@@ -1,0 +1,614 @@
+// *******************************************************************************
+// Catalog
+//
+// Cet objet permet de gérer le Catalogue des clips mp3.
+// *******************************************************************************
+
+
+#include <SdFat.h>
+#include "Catalog.h"
+
+
+// *******************************************************************************
+// Constructor
+// *******************************************************************************
+Catalog::Catalog(byte pinLedBusy)
+{
+   Media_Genre="-";
+   LedBusy = pinLedBusy; 
+}
+
+// *******************************************************************************
+// On initialise le Seed du générateur aléatoire.
+// N'a besoin d'être fait qu'une fois, mais pas immédiatement car SD doit être prêt.
+// *******************************************************************************
+void Catalog::begin()
+{
+//   SdFile FichierIndex;
+
+   // On initialise le Seed du générateur aléatoire avec une valeur chaque fois différente.
+   randomSeed(analogRead(0));
+
+   // On cherche le nombre maximum, correspondant à la taille du fichier index.
+   digitalWrite(LedBusy,LOW); // ON
+   if (!FichierIndex.open("/Catalog.ndx")) Serial.println(F("Catalog: Cannot open Catalog.ndx"));
+
+   RandomMax = FichierIndex.fileSize();
+   FichierIndex.close();
+   digitalWrite(LedBusy,HIGH); // OFF
+   Serial.print(" taille Catalog.ndx: "); Serial.println(RandomMax);
+}
+
+
+// *******************************************************************************
+// Initialise une recherche de clip pour un genre donné.
+// Il faut appeler cette méthode lorsque le genre demandé change, ou que l'on vient de basculer sur le mode "Genre".
+// *******************************************************************************
+void Catalog::initNewSearch(int tuning)
+{
+  Serial.println(" initNewSearch for tuning "+String(tuning));
+  CurrentTuning  = tuning;
+  RequestedGenre = this->getGenreLabel(tuning); // La valeur textuelle du genre demandé
+  RequestedYear  = this->getYearValue(tuning);  // La valeur textuelle de l'année demandée
+  RequestedRating= this->getStarsValue(tuning); // La valeur textuelle du rating demandé
+
+  // on identie le premier clip pour cette date
+  this->findFirstClipForRequestedYear();
+
+  // pour les genres, on se positionne simplement au debut du catalogue
+  this->findFirstClipForRequestedGenre();
+}
+
+
+// *******************************************************************************
+// Parsing des 4 champs d'une ligne de catalogue  (ex: 1956;E76E79B1;Calipso;0; )
+// *******************************************************************************
+void Catalog::parseFields(String medialine)
+{
+  // Serial.print("  parsing: "); Serial.println (medialine);
+  if (medialine.length()<18) 
+  {
+    // Si la ligne est trop courte pour être exploitable, on met les valeurs par défaut
+    Field1 = "0000";
+    Field2 = "NOISE";
+    Field3 = "-";
+    Field4 = "-";
+  }
+  else
+  {
+    // Si la ligne a une longueur correcte, on fait le parsing
+    int    Separ1   = medialine.indexOf(';');              // pointeur sur le premier séparateur
+    int    Separ2   = medialine.indexOf(';',Separ1+1);     // pointeur sur le second séparateur
+    int    Separ3   = medialine.indexOf(';',Separ2+1);     // pointeur sur le troisième séparateur
+    int    Separ4   = medialine.indexOf(';',Separ3+1);     // pointeur sur le quatrième séparateur
+    Field1 = medialine.substring(0       ,Separ1);
+    Field2 = medialine.substring(Separ1+1,Separ2);
+    Field3 = medialine.substring(Separ2+1,Separ3);          
+    Field4 = medialine.substring(Separ3+1,Separ4);
+  }
+
+  // Si après le parsing, un des champs est vide, on met la valeur par défaut
+  if (Field1.length()==0) Field1="0000";
+  if (Field2.length()==0) Field2="NOISE";
+  if (Field3.length()==0) Field3="-";
+  if (Field4.length()==0) Field4="-";
+
+  // On mémorise la position du field Rating
+  RatingPosition = FichierIndex.curPosition()-4;
+}
+
+// *******************************************************************************
+// Renvoie l'ID qui a été trouvé lors du GetNextClip
+// *******************************************************************************
+String Catalog::getSelectedID()
+{
+  return Media_ID;
+}
+
+// *******************************************************************************
+// Renvoie le genre qui a été trouvé lors du GetNextClip
+// *******************************************************************************
+String Catalog::getSelectedGenre()
+{
+  return Media_Genre;
+}
+
+// *******************************************************************************
+// Renvoie l'Année qui a été trouvé lors du GetNextClip
+// *******************************************************************************
+String Catalog::getSelectedYear()
+{
+  return Media_Year;
+}
+
+// *******************************************************************************
+// Renvoie l'ID qui a été trouvé lors du GetNextClip
+// *******************************************************************************
+String Catalog::getSelectedRating()
+{
+  return Media_Rating;
+}
+
+// *******************************************************************************
+// Renvoie la position du curseur pour le Rating
+// *******************************************************************************
+long Catalog::getRatingPosition()
+{
+  return RatingPosition;
+}
+
+// *********************************************************************
+// Renvoie le GENRE correspondant à la position du bouton TUNE
+// *********************************************************************
+String Catalog::getGenreLabel(int value)
+{
+  float  PartSize;
+  int    Position;
+  String RequestedGenreFound;
+  int    Separ=0;
+  int    SeparFin=1;
+  
+  PartSize      = float(MAX_TUNING / GenreWhiteListSize);    // ex: 25.5
+  Position      = (value / PartSize);                 // ex: 50-->2.3-->2
+  // On cherche le Nième ';'
+  for (int i=0; i<Position; i++)
+  {
+    Separ = GenreWhiteList.indexOf(';',Separ)+1;  
+  }
+  SeparFin = GenreWhiteList.indexOf(';',Separ);  
+  RequestedGenreFound    = GenreWhiteList.substring(Separ,SeparFin);
+  if (RequestedGenreFound.length()==0) RequestedGenreFound="*";
+  return RequestedGenreFound;
+}
+
+
+// *********************************************************************
+// Renvoie le RATING correspondant à la position du bouton TUNE
+// *********************************************************************
+int Catalog::getStarsValue(int value)
+{
+  if (value < 0.15*MAX_TUNING)  {return 0; }  
+  if (value < 0.30*MAX_TUNING)  {return 1; }  
+  if (value < 0.45*MAX_TUNING)  {return 2; }  
+  if (value < 0.65*MAX_TUNING)  {return 3; }  
+  if (value < 0.85*MAX_TUNING)  {return 4; }
+  if (value <    1+MAX_TUNING)  {return 5; }  
+}
+
+// *********************************************************************
+// Renvoie l'ANNEE correspondant à la position du bouton TUNE
+// *********************************************************************
+int Catalog::getYearValue(int value)
+{
+  
+  if (value < 0.1*MAX_TUNING)          {RangeStart=0;    RangeEnd=1700; return (      (value               ) * float(1700)/STEP_TUNING);} //   0..1700
+  if (value < 0.2*MAX_TUNING)          {RangeStart=1700; RangeEnd=1800; return (1700+ (value-0.1*MAX_TUNING) * float(100)/STEP_TUNING);}  //1700..1800
+  if (value < 0.3*MAX_TUNING)          {RangeStart=1800; RangeEnd=1900; return (1800+ (value-0.2*MAX_TUNING) * float(100)/STEP_TUNING);}  //1800..1900
+  if (value < 0.4*MAX_TUNING)          {RangeStart=1900; RangeEnd=1940; return (1900+ (value-0.3*MAX_TUNING) * float(40)/STEP_TUNING); }  //1900..1940
+  if (value < 0.5*MAX_TUNING)          {RangeStart=1940; RangeEnd=1950; return (1940+ (value-0.4*MAX_TUNING) * float(10)/STEP_TUNING); }  //1940..1950
+  if (value < 0.6*MAX_TUNING)          {RangeStart=1950; RangeEnd=1960; return (1950+ (value-0.5*MAX_TUNING) * float(10)/STEP_TUNING); }  //1950..1960
+  if (value < 0.7*MAX_TUNING)          {RangeStart=1960; RangeEnd=1970; return (1960+ (value-0.6*MAX_TUNING) * float(10)/STEP_TUNING); }  //1960..1970
+  if (value < 0.8*MAX_TUNING)          {RangeStart=1970; RangeEnd=1980; return (1970+ (value-0.7*MAX_TUNING) * float(10)/STEP_TUNING); }  //1970..1980
+  if (value < 0.9*MAX_TUNING)          {RangeStart=1980; RangeEnd=2000; return (1980+ (value-0.8*MAX_TUNING) * float(20)/STEP_TUNING); }  //1980..2000
+  /* else */                            RangeStart=2000; RangeEnd=2050; return (2000+ (value-0.9*MAX_TUNING)  -54                      );    //2000..2025...et svtes
+}
+
+// *******************************************************************************
+// Debug: Affiche tous les genres en fonction de la valeur du "tuning"
+// *******************************************************************************
+void Catalog::debugGenre()
+{
+  for (int i=0; i<MAX_TUNING; i++)
+  {
+    Serial.print(i);Serial.print("=>");Serial.println(this->getGenreLabel(i));
+  }
+}
+
+// *******************************************************************************
+// Debug: Affiche toutes les années en fonction de la valeur du "tuning"
+// *******************************************************************************
+void Catalog::debugYear()
+{
+  for (int i=0; i<MAX_TUNING; i++)
+  {
+    Serial.print(i);Serial.print("=>");Serial.println(this->getYearValue(i));
+  }
+}
+
+// *******************************************************************************
+// Renvoie un ID de clip au hasard, tiré dans le catalogue.
+// *******************************************************************************
+String Catalog::selectRandomClip()
+{
+  String  LineRead;
+  bool    FileAccessOK;
+
+  // On ouvre le fichier
+  FileAccessOK = this->openCatalogAtPosition(5);
+  // En cas d'erreur d'ouverture du fichier, on renvoie "NOISE.MP3"
+  if (!FileAccessOK) return ("NOISE");
+  
+  // On lit une ligne au hasard dans le fichier
+  LineRead = readRandomLine();
+  this->closeCatalog(); 
+  if (LineRead=="ERROR") {return "NOISE";}    
+  if (LineRead=="EOF")   {return "NOISE";}
+  
+  // Serial.print(F("  line read: ")); Serial.println (LineRead);
+  
+  // on parse la ligne du media trouvé pour extraire l'ID
+  this->parseFields(LineRead);
+  LastMedia_ID = Media_ID;
+  Media_ID     = Field2;
+
+  // Si on est tombé 2 fois sur le même ID, on met du Noise
+  if (LastMedia_ID==Media_ID) Media_ID="NOISE";
+
+  // On stocke les infos du clip trouvé
+  Media_Rating = Field4;
+  Media_Genre  = Field3;
+  Media_Year   = Field1;   
+  // On retourne l'ID du media trouvé
+  return Media_ID;
+}
+
+
+// *******************************************************************************
+// Renvoie l'ID du Clip suivant dans l'index, correspondant au genre demandé.
+// On commence la recherche à partir de CurrentPosition (qui est l'emplacement du dernier clip joué
+// ou du début, si on a fait un initSearch.
+// *******************************************************************************
+String Catalog::selectClipForRequestedGenre()
+{
+  bool   FileAccessOK;
+  char   line[MAX_LG_LINE];            // ligne lue dans le fichier index
+  String medialine;
+  
+  Serial.println ("  selectClipForRequestedGenre: "+RequestedGenre);
+    
+  // On se positionne a la dernière position utilisée pour Genre.
+  FileAccessOK = this->openCatalogAtPosition(CurrentPositionG);
+  // En cas d'erreur d'ouverture du fichier, on renvoie "NOISE.MP3"
+  if (!FileAccessOK) return ("NOISE");
+
+  // On lit des lignes jusqu'à ce qu'on trouve une ligne du genre demandé
+  do
+  {
+    // On lit une ligne
+    medialine = this->readNextLine();
+    if (medialine=="ERROR") {this->closeCatalog(); return "NOISE";}    
+    if (medialine=="EOF")   {this->closeCatalog(); this->findFirstClipForRequestedGenre(); return "NOISE";}
+    // Serial.print (F("  line read in Catalog.ndx: ")); Serial.println (medialine);
+    CurrentPositionG = FichierIndex.curPosition();  // On mémorise la position courante
+    // on parse la ligne pour connaitre le genre que l'on compare au genre attendu
+    this->parseFields(medialine);
+    // tant que le genre lu n'est pas conforme au genre attendu...
+  } while (this->isNotAsExpected(Field3));      
+  Serial.println (F(" found a match! "));
+  
+  this->closeCatalog(); 
+
+  // On mémorise les informations sur le media touvé
+  Media_Year  = Field1;
+  Media_ID    = Field2;   // this->parseMediaID(String(line));
+  Media_Genre = Field3;   // this->parseGenre(String(line));
+  Media_Rating= Field4;
+
+  // Retourne l'ID du media
+  return Media_ID;
+}
+
+// *******************************************************************************
+// Renvoie le clip suivant dans l'index, correspondant à une periode allant 
+// de l'année sélectionnée à la fin de la période.
+// La fin de la période est définie dans getYearValue().
+// L'index (ordonné) Catalog.ndx permet d'avancer d'année en année.
+// *******************************************************************************
+String Catalog::selectClipForRequestedYear()
+{
+  bool   FileAccessOK;
+  String medialine;
+ 
+  Serial.print(F("  selectClipForRequestedYear: ")); Serial.println(RequestedYear);
+
+  FileAccessOK = this->openCatalogAtPosition(CurrentPositionY);
+  // En cas d'erreur d'ouverture du fichier, on renvoie "NOISE.MP3"
+  if (!FileAccessOK) return ("NOISE");
+
+  // On lit la ligne suivante
+  medialine = this->readNextLine();
+  if (medialine=="ERROR") {FichierIndex.close(); return "NOISE";}    
+  if (medialine=="EOF")   {FichierIndex.close(); return "NOISE";}
+
+//  int Lg= FichierIndex.fgets(line,MAX_LG_LINE);  
+//  if (Lg==-1) {FichierIndex.close(); return ("NOISE");}         // Erreur de lecture
+//  if (Lg==0)  {FichierIndex.close(); return ("NOISE");}         // la ligne lue est vide ou EOF
+//  if (Lg<10)  {FichierIndex.close(); Serial.print(F("line size too short: ")); Serial.println(Lg);  return ("NOISE");   }
+
+  Serial.print (F("  line read: ")); Serial.print (medialine);
+  CurrentPositionY  =FichierIndex.curPosition();  // On mémorise la position courante
+  FichierIndex.close();
+  digitalWrite(LedBusy,HIGH); // OFF
+
+//  medialine = String(line);
+//  medialine.trim();
+  this->parseFields(medialine);
+  // On verifie si le YEAR lu est toujours bien dans la période musicale demandée
+  if (Field3.toInt()>RangeEnd)
+  {
+    // Si on déborde, alors on rewinde.
+    CurrentPositionY=FirstcurrentPositionY;
+    Media_Year  = FirstMediaYear;
+    Media_ID    = FirstMediaID;
+    Media_Genre = FirstMediaGenre;
+    Media_Rating= FirstMediaRating;
+  }
+  else
+  {
+    // On memorise l'ID Media trouvé
+    Media_Year  = Field1;
+    Media_ID    = Field2;
+    Media_Genre = Field3;
+    Media_Rating= Field4;
+  }
+  // Retourne l'ID du media à jouer
+  return Media_ID;
+}
+
+
+// *******************************************************************************
+// On renvoie un clip au hasard, mais ayant le nombre d'étoiles demandé.
+// *******************************************************************************
+String Catalog::selectClipForRequestedRating()
+{
+  String medialine;
+  bool   FileAccessOK;
+
+  Serial.print(F("  selectClipForRequestedRating ")); Serial.println(RequestedRating);
+
+  FileAccessOK = this->openCatalogAtPosition(5);
+  // En cas d'erreur d'ouverture du fichier, on renvoie "NOISE.MP3"
+  if (!FileAccessOK) return ("NOISE");
+  
+  // On lit une ligne au hasard dans le fichier
+  medialine = this->readRandomLine();
+  if (medialine=="ERROR") {FichierIndex.close(); return "NOISE";}    
+  if (medialine=="EOF")   {FichierIndex.close(); return "NOISE";}
+  Serial.print (F(" line read: ")); Serial.print (medialine);
+  this->parseFields(medialine);
+
+  // Si ce clip n'a pas assez d'étoiles, alors on on lit la ligne suivante
+  while (!this->isAsExpectedRating(Field4))
+  {
+        medialine=this->readNextLine();
+        if (medialine=="ERROR")  {FichierIndex.close(); return "NOISE";}  
+        if (medialine=="EOF")    {FichierIndex.close(); return "NOISE";}  
+        this->parseFields(medialine);
+  } 
+
+  // On memorise l'ID Media trouvé
+  Media_Year       = Field1;
+  Media_ID         = Field2;
+  Media_Genre      = Field3;
+  Media_Rating     = Field4;
+
+  // on envoie l'ID du media trouvé
+  FichierIndex.close();
+  digitalWrite(LedBusy,HIGH); // OFF
+  return (Media_ID);
+}
+
+// *******************************************************************************
+// Ouvre le fichier Catalog.ndx, en gérant les cas d'erreur.
+// *******************************************************************************
+bool Catalog::openCatalogAtPosition(long pos)
+{
+  bool FileAccessOK;
+  
+  digitalWrite(LedBusy,LOW); // Allume la LED témoin
+  FileAccessOK = FichierIndex.open("/Catalog.ndx");      // on ouvre le fichier Catalog
+  if (!FileAccessOK)
+  {
+    // en cas d'erreur d'ouverture du fichier, on renvoie "NOISE.MP3"
+    Serial.println (F("Cannot open Catalog.ndx"));
+    return (false);
+  }
+  
+  // On se positionne dans l'index à la derniere position connue
+  Serial.print(F("  Catalog.ndx: going to position ")); Serial.println(pos);
+  FileAccessOK = FichierIndex.seekSet(pos);
+  if (!FileAccessOK)
+  {
+    Serial.print(F("Catalog.ndx: Cannot go to position ")); Serial.println(pos);
+    FichierIndex.close();
+    return (false);
+  }
+  return true;
+}
+
+// *******************************************************************************
+// Ferme le fichier Catalog.ndx.
+// *******************************************************************************
+void Catalog::closeCatalog()
+{
+  FichierIndex.close();
+  digitalWrite(LedBusy,HIGH); // Eteint la LED témoin
+}
+
+// *******************************************************************************
+// Lit une ligne au hasard dans le fichier.
+// Le FichierIndex est ouvert préalablement.
+// Renvoie la ligne, ou "EOF" ou "ERROR"
+// *******************************************************************************
+String Catalog::readRandomLine()
+{
+   char         line[MAX_LG_LINE];         // ligne lue dans le fichier
+   unsigned int RandomNb;         // Numéro aléatoire entre 1 et taille
+   int          Lg=0;
+   String       medialine;
+
+  RandomNb   = random(RandomMax)+1;   // random(Max) renvoie un nombre aléatoire entre 0 et Max-1
+  Serial.print("  read random line, number "); Serial.print (RandomNb); Serial.print (" out of "); Serial.println (RandomMax); 
+   
+  // On se positionne sur un octet au hasard dans l'index
+  if (!FichierIndex.seekSet(RandomNb))
+  {
+    Serial.println (F("Ratings.txt: Cannot go to position ")); Serial.println(RandomNb);
+    return ("ERROR");
+  }
+  
+  //On lit la fin de la ligne en cours (généralement tronquée, puisqu'on s'est placé au hasard dans le fichier)
+  Lg = FichierIndex.fgets(line,MAX_LG_LINE);
+  if (Lg==-1) return ("ERROR");      // Erreur de lecture
+  if (Lg==0)  return ("EOF");      // la ligne lue est vide ou EOF
+  // Serial.print (" positioned at : "); Serial.println (line);
+  
+  // On lit la ligne suivante
+  Lg = FichierIndex.fgets(line,MAX_LG_LINE);
+  if (Lg==-1) return ("ERROR");      // Erreur de lecture
+  if (Lg==0)  return ("EOF");      // la ligne lue est vide ou EOF
+
+  medialine=String(line);
+  medialine.trim();
+  return medialine;
+}
+
+// *******************************************************************************
+// On lit la ligne suivante du fichier
+// Le FichierIndex est ouvert préalablement.
+// *******************************************************************************
+String Catalog::readNextLine()
+{
+  char   Line[MAX_LG_LINE];         // ligne lue dans le fichier
+  String Medialine;
+   
+  // On lit la ligne suivante
+  int Lg = FichierIndex.fgets(Line,MAX_LG_LINE);
+  if (Lg==-1) return ("ERROR");    // Erreur de lecture
+  if (Lg==0)  return ("EOF");      // la ligne lue est vide ou EOF
+
+  Medialine=String(Line);
+  Medialine.trim();
+  return Medialine;
+}
+
+
+// *******************************************************************************
+// Initialisation des recherches de clip pour une année donnée.
+// Il faut appeler cette méthode lorsque l'année demandée change, ou que l'on vient de basculer sur le mode "YEAR".
+// Cette fonction initialise FirstcurrentPositionY et CurrentPositionY.
+// *******************************************************************************
+void Catalog::findFirstClipForRequestedYear()
+{
+//  SdFile FichierIndex;
+  char   Line[MAX_LG_LINE];            // ligne lue dans le fichier catalogue
+  int    Lg;
+  String medialine;
+
+  // on se positionne au debut du Catalogue
+  Serial.print(F(" findFirstClipForRequestedYear ")); Serial.println(RequestedYear);
+  CurrentPositionY  =5;                      // Au debut du fichier index, il y a quelques octets inutiles. En dessous de 5, le programme plante.
+
+  // on ouvre le fichier Catalogue 
+  if (!FichierIndex.open("/Catalog.ndx"))      Serial.println (F("Cannot open Catalog.ndx"));
+  digitalWrite(LedBusy,LOW); // ON
+    
+  // On se positionne au debut du Catalogue
+  FichierIndex.seekSet(5);
+
+  // On cherche la première ligne correspondant à l'année demandée.
+  // (On en a peut-être pas, alors on en prend une supérieure)
+  do
+  {
+    CurrentPositionY  =FichierIndex.curPosition();  // On mémorise la position courante
+    Lg = FichierIndex.fgets(Line,MAX_LG_LINE);         // On lit une ligne
+    if (Lg==-1) {Serial.println (F("Cannot read Catalog.ndx")); break;}     // Erreur de lecture
+    if (Lg==0 ) {Serial.println (F("End of Catalog"));          break;}     // Fin de fichier - EOF
+    if (Lg <10) {Serial.println (F("line too short in Catalog.ndx")); Serial.println(Lg); Serial.println(Line);    continue;}     // ligne trop courte
+      
+    // Serial.print (" rewinding to line "); Serial.print (currentPositionY); Serial.print (F(" in Catalog.ndx: line read=")); Serial.println(line); 
+    medialine=String(Line);
+    medialine.trim();
+    // on parse la ligne pour lire l'année
+    this->parseFields(medialine);
+  } while (!isInRange(Field1.toInt()));
+
+  FichierIndex.close();
+  digitalWrite(LedBusy,HIGH); // OFF
+
+  FirstcurrentPositionY=CurrentPositionY;
+  FirstMediaYear  =Field1;
+  FirstMediaID    =Field2;
+  FirstMediaGenre =Field3;
+  FirstMediaRating=Field4;
+}
+
+// *******************************************************************************
+// Initialisation des recherches de clip pour les genres.
+// Cette fonction initialise CurrentPositionG.
+// *******************************************************************************
+void Catalog::findFirstClipForRequestedGenre()
+{
+//  SdFile FichierIndex;
+  char   Line[MAX_LG_LINE];            // ligne lue dans le fichier catalogue
+
+    Serial.print(F(" findFirstClipForRequestedGenre ")); Serial.println(RequestedGenre);
+    // on se positionne entre [5 .. TailleCatalog]  (TailleCatalog = randomMax)
+    // en fonction d'un current tuning entre [0 .. 1023]
+    // on commence à 5, car au debut du fichier catalogue, il y a quelques octets inutiles.
+    float f = float(CurrentTuning)/MAX_TUNING;
+    Serial.print(F("  f=")); Serial.print(f); Serial.println(F("% of file"));
+    unsigned int p = max(5,f*RandomMax - 100);  // on prend une marge de 100 chars pour ne pas être trop près de la fin du catalogue
+    Serial.print(F("  p=")); Serial.print(p); Serial.println(F("(new planed position)"));
+    // on se positionne à p, et on lit une ligne bidon, de façon à trouver une position initiale viable.
+    digitalWrite(LedBusy,LOW); // ON
+    FichierIndex.open("/Catalog.ndx");
+    FichierIndex.seekSet(p);
+    FichierIndex.fgets(Line,MAX_LG_LINE);
+    CurrentPositionG  =FichierIndex.curPosition();
+    Serial.print(F("  CurrentPositionG=")); Serial.print(CurrentPositionG); Serial.println(F("(new position) "));
+    FichierIndex.close();
+
+    Serial.print(F("  Position of first ")); Serial.print(RequestedGenre); Serial.print(F(" is ")); Serial.println (CurrentPositionG);
+    
+}
+
+// *********************************************************************
+// Renvoie TRUE si l'ANNEE du media est dans la bonne période (décade)
+// *********************************************************************
+bool Catalog::isInRange(int year)
+{
+  return ((year>=RequestedYear) && (year<RangeEnd));
+}
+
+
+// *******************************************************************************
+// Renveio TRUE si le nombre d'étoiles du media est égal au Rating demandé.
+// *******************************************************************************
+bool Catalog::isAsExpectedRating(String rating)
+{
+  int Rating = rating.toInt();
+  return (Rating == RequestedRating);            // variante: <= Threshold
+}
+  
+
+// *******************************************************************************
+// Renvoie FALSE si le genre du média est egal genre demandé.
+// Si le genre demandé est "*" alors cad que l'on attend un genre "hors-WhiteList"
+// *******************************************************************************
+bool Catalog::isNotAsExpected(String genre)
+{
+  //  Serial.println ("isNotAsExpected for "+RequestedGenre);
+  if (RequestedGenre=="*") 
+    // si le genre attendu est Others, on regarde si le genre lu est dans la Whitelist
+    // Si il y est : il faut en chercher un autre. on renvoie donc VRAI.
+    {
+      Serial.print (" others:"+genre+":"); Serial.println (GenreWhiteList.indexOf(genre));
+      return (GenreWhiteList.indexOf(genre)>-1); // -1=>on n'a pas trouvé=> on renvoie FALSE, sinon on renvoie VRAI
+    }
+  else 
+    // si le genre attendu est defini, on le compare au genre lu
+    return (!genre.equalsIgnoreCase(RequestedGenre));
+}
+
+
