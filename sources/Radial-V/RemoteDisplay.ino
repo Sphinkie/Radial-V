@@ -1,7 +1,7 @@
 // *******************************************************************************
 // REMOTE DISPLAY
 //
-// Cet objet envioe des commandes a un écran TFT via un bus I2C.
+// Cet objet envoie des commandes a un écran TFT via un bus I2C.
 // Il y a un autre arduino (slave) sur le bus I2C pour recevoir ces commandes
 // *******************************************************************************
 

@@ -1,0 +1,24 @@
+# Export layouts
+#
+# Generate 3 PNG files: Layer-Top, Layer-Bottom, and Components
+#
+# by David de Lorenzo
+
+
+DISPLAY ALL
+RATSNEST
+
+DISPLAY None 
+DISPLAY Dimension Top Pads Vias
+EXPORT IMAGE C:\Users\David\Documents\eagle\Layer-Top.png MONOCHROME 600;
+
+DISPLAY None 
+DISPLAY Dimension Bottom Pads Vias
+EXPORT IMAGE C:\Users\David\Documents\eagle\Layer-Bottom.png MONOCHROME 600;
+
+DISPLAY None 
+DISPLAY Dimension tPlace tNames tValues bPlace Holes
+EXPORT IMAGE C:\Users\David\Documents\eagle\Layer-Components.png MONOCHROME 600;
+
+DISPLAY None 
+DISPLAY Top Bottom Unrouted Dimension tNames tPlace bPlace tValues tOrigins bOrigins Pads Vias Holes

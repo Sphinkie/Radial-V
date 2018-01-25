@@ -1,0 +1,25 @@
+EAGLE AutoRouter Statistics:
+
+Job           : C:/Users/David/Documents/eagle/Radial-V extension board/Radial-V Ext.brd
+
+Start at      : 11:26:28 (28/12/2015)
+End at        : 11:26:32 (28/12/2015)
+Elapsed time  : 00:00:01
+
+Signals       :    47   RoutingGrid: 25 mil  Layers: 2
+Connections   :    94   predefined:  20 ( 0 Vias )
+
+Router memory :   113128
+
+Passname          :    Busses     Route Optimize1 Optimize2 Optimize3 Optimize4
+
+Time per pass     :  00:00:00  00:00:00  00:00:00  00:00:01  00:00:00  00:00:00
+Number of Ripups  :         0         0         0         0         0         0
+max. Level        :         0         0         0         0         0         0
+max. Total        :         0         0         0         0         0         0
+
+Routed            :        13        74        74        74        74        74
+Vias              :         0        75         5         1         0         0
+Resolution        :    35.1 %   100.0 %   100.0 %   100.0 %   100.0 %   100.0 %
+
+Final             : 

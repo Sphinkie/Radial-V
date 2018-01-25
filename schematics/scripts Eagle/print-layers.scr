@@ -1,0 +1,24 @@
+# Print layouts
+#
+# Print 3 layers: Layer-Top, Layer-Bottom, and Components
+#
+# by David de Lorenzo
+
+
+DISPLAY ALL
+RATSNEST
+
+DISPLAY None
+DISPLAY Dimension Top Pads Vias
+PRINT 1 BLACK SOLID;
+
+DISPLAY None
+DISPLAY Dimension Bottom Pads Vias
+PRINT 1 MIRROR BLACK SOLID;
+
+DISPLAY None
+DISPLAY Dimension tPlace tNames tValues bPlace
+PRINT 1 BLACK;
+
+DISPLAY None
+DISPLAY Top Bottom Unrouted Dimension tNames tPlace bPlace tValues tOrigins bOrigins Pads Vias

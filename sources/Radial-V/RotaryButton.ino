@@ -6,8 +6,6 @@
 #include "RotaryButton.h"
      
         
-        
-        
 // ****************************************************************        
 // Constructeur
 //  On considère en dur qu'il y a 4 positions.

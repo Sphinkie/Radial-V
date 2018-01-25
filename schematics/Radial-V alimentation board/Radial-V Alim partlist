@@ -1,0 +1,29 @@
+Partlist
+
+Exported from Radial-V Alim.sch at 27/12/2015 20:17
+
+EAGLE Version 7.4.0 Copyright (c) 1988-2015 CadSoft
+
+Assembly variant: 
+
+Part       Value           Device          Package  Library       Sheet
+
+A8-A15     ARDUINO         MA08-1          MA08-1   con-lstb      1
+ALIM       22-27-2021-02   22-27-2021-02   6410-02  con-molex     1
+C1         10uF            CPOL-EUB45181C  B45181C  rcl           1
+C2         100uF           CPOL-EUB45181C  B45181C  rcl           1
+CNX-ON-OFF 22-27-2021-02   22-27-2021-02   6410-02  con-molex     1
+D14-D21    ARDUINO         MA08-1          MA08-1   con-lstb      1
+D22-D53    ARDUINO         MA18-2          MA18-2   con-lstb      1
+IC1        7805TV          7805TV          TO220V   linear        1
+JK1        POWER-IN        DCJ0303         DCJ0303  con-jack      1
+JP1        Jumper          JP2E            JP2      jumper        1
+PIN-3V3    ARDUINO         PINHD-1X1       1X01     pinhead       1
+PIN-D3     ARDUINO         PINHD-1X1       1X01     pinhead       1
+PL1                        26H             26H      con-harting-h 1
+RST        ARDUINO         PINHD-1X1       1X01     pinhead       1
+W2B-AMPLI  C-GRID-02-70543 C-GRID-02-70543 70543-02 con-molex     1
+W2B-ARD1   C-GRID-02-70543 C-GRID-02-70543 70543-02 con-molex     1
+W2B-ARD2   C-GRID-02-70543 C-GRID-02-70543 70543-02 con-molex     1
+W2B-LAMP1  C-GRID-02-70543 C-GRID-02-70543 70543-02 con-molex     1
+W2B-LAMP2  C-GRID-02-70543 C-GRID-02-70543 70543-02 con-molex     1
