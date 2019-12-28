@@ -94,7 +94,7 @@ Catalog            Catalogue;
 Favorites          FavoritesMgt;
 Rotary             ModeButton(MODE_1,MODE_2,MODE_3,MODE_4); 
 Rotary             SourceButton(MP3_ON, FM_ON); 
-CapButton          TuneButton(A12,A14);
+CapButton          TuneButton(TUNE_OUT,TUNE_IN);
 SelfReturnButton   PromoteButton(PROMOTE, &ISR_PromoteButton);   
 SelfReturnButton   AgainButton(AGAIN,     &ISR_AgainButton);     
 SelfReturnButton   NextButton(NEXT,       &ISR_NextButton);    
@@ -471,7 +471,3 @@ void setRelay(int relaisposition)
    digitalWrite(K2,relaisposition);           // Commutation relay
 }
   
-
-
-
-
