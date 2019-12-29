@@ -31,6 +31,9 @@ class Catalog
         String getSelectedClipRating();
         long   getRatingPosition();
         void   promoteSelectedClip();
+        // Accès au fichier Catalog.ndx
+        void   addStar(long clipPosition);
+        void   removeStar(long clipPosition);
       
     private:
         bool   openCatalogAtPosition(long pos);
@@ -44,6 +47,10 @@ class Catalog
         bool   isInRange(int year);
         bool   isNotAsExpected(String mediagenre);
         bool   isAsExpectedRating(String rating);
+        // Accès au fichier Catalog.ndx
+        void   writeRating(int rating, long clipPosition);
+        int    readRating(long clipPosition);
+
         // debugage
         void   debugGenre();
         void   debugYear();
@@ -92,4 +99,3 @@ class Catalog
 
 
 #endif // CATALOGCLASS_H_INCLUDED
-

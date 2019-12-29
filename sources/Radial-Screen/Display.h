@@ -2,6 +2,9 @@
 #ifndef DISPLAYCLASS_H_INCLUDED
 #define DISPLAYCLASS_H_INCLUDED
 
+#include <SD.h>
+#include <TFT.h>  
+
  
 #define LINEMAX     32              // Taille maximum des textes. Au dela: on tronque.
 

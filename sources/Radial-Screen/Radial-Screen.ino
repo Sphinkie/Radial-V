@@ -4,7 +4,7 @@
 
 Software pour la radio Radial-V.
 
-Pilotage par Arduino-Uno d'un ecran TFT
+Pilotage par Arduino-MEGA d'un ecran TFT
 
 *************************************************************************************************** 
 * 1.0     03/11/2015    Creation
@@ -14,11 +14,8 @@ Pilotage par Arduino-Uno d'un ecran TFT
 *************************************************************************************************** 
 */
 
+#include <Wire.h>     // Librairie Arduino pour le bus I2C
 
-
-#include <Wire.h>
-#include <SD.h>
-#include <TFT.h>  
 #include "Display.h"
 #include "RadialScreen.h"
 #include "ArrayQueue.h"
@@ -60,7 +57,7 @@ void setup()
   Serial.println(F("Loading graphical pictos"));
   LCDdisplay.initDisplay();
   LCDdisplay.setBackground(BG_R,BG_G,BG_B);
-  LCDdisplay.printLog(F("Radial-V demarrage."));
+  LCDdisplay.printLog(F("  Radial-V demarrage."));
 
   // Initialisation de la connection au bus IIC
   Wire.begin(TFT_SLAVE);                // join i2c bus with address $2
@@ -156,6 +153,3 @@ void receiveEvent(int howMany)
   // On stocke les info reçues dans la fifo.
   Fifo.enQueue(Command, Data);
 }
-
-
-

@@ -14,11 +14,6 @@
 #ifndef MUSICPLAYERCLASS_H_INCLUDED
 #define MUSICPLAYERCLASS_H_INCLUDED
 
-//#include <SPI.h>
-//#include <SdFat.h>
-///#include <SdFatUtil.h> 
-//#include <SFEMP3Shield.h>
-
 class MusicPlayer
 {
     public:
@@ -63,4 +58,3 @@ class MusicPlayer
 #define MAX_STEP  20     // Nombre d'étapes gérées par le mini-séquenceur
 
 #endif // MUSICPLAYERCLASS_H_INCLUDED
-

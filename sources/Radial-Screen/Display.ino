@@ -1,14 +1,22 @@
+/* ************************************************************************************************
 
+Librairie pour piloter le shield ARDUINO ROBOT LCD SCREEN
 
-#include <SPI.h>
-#include <SD.h>
-#include <TFT.h>  
+Utilise les librairies Arduino suivantes:
+- SD    pour les accès à la carte SD du shield "Arduino Screen"
+- TFT   pour les accès à l'écran LCD du shield "Arduino Screen"
+- SPI   pour le bus SPI   (inutile: a été enlevé)
+
+*************************************************************************************************** 
+* 1.0     03/11/2015    Creation
+*************************************************************************************************** 
+*************************************************************************************************** 
+*/
+
 #include "display.h"
 
-
-
+// On instancie la librairie TFT avec les pin utilisés
 TFT     TFTscreen(CS_LD,DC_LD,RESET);
-
 
 
 // **********************************************************
@@ -25,7 +33,7 @@ Display::Display()
   strcpy(CurrentLog,    "");
 
   pinMode(BACKLIGHT, OUTPUT);    
-  this->setBacklight(0);   
+  this->setBacklight(0);
 }
 
 // **********************************************************
@@ -33,7 +41,7 @@ Display::Display()
 // **********************************************************
 void Display::initDisplay() 
 {
-  // Initialsiation de la caret SD. En car d'erreur, le programme stoppe.
+  // Initialisation de la carte SD. En car d'erreur, le programme stoppe.
   Serial.print(F("Initializing TFT SD card..."));
   if (!SD.begin(CS_SD)) 
   {
@@ -45,7 +53,7 @@ void Display::initDisplay()
   StarOn  = TFTscreen.loadImage("star_f.bmp");
   StarOff = TFTscreen.loadImage("star_e.bmp");
 
-  // Put this line at the beginning of every sketch that uses the GLCD:
+  // Put this line at the beginning of every sketch that uses the LCD:
   TFTscreen.begin();
   TFTscreen.background(0, 0, 0);               // clear the screen with black
   TFTscreen.setTextSize(1);                    // set the font size to 1
@@ -123,7 +131,7 @@ void Display::printTitle(String texte)
 // **********************************************************
 void Display::printArtist(String texte) 
 {
-  texte.remove(21);                                     // On tronque le genre à 21 chars.
+  texte.remove(21);                                     // On tronque le texte à 21 chars.
   if (texte.length()<18) texte="par "+texte;            // Si la longueur le permet, on rajoute "par"
   this->clearField(X_MARGIN, Y_ARTIST, 24*5, 8);
   this->cleanString(texte, CurrentArtist);              // On copie le texte dans CurrentArtist
@@ -202,8 +210,8 @@ void Display::printLog(String  texte)
   this->clearField(X_MARGIN,Y_TRACE,24*5,8);
   this->cleanString(texte, CurrentLog);           // On copie le texte dans CurrentLog
   TFTscreen.setTextSize(1);
-  TFTscreen.stroke(200, 20, 20);                  // couleur Rouge
-  TFTscreen.text(CurrentLog, X_MARGIN, Y_TRACE);  // print the text at X,Y
+  TFTscreen.stroke(200, 20, 20);                  // Couleur Rouge
+  TFTscreen.text(CurrentLog, X_MARGIN, Y_TRACE);  // Print the text at X,Y
 }
 
 
@@ -332,16 +340,16 @@ clearAllTexts();
 // ******************************************************************************
 void Display::cleanString(String texteIN, char* texteOUT) 
 {
-  int CAR;
+  int lettre;
   Serial.print("cleanString:"); 
   for (byte I=0; I<texteIN.length()+1; I++) 
   {
-     CAR = int(texteIN[I]); 
-     Serial.print(" 0x"); Serial.print(CAR,HEX); 
-     switch (CAR)
+     lettre = int(texteIN[I]); 
+     Serial.print(" 0x"); Serial.print(lettre,HEX); 
+     switch (lettre)
        {
-       case -23  : { texteOUT[I] = 'e'; break;} // 0xE9  é  
-       case -24  : { texteOUT[I] = 'e'; break;} // 0xE8  è  
+       case -23  : { texteOUT[I] = 'e'; break;} // 0xE9  é
+       case -24  : { texteOUT[I] = 'e'; break;} // 0xE8  è
        case -32  : { texteOUT[I] = 'a'; break;} // 0xE0  à
        default:    { texteOUT[I] = texteIN[I];} // caractères non-accentués 
        }
@@ -406,5 +414,3 @@ void Display::clearField(int X, int Y, int W, int H)
   TFTscreen.fill  (BackgroundR, BackgroundG, BackgroundB);
   TFTscreen.rect(X,Y,W,H);
 }
-
-

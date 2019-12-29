@@ -126,13 +126,13 @@ long Catalog::getRatingPosition()
 }
 
 // *******************************************************************************
-// Incrémente le Rating mémorisé.
-// On appelle cette fonction si le Rating a été incrémenté via la Classe "Favorite"
+// Incrémente le Rating mémorisé (max 5).
+// On appelle cette fonction si le Rating a été incrémenté via AddStar
 // *******************************************************************************
 void Catalog::promoteSelectedClip()
 {
   char NewRating  = Media_Rating[0]+1;
-  Media_Rating[0] = min(NewRating,'5');  // Reco Arduino: éviter les opération dans la fonction min.
+  Media_Rating[0] = min(NewRating,'5');  // Reco Arduino: éviter les opérations dans la fonction min.
 }
 
 // *********************************************************************
@@ -215,8 +215,6 @@ int Catalog::getYearValue(int tuning)
   if (tuning <1024)          {RangeStart=0;    RangeEnd=1700; return map(tuning,1024,1000,RangeStart,RangeEnd);    }
 
 }
-
-
 
 
 // *******************************************************************************
@@ -633,4 +631,177 @@ bool Catalog::isNotAsExpected(String genre)
     return (!genre.equalsIgnoreCase(RequestedGenre));
 }
 
+// *******************************************************************************
+// Ajoute +1 (max=5) au Rating du clip demandé, dans le fichier Catalog.ndx
+// *******************************************************************************
+void Catalog::addStar(long clipPosition)
+{
+  SdFile FichierIndex;
+  char   Stars='A';
+  
+  Serial.print (F("ADDING a Star at ")); Serial.println (clipPosition);
+  if (clipPosition==NULL) return;
+  
+  // On ouvre le fichier (renvoie false si error)
+  if (!FichierIndex.open("/Catalog.ndx", O_RDWR))      // renvoie False en cas d'erreur
+  {
+    // En cas d'erreur d'ouverture du fichier, on sort.
+    Serial.println (F("Cannot open Catalog.ndx"));
+    return;
+  }
+  
+  // On se positionne sur la ligne du clip
+  FichierIndex.seekSet(clipPosition);
+  
+  // On lit le nombre d'etoiles (1 octet)
+  Stars = FichierIndex.read();
+  Serial.print (F(" I have read a byte:")); Serial.print(Stars);
+  // On incrémente
+  if (++Stars >'5') Stars='5'; 
+  if (Stars   <'0') Stars='0';
+  // On ecrit le nouveau nombre d'étoiles
+  FichierIndex.seekSet(clipPosition);
+  FichierIndex.print(Stars);
+  Serial.print (F(" and replaced with ")); Serial.println(Stars);
 
+  // On vérifie (pour le debug)
+  FichierIndex.seekSet(clipPosition-12);
+  Serial.print (F(" Debug end of line (after update): "));
+  for (int i=0; i<14; i++) 
+    {
+      char Debug = FichierIndex.read(); 
+      Serial.print(Debug);
+    }
+  Serial.println(); 
+  
+  // On ferme le fichier
+  FichierIndex.close();
+}
+
+
+
+// *******************************************************************************
+// Soustrait 1 (min=0) au Rating du clip demandé, dans le fichier Catalog.ndx
+// *******************************************************************************
+void Catalog::removeStar(long clipPosition)
+{
+  SdFile FichierIndex;
+  char   Stars='A';
+  
+  Serial.print (F("REMOVING a Star at ")); Serial.println (clipPosition);
+  if (clipPosition==NULL) return;
+
+  // On ouvre le fichier
+  if (!FichierIndex.open("/Catalog.ndx", O_RDWR))      // renvoie false si error
+  {
+    // En cas d'erreur d'ouverture du fichier, on sort
+    Serial.println (F("Cannot open Catalog.ndx"));
+    return;
+  }
+
+  // On se positionne sur la ligne du clip
+  FichierIndex.seekSet(clipPosition);
+  
+  // On lit le nombre d'etoiles
+  Stars = FichierIndex.read();
+  Serial.print (F(" I have read byte ")); Serial.print(Stars);
+  // On décrémente
+  if (--Stars < '0') Stars='0';
+  if (Stars   >'5') Stars='5';
+  // On ecrit le nouveau nombre d'étoiles
+  FichierIndex.seekSet(clipPosition);
+  FichierIndex.print(Stars);
+  Serial.print (F(" and replaced with ")); Serial.println(Stars);
+  
+  // On vérifie (pour le debug)
+  FichierIndex.seekSet(clipPosition-12);
+  Serial.print (F(" Debug end of line (after update): "));
+  for (int i=0; i<14; i++) 
+    {
+      char Debug = FichierIndex.read(); 
+      Serial.print(Debug);
+    }
+  Serial.println(); 
+  
+  // On ferme le fichier
+  FichierIndex.close();
+}
+
+// *******************************************************************************
+// Ecrit le Rating du clip demandé, dans le fichier Catalog.ndx
+// (on convertit les ints 0..5 en chars '0'..'5' 
+// *******************************************************************************
+void Catalog::writeRating(int rating, long clipPosition)
+{
+  SdFile FichierIndex;
+  
+  Serial.print (F("writing Rating at ")); Serial.println (clipPosition);
+  if (clipPosition==NULL) return;
+  
+  // On ouvre le fichier (renvoie false si error)
+  if (!FichierIndex.open("/Catalog.ndx", O_RDWR))      // renvoie False en cas d'erreur
+  {
+    // En cas d'erreur d'ouverture du fichier, on sort.
+    Serial.println (F("Cannot open Catalog.ndx"));
+    return;
+  }
+  
+  // On se positionne sur la ligne du clip
+  FichierIndex.seekSet(clipPosition);
+  // On ecrit 1 octet
+  char stars = char(rating +'0');
+  FichierIndex.print(stars);
+
+  // On vérifie (pour le debug)
+  FichierIndex.seekSet(clipPosition-12);
+  Serial.print (F(" Debug end of line (after update): "));
+  for (int i=0; i<14; i++) 
+    {
+      char Debug = FichierIndex.read(); 
+      Serial.print(Debug);
+    }
+  Serial.println(); 
+  
+  // On ferme le fichier
+  FichierIndex.close();
+}
+
+// *******************************************************************************
+// Lit le Rating du clip demandé, dans le fichier Catalog.ndx
+// *******************************************************************************
+int Catalog::readRating(long clipPosition)
+{
+  SdFile FichierIndex;
+  char   Stars='A';
+  
+  Serial.print (F("reading Rating at ")); Serial.println (clipPosition);
+  if (clipPosition==NULL) return;
+  
+  // On ouvre le fichier (renvoie false si error)
+  if (!FichierIndex.open("/Catalog.ndx", O_RDWR))      // renvoie False en cas d'erreur
+  {
+    // En cas d'erreur d'ouverture du fichier, on sort.
+    Serial.println (F("Cannot open Catalog.ndx"));
+    return 0;
+  }
+  
+  // On se positionne sur la ligne du clip
+  FichierIndex.seekSet(clipPosition);
+  // On lit 1 octet
+  Stars = FichierIndex.read();
+
+
+  // On vérifie (pour le debug)
+  FichierIndex.seekSet(clipPosition-12);
+  Serial.print (F(" Debug end of line (after update): "));
+  for (int i=0; i<14; i++) 
+    {
+      char Debug = FichierIndex.read(); 
+      Serial.print(Debug);
+    }
+  Serial.println(); 
+  
+  // On ferme le fichier
+  FichierIndex.close();
+  return (Stars-'0');  // renvoie un entier
+}

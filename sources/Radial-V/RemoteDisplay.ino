@@ -184,5 +184,3 @@ void RemoteDisplay::setBacklight(bool on)
     Wire.write(C_BLOFF);                // sends one byte command
   Wire.endTransmission();               // stop transmitting
 }
-
-

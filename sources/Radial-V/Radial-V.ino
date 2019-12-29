@@ -44,7 +44,6 @@ over Serial or to a LCD is a really slow process, so a few extra clock cycles re
 #include "CapButton.h"
 #include "SelfReturnButton.h"
 #include "Catalog.h"
-#include "Favorites.h"
 #include "RemoteDisplay.h"
 
 // *******************************************************************************
@@ -91,7 +90,6 @@ over Serial or to a LCD is a really slow process, so a few extra clock cycles re
 // *******************************************************************************
 MusicPlayer        mp3shield(SD_CS);
 Catalog            Catalogue;
-Favorites          FavoritesMgt;
 Rotary             ModeButton(MODE_1,MODE_2,MODE_3,MODE_4); 
 Rotary             SourceButton(MP3_ON, FM_ON); 
 CapButton          TuneButton(TUNE_OUT,TUNE_IN);
@@ -185,6 +183,7 @@ void loop()
               RemoteTFT.clearAllText();
               RemoteTFT.printStars("-");
               RemoteTFT.printPictoMute();
+              RemoteTFT.setBacklight(false);
               break;
 
       // on vient de passer sur la source MP3
@@ -193,6 +192,7 @@ void loop()
               setRelay(HIGH);
               Serial.println(F("  Picto OFF"));
               RemoteTFT.clearPicto();
+              RemoteTFT.setBacklight(true);
               break;
    
       // on vient de passer sur la source FM
@@ -203,6 +203,7 @@ void loop()
               mp3shield.stopTrack();
               Serial.println(F("  Picto FM"));
               RemoteTFT.printPictoFM();
+              RemoteTFT.setBacklight(true);
               break;
     }
   }
@@ -363,7 +364,7 @@ void loop_mp3()
                         NextButton.wasPushed();   
                         Serial.println("NEXT !");    
                         mp3shield.stopTrack();    
-                        FavoritesMgt.removeStar(CurrentRatingPos); // On édite le catalog pendant que le clip est stoppé.
+                        Catalogue.removeStar(CurrentRatingPos); // On édite le catalog pendant que le clip est stoppé.
                         break; 
        case _AGAIN: // On ajoute une étoile, et on reprend le clip du début
                         Action=_IDLE; 
@@ -371,7 +372,7 @@ void loop_mp3()
                         Serial.println("AGAIN !");   
                         digitalWrite(LED_1,LOW); // Allume la Led témoin SPI BUSY
                         mp3shield.pauseDataStream();
-                        FavoritesMgt.addStar(CurrentRatingPos);    
+                        Catalogue.addStar(CurrentRatingPos);
                         mp3shield.resumeDataStream();
                         digitalWrite(LED_1,HIGH); // Eteint la Led témoin SPI BUSY
                         mp3shield.restartTrack();
@@ -383,7 +384,7 @@ void loop_mp3()
                         Serial.println("PROMOTE !"); 
                         digitalWrite(LED_1,LOW); // Allume la Led témoin SPI BUSY
                         mp3shield.pauseDataStream();
-                        FavoritesMgt.addStar(CurrentRatingPos);    
+                        Catalogue.addStar(CurrentRatingPos);    
                         mp3shield.resumeDataStream();
                         digitalWrite(LED_1,HIGH); // Eteint la Led témoin SPI BUSY
                         Serial.println(F(" display: Stars"));
