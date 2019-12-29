@@ -1,11 +1,25 @@
-
 #ifndef DISPLAYCLASS_H_INCLUDED
 #define DISPLAYCLASS_H_INCLUDED
 
-#include <SD.h>
-#include <TFT.h>  
+/* ************************************************************************************************
 
- 
+Librairie pour piloter le shield ARDUINO ROBOT LCD SCREEN
+
+Utilise les librairies Arduino suivantes:
+- SD    pour les accès à la carte SD du shield "Arduino Screen"
+- TFT   pour les accès à l'écran LCD du shield "Arduino Screen"
+- SPI   pour le bus SPI   (inutile: a été enlevé)
+
+*************************************************************************************************** 
+* 1.0     03/11/2015    Creation
+*************************************************************************************************** 
+*************************************************************************************************** 
+*/
+
+#include <SD.h>       // pour le type File
+#include <TFT.h>      // opur le type PImage
+
+
 #define LINEMAX     32              // Taille maximum des textes. Au dela: on tronque.
 
 // Position (verticale) des textes

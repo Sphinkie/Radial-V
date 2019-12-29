@@ -13,6 +13,8 @@ Utilise les librairies Arduino suivantes:
 *************************************************************************************************** 
 */
 
+#include <SD.h>
+#include <TFT.h>  
 #include "display.h"
 
 // On instancie la librairie TFT avec les pin utilisés
@@ -33,7 +35,7 @@ Display::Display()
   strcpy(CurrentLog,    "");
 
   pinMode(BACKLIGHT, OUTPUT);    
-  this->setBacklight(0);
+  this->setBacklight(0);  // ON
 }
 
 // **********************************************************

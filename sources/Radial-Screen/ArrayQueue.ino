@@ -1,10 +1,10 @@
 #include "ArrayQueue.h"
 
-// *******************************************************************
-// Gestion d'une FIFO du type:  [Front x x x x x Rear]
-//  ---FxxxxR----
-// *******************************************************************
-
+/* *******************************************************************
+ Gestion d'une FIFO du type:  [Front x x x x x Rear]
+  ---FxxxxR----
+**********************************************************************
+*/
 
 // -------------------------------------------------------------------
 // Constructeur
@@ -28,14 +28,13 @@ void ArrayQueue::enQueue(int element, char* texte)
   if (this->getSize() == MAX_QUEUE_SIZE-1) 
   {
     Serial.println(F("Warning: overwriting ArrayQueue"));
-    Serial.println("Rear="+String(Rear));
-    Serial.println("Front="+String(Front));
+    Serial.println("  Rear="+String(Rear));
+    Serial.println("  Front="+String(Front));
     return;
   }
   // On stocke les données founies
   Queue[Rear] = element;
   Data[element] = texte;
-  
   // Modulo is used so that rear indicator can wrap around
   Rear = ++Rear % MAX_QUEUE_SIZE;
 }      

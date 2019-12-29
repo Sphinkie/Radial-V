@@ -50,8 +50,10 @@ void setup()
   // Initialisation de la RS de debug
   Serial.begin(115200);
   
+  Serial.println(F("-----------------------------------"));
   Serial.print  (F("CPU Frequency: ")); Serial.print(F_CPU/1000000);  Serial.println(F(" MHz"));
   Serial.print  (F("Free RAM: "));      Serial.print(FreeRam(), DEC); Serial.println(F(" bytes"));   // FreeRam is provided by SdFatUtil.h
+  Serial.println(F("-----------------------------------"));
 
   // Initialisation de l'écran TFT
   Serial.println(F("Loading graphical pictos"));
@@ -63,6 +65,7 @@ void setup()
   Wire.begin(TFT_SLAVE);                // join i2c bus with address $2
   Wire.onReceive(receiveEvent);         // register event
   Serial.println(F("IIC initialization...done"));
+  Serial.println(F("-----------------------------------"));
   
   Serial.println(F("Loading background"));
   LCDdisplay.setBackgroundImage("back_2.bmp");
@@ -70,6 +73,7 @@ void setup()
 
   Ready = true;
   Serial.println(F("End setup. Starting loop."));
+  Serial.println(F("-----------------------------------"));
 }
 
 
@@ -98,17 +102,17 @@ void loop()
     switch (Command)
       {
       // affichage des champs textuels
-      case C_TITLE    : LCDdisplay.printTitle(Data);      break;
-      case C_ARTIST   : LCDdisplay.printArtist(Data);     break;
-      case C_ALBUM    : LCDdisplay.printAlbum(Data);      break;
-      case C_YEAR     : LCDdisplay.printYear(Data);       break;
-      case C_GENRE    : LCDdisplay.printGenre(Data);      break;
-      case C_LOG      : LCDdisplay.printLog(Data);        break;
-      case C_CLEARTEXT: LCDdisplay.clearAllTexts();       break;
+      case C_TITLE    : LCDdisplay.printTitle(Data);        break;
+      case C_ARTIST   : LCDdisplay.printArtist(Data);       break;
+      case C_ALBUM    : LCDdisplay.printAlbum(Data);        break;
+      case C_YEAR     : LCDdisplay.printYear(Data);         break;
+      case C_GENRE    : LCDdisplay.printGenre(Data);        break;
+      case C_LOG      : LCDdisplay.printLog(Data);          break;
+      case C_CLEARTEXT: LCDdisplay.clearAllTexts();         break;
       // Affichage des pictos
-      case C_ICON0 : LCDdisplay.clearPicto();            break;
-      case C_ICON1 : LCDdisplay.showPicto(Data, 25, 14); break;    // Image size: 77x79
-      case C_ICON2 : LCDdisplay.showPicto("fun",13, 10); break;
+      case C_ICON0    : LCDdisplay.clearPicto();            break;
+      case C_ICON1    : LCDdisplay.showPicto(Data, 25, 14); break;    // Image size: 77x79
+      case C_ICON2    : LCDdisplay.showPicto("fun",13, 10); break;
       case C_STARS : {
                       if      (Data[0]<'0') LCDdisplay.clearStars();
                       else if (Data[0]>'5') LCDdisplay.clearStars();

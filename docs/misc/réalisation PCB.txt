@@ -1,0 +1,333 @@
+une liste de sous-traitants, compilée par un bon samaritain dont le nom est en fin de liste :
+
+* Nom : Eurl Toulet
+URL : www.circuit-electronique.fr
+Adresse : 
+4, rue du cimetière 
+Ville : Thervay(39290)
+email : contact@circuit-imprime-jurassien.fr
+Fax : 09 72 21 12 97
++----------------------------------------------+
+| Couche | Prix | Devise | Dimension |
++--------+----------+-----------+--------------+ 
+| 1 | 24,10 | Euros | 100x100 mm |
+| 1 | 26,10 | Euros | 100x100 mm |
+| 1 | 26,30 | Euros | 100x100 mm |
+| 1 | 30,90 | Euros | 100x100 mm |
+| 1 | 24,10 | Euros | 100x100 mm |
+| 2 | 36,10 | Euros | 100x100 mm |
+| 1 | 32,50 | Euros | 100x160 mm |
+| 2 | 48,70 | Euros | 100x160 mm |
++--------+----------+-----------+--------------+ 
+
+Dans l'ordre d'affichage du tableau ci-dessus, voici les différences entre
+chaque tarifs par couche... : 
+1x100x100 cuivre brut, non percé 
+1x100x100 vernis, non percé 
+1x100x100 étamage chimique, non percé 
+1x100x100 cuivre brut et percé 
+1x100x100 cuivre brut, non percé 
+2x100x100 cuivre brut, non percé 
+1x100x160 cuivre brut, non percé 
+2x100x160 cuivre brut, non percé 
+
+
+
+
+* Nom : PCB Cart
+URL : http://www.pcbcart.com/
+Ville : 
+Fax : +86-571-87036705
+Commande minimum : 1 circuits
+Port : Indéterminé
++----------------------------------------------+
+| Couche | Prix | Devise | Dimension |
++--------+----------+-----------+--------------+ 
+| 1 | 24 | Dollars | 160x100 mm |
+| 2 | 32 | Dollars | 160x100 mm |
+| 4 | 46 | Dollars | 160x100 mm |
++--------+----------+-----------+--------------+ 
+
+
+Remarques : 46.15 Dollars, variable celon nb. couches, d'outillages
+: facturé 1 fois quelque soit la quantité
+
+Contribution : Pierre-François (f5bqp_pfm) 
+
+
+
+
+* Nom : Etronics
+URL : http://etronics.free.fr/boutique/boutique.htm
+Ville : Bordeaux
+Commande minimum : non
+Port : 3,50 Euros pour 3 petits circuits... + au poids PTT
++----------------------------------------------+
+| Couche | Prix | Devise | Dimension |
++--------+----------+-----------+--------------+ 
+| 1 | 5,89 | Euros | 100x100 mm |
+| 2 | 11,77 | Euros | 100x100 mm |
++--------+----------+-----------+--------------+ 
+
+Commentaires divers : Pour un calcul de prix d'une simple face c'est 
+: (Longueur x Largeur) / 1700 = Prix
+: en Euro, puis Double Face (L x l) / 850 = Prix Euros
+: Pour le perçage : 0,035 euros le trou. Soit 2.5 euros les 100 trous
+
+Remarques : Semble être très rapide et de qualité
+: d'après Relisys500.
+Contribution : relisys500 
+
+
+
+* Nom : Futurlec
+URL : http://www.futurlec.com/
+Adresse : 
+1133 Broadway, 
+Suite 706, 
+New York, 
+NY 10010 
+USA 
+Ville : New York
+Commande minimum : 1 Circuit
+Port : Ajouter 4$ pour 29$ de circuits
++----------------------------------------------+
+| Couche | Prix | Devise | Dimension |
++--------+----------+-----------+--------------+ 
+| 1 | 7.00 | Dollars | 100x100 mm |
+| 2 | 10.00 | Dollars | 100x100 mm |
++--------+----------+-----------+--------------+ 
+
+Dans l'ordre d'affichage du tableau ci-dessus, voici les différences entre
+chaque tarifs par couche... : 
+1x100x100 frais d'outillages de 15$ 
+2x100x100 frais d'outillages de 25$ 
+
+
+Remarques : Ce fabricant propose deux autres options : Design et
+: Assemblage de composants
+
+
+
+* Nom : Olimex
+URL : http://www.olimex.com/pcb/
+Adresse : 
+Olimex LTD 
+89 Slavjanska St. 
+P.O.Box 237 
+Plovdiv 4000 
+Ville : Bulgarie
+Téléphone : +359-32-626259
+Fax : +359-32-621270
+Commande minimum : 
+Port : de 50$ à 5$ entre 1 à 7 jours.
++----------------------------------------------+
+| Couche | Prix | Devise | Dimension |
++--------+----------+-----------+--------------+ 
+| 1 | 24,00 | Dollars | 160x100 mm |
+| 1 | 96,00 | Dollars | 320x200 mm |
+| 2 | 00,00 | Dollars | 160x100 mm |
+| 2 | 120,00 | Dollars | 320x200 mm |
++--------+----------+-----------+--------------+ 
+
+Commentaires divers : Tarifs pour moins de 500 trous,
+: options pour >500 +2,60$, >1000 +5,20$
+: Gravure de piste inférieur à 0,203mm et plus ...
+: De nombreux formats acceptés (Eagle, DXF, PRN, ...)
+: 
+
+
+
+* Nom : SunStone Circuits
+URL : http://www.sunstone.com/
+Adresse : 
+13626 S Freeman Rd 
+Mulino Oregon 97042 USA 
+
+Ville : Oregon
+Commande minimum : 
+Port : 25 à 45$ pour l'international
++----------------------------------------------+
+| Couche | Prix | Devise | Dimension |
++--------+----------+-----------+--------------+ 
+| 2 | 99,16 | Dollars | 160x100 mm |
++--------+----------+-----------+--------------+ 
+
+Commentaires divers : Fusion de PCB123 et PCBPro
+: Fournit un logiciel de fabrication de PCB ce qui
+: facilite le transfert de vos PCB/Schéma ...
+: Déduction de prix pour quantité supérieuré à 2 PCBS
+
+
+
+* Nom : PCB Pool
+URL : http://www.pcb-pool.com/ppfr/info.html
+Adresse : 
+Quartier Saint Legèr Est 
+26790 Tulette 
+France 
+Ville : Tulette(26790)
+Téléphone : 0800 903330
+Fax : 0800 900813
+Commande minimum : 
+Port : 14,00 euros sous huitaine (valable pour l'exemple donné)
++----------------------------------------------+
+| Couche | Prix | Devise | Dimension |
++--------+----------+-----------+--------------+ 
+| 2 | 40,00 | Euros | 160x100 mm |
++--------+----------+-----------+--------------+ 
+
+Commentaires divers : Appel gratuit. Devis à réaliser sur le site.
+
+Remarques : Site en Français (Multi langue) et propose une
+: simulation de prix
+
+
+
+* Nom : PCBExpress
+URL : http://www.pcbexpress.com/
+Commande minimum : Deux Circuits minimun
+Port : en 24h
++----------------------------------------------+
+| Couche | Prix | Devise | Dimension |
++--------+----------+-----------+--------------+ 
+| 2 | 190,00 | Dollars | 160x100 mm |
++--------+----------+-----------+--------------+ 
+
+Commentaires divers : Tarifs comparatifs entre PCBExpress et PCBPro sur :
+: http://www.pcbexpress.com/products/index.php
+: Plus vous commandez le même circuit, plus
+
+Remarques : le prix est dégréssif.
+
+
+
+* Nom : Euro Circuits
+URL : http://www.eurocircuits.com/
+Adresse : 
+
+Hongire 
+Ville : 
+Commande minimum : 2 circuits minimum.
+Port : 13 Euros Minimun
++----------------------------------------------+
+| Couche | Prix | Devise | Dimension |
++--------+----------+-----------+--------------+ 
+| 2 | 70,00 | Euros | 160x100 mm |
+| 4 | 173,88 | Euros | 160x100 mm |
++--------+----------+-----------+--------------+ 
+
+Commentaires divers : Anciennement PCB Shop
+: Version Française disponible
+Contribution : Pascal 06 
+
+
+
+* Nom : Imprelec
+URL : imprelec@wanadoo.fr
+Adresse : 
+102 rue Voltaire 
+Ville : Oyonnax(01100)
+Téléphone : 04.74.73.03.66
+Fax : 04.74.73.43.00.85
+Commande minimum : Minimun de facturation: 1,20 Euros ttc par circuit en
+: simple face et 2,00 Euros ttc par circuit en double
+: face.
+Port : Lettre 4,25e pour la France/métro et 6.5 pour l'étranger. Colissimo 9,11e pour la France
++----------------------------------------------+
+| Couche | Prix | Devise | Dimension |
++--------+----------+-----------+--------------+ 
+| 1 | 12,50 | Euros | 100x100 mm |
+| 1 | 16,16 | Euros | 100x100 mm |
+| 1 | 16,71 | Euros | 100x100 mm |
+| 1 | 17,76 | Euros | 100x100 mm |
+| 1 | 20,05 | Euros | 100x100 mm |
+| 1 | 30,40 | Euros | 100x100 mm |
+| 2 | 15,91 | Euros | 100x100 mm |
+| 2 | 18,59 | Euros | 100x100 mm |
+| 2 | 20,13 | Euros | 100x100 mm |
++--------+----------+-----------+--------------+ 
+
+Dans l'ordre d'affichage du tableau ci-dessus, voici les différences entre
+chaque tarifs par couche... : 
+Tarif CI simple face 16/10° 35 µ, perçage à 0,8 mm, étamé à chaud 
+Tarif CI simple face 5/10° 35 µ, perçage à 0,8 mm, étamé à chaud: 
+Tarif CI simple face 8/10° 35 µ, perçage à 0,8 mm, étamé à chaud: 
+Tarif CI simple face 16/10° 70 µ, perçage à 0,8 mm, étamé à chaud: 
+Tarif CI simple face 24/10° 70 µ, perçage à 0,8 mm, étamé à chaud: 
+Tarif CI souple simple face 50µ cuivré 35 µ, non percé, étamé à chaud: 
+Tarif CI double face 16/10° ( sans trous métallisés ) 35 µ, perçage à 0,8 mm, étamé à chaud: 
+Tarif CI double face 8/10° ( sans trous métallisés ) 35 µ, perçage à 0,8 mm, étamé à chaud: 
+Tarif CI double face 16/10° ( sans trous métallisés ) 70 µ, perçage à 0,8 mm, étamé à chaud: 
+
+Commentaires divers : Minimun de facturation: 1,20 Euros ttc par circuit en
+: simple face.
+: Minimun de facturation: 2,00 Euros ttc par circuit en
+: double face. Impossible de savoir s'ils ont un site,
+: ne répondent pas au téléphone...
+
+Remarques : Si vous avez plus d'info à leurs sujet merci de bien
+: vouloir me les faire parvenir via mail...
+Contribution : Mathieu Benoit, Maior 
+
+
+
+* Nom : Atexa
+URL : http://www.atexa.fr/
+Adresse : 
+Alexandre LANDO 
+76 quater rue Poterie 
+Ville : Vendôme(41100)
+Téléphone : 02 54 67 00 37
+Fax : 02 54 73 95 72 
+Commande minimum : Prise en charge de 4 euros pour un simple face et de 
+: 7 euros pour double face. Quelque soit la quantité
+: de circuit
+Port : +2.50 non assuré
++----------------------------------------------+
+| Couche | Prix | Devise | Dimension |
++--------+----------+-----------+--------------+ 
+| 1 | 12,50 | Euros | 100x100 mm |
+| 2 | 17,50 | Euros | 100x100 mm |
++--------+----------+-----------+--------------+ 
+
+Commentaires divers : Etamage à chaud +2,80 / dm2 euros et par face,
+: Perçage des pastilles 0,01 euro le trou!
+Contribution : Yvan 
+
+
+
+* Nom : Screaming Circuits
+URL : http://www.screamingcircuits.com/
+Adresse : 
+4287 D SE International Way 
+Milwaukie, OR 97222 
+Ville : Milwaukie
+Commande minimum : Quantité minimun de 10 circuits, en dessous le prix est
+: le même.
+
+Commentaires divers : Assembleur de composants travaillant avec SunStone.
+
+
+
+
+Dictionnaire
+============
+
+Pad Est un emplacement pour souder une patte de composant. Ca n'a
+pas toujours besoin d'être percé, avec les CMS.
+
+Via Est un trou de connexion entre deux couches du circuit imprimé.
+
+
+
+Pour toute modif ou ajout merci de contacter :
+============================== ================
+
+Auteurs / contributeurs :
+José Mans (mans@NO__S_PAMgyptis.org) -> enlever NO__S_PAM
+
+
+Participation divers :
+
+Nicolas Matringue (pad, via)
