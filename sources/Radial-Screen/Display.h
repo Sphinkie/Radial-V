@@ -52,6 +52,8 @@ Utilise les librairies Arduino suivantes:
 #define BG_G           210
 #define BG_B           0
 
+// **********************************************************************
+// **********************************************************************
 class Display
 {
 
@@ -80,6 +82,7 @@ class Display
     void cleanString(String texteIN,char* texteOUT);
     void printDirectory(File dir, int numTabs);
     void clearField(int X, int Y, int W, int H);
+    void printAllChars();
 
     PImage  StarOn;
     PImage  StarOff;

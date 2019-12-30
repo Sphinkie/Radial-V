@@ -44,6 +44,7 @@ void RemoteDisplay::setBackgroundImage()
   
 // **********************************************************
 // Envoie un texte à afficher (Titre)
+// Attention: la library Wire tronque à 32 chars.
 // **********************************************************
 void RemoteDisplay::printTitle(String texte)
 {
@@ -156,7 +157,7 @@ void RemoteDisplay::printPictoMute()
 {
   Wire.beginTransmission(TFT_SLAVE);    // transmit to slave device 
   Wire.write(C_ICON1);                  // sends one byte command
-  Wire.write("mute2js");                // sends string
+  Wire.write("i_MUTE");                 // sends string
   Wire.endTransmission();               // stop transmitting
 }
 
@@ -167,7 +168,7 @@ void RemoteDisplay::printPictoFM()
 {
   Wire.beginTransmission(TFT_SLAVE);    // transmit to slave device 
   Wire.write(C_ICON1);                  // sends one byte command
-  Wire.write("FM1js");                  // sends string
+  Wire.write("i_FM");                   // sends string
   Wire.endTransmission();               // stop transmitting
 }
 
@@ -183,4 +184,19 @@ void RemoteDisplay::setBacklight(bool on)
   else
     Wire.write(C_BLOFF);                // sends one byte command
   Wire.endTransmission();               // stop transmitting
+}
+
+
+// **********************************************************
+// Demande de Status (1 byte)
+// **********************************************************
+char RemoteDisplay::requestStatus()
+{
+  char c;
+  Wire.requestFrom(TFT_SLAVE, 1);
+  while(Wire.available())    // slave may send less than requested
+  { 
+    c = Wire.read();    // receive a byte as character
+  }
+  return c;
 }

@@ -103,6 +103,7 @@ int                Volume = MIN_VOLUME;        // Valeur du volume lors de la mi
 String             MusicFile;                  // ID du clip MP3 en cours
 String             NextMusicFile;              // ID du prochain clip MP3 à jouer
 long               CurrentRatingPos=0;         // Position dans le fichier Catalog du champ Rating (du MP3 courant).
+char               SlaveArduinoStatus=0;       // Status de l'Arduino Slave I2C (1=ready)                
 
 // *******************************************************************************
 // The setup function runs once when you press reset or power the board
@@ -118,7 +119,9 @@ void setup()
   Serial.begin(115200);
   while (!Serial)   { ; } // wait for serial port to connect. Needed for native USB port only
   
-  Serial.println(F("======================================"));
+  Serial.println(F("================================="));
+  Serial.println(F("==    RADIAL-V                 =="));
+  Serial.println(F("================================="));
   Serial.print  (F("CPU Frequency (MHz)= ")); Serial.println(F_CPU/1000000);
   Serial.print  (F("Free RAM (bytes)= "));    Serial.println(FreeRam(), DEC);    // FreeRam is provided by SdFatUtil.h
 
@@ -129,6 +132,7 @@ void setup()
   
   // Initalise le Shield Sparkfun MP3 player
   mp3shield.initialize(); 
+  digitalWrite(LED_1,HIGH); // Eteint la Led témoin SPI BUSY
     
   // On se connecte au bus I2C
   RemoteTFT.begin();
@@ -144,7 +148,15 @@ void setup()
   NextMusicFile = "NOISE" ;   // ID du prochain clip MP3 à jouer ("STARTER")
   Action = _IDLE;
 
-  Serial.println(F("--------------------"));
+  Serial.println(F("Waiting I2C Salve ready..."));
+  // -----------------------------------------------------------------------------
+  // On attend que le TFT soit prêt (status 0x01 = READY)
+  // -----------------------------------------------------------------------------
+  while (SlaveArduinoStatus!=0)
+  {
+    SlaveArduinoStatus=RemoteTFT.requestStatus();
+  }
+  Serial.println(F("================================="));
 }
 
 
@@ -155,16 +167,16 @@ void setup()
 // *******************************************************************************
 void loop() 
 {
-  // --------------------------------------------------------------
+  // -----------------------------------------------------------------------------
   // Au démarrage, on fait monter le son progressivement, pour faire un effet de "Mise en route avec chauffage".
-  // --------------------------------------------------------------
+  // -----------------------------------------------------------------------------
   if (Volume>MAX_VOLUME+20)   // pour niveau final à peine audible, mettre +60
   {
      Volume--;
      mp3shield.setVolume(Volume); 
      // Serial.println("Volume:"+String(Volume));
   }
-
+  
   // --------------------------------------------------------------
   // En cas de changement de source 
   // --------------------------------------------------------------
@@ -180,8 +192,7 @@ void loop()
               mp3shield.stopTrack();
               TuneButton.dischargeCapacitor();
               Serial.println(F("  Picto Mute"));
-              RemoteTFT.clearAllText();
-              RemoteTFT.printStars("-");
+              RemoteTFT.clearBackground();
               RemoteTFT.printPictoMute();
               RemoteTFT.setBacklight(false);
               break;
@@ -191,7 +202,7 @@ void loop()
               Serial.println(F(">>Source has changed: MP3")); 
               setRelay(HIGH);
               Serial.println(F("  Picto OFF"));
-              RemoteTFT.clearPicto();
+              RemoteTFT.clearBackground();
               RemoteTFT.setBacklight(true);
               break;
    
@@ -202,6 +213,7 @@ void loop()
               // On coupe le MP3
               mp3shield.stopTrack();
               Serial.println(F("  Picto FM"));
+              RemoteTFT.clearBackground();
               RemoteTFT.printPictoFM();
               RemoteTFT.setBacklight(true);
               break;
@@ -213,10 +225,12 @@ void loop()
   // --------------------------------------------------------------
   switch (SourceButton.getValue())
   {
-    case 0: // NO SOURCE
+    case 0:    // NO SOURCE
             break;
-    case 1: loop_mp3(); break;    // SOURCE = MP3
-    case 2:             break;    // SOURCE = FM   
+    case 1: loop_mp3();   // SOURCE = MP3
+            break;
+    case 2:               // SOURCE = FM         
+            break;
   }
 
   // --------------------------------------------------------------
@@ -282,7 +296,7 @@ void loop_mp3()
       MusicFile = NextMusicFile;        // Le Next devient le Courant
       NextMusicFile = "NOISE";          // Initialisation au cas où on ne trouve pas de suivant.
       Serial.println(F("---------------"));
-      mp3shield.playTrack(MusicFile);   // On joue le MP3
+      mp3shield.playTrack(MusicFile);   // On joue le MP3 
   }
 
    // --------------------------------------------------------------
@@ -292,7 +306,8 @@ void loop_mp3()
    switch (Step)
    {
     case 1: // on recupère des infos dans le catalogue
-            RemoteTFT.setBacklight(true);
+            RemoteTFT.clearBackground();
+            Serial.println(F(" clearBackground"));
             if (MusicFile == "NOISE") CurrentRatingPos = NULL; 
             else CurrentRatingPos = Catalogue.getRatingPosition();
             break;
@@ -301,13 +316,12 @@ void loop_mp3()
             RemoteTFT.printLog(MusicFile);
             if (MusicFile == "NOISE") 
             {
-              RemoteTFT.printTitle("Recherche");
-              RemoteTFT.printArtist("sur carte SD      ");
+              RemoteTFT.printTitle("Recherche d'un clip musical");
               switch (ModeButton.getValue())
               {
-                case 1: RemoteTFT.printAlbum("clips favoris"); break;
-                case 2: RemoteTFT.printAlbum("par annee");  break;
-                case 3: RemoteTFT.printAlbum("par genre");  break;
+                case 1: RemoteTFT.printAlbum("parmi les favoris"); break;
+                case 2: RemoteTFT.printArtist("annee");     break;     // préfixé par "par"
+                case 3: RemoteTFT.printArtist("genre");     break;     // préfixé par "par"
                 case 4: RemoteTFT.printAlbum("aleatoire");  break;
               }
             }
@@ -471,4 +485,7 @@ void setRelay(int relaisposition)
    digitalWrite(K1,relaisposition);           // Commutation relay
    digitalWrite(K2,relaisposition);           // Commutation relay
 }
+
+
+
   

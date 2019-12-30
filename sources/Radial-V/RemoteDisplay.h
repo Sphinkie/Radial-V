@@ -28,6 +28,7 @@ class RemoteDisplay
     void printPictoMute();
     void printPictoFM();
     void clearPicto();
+    char requestStatus();
     
   private:
     
@@ -55,6 +56,7 @@ class RemoteDisplay
     #define C_ICON0           15   // clear last icon
     #define C_ICON1           16   // audio icon
     #define C_ICON2           17   // dance icon
+    #define C_STATUS          18   // Request status
 
 
 
@@ -63,4 +65,3 @@ class RemoteDisplay
 
 
 #endif // REMOTEDISPLAYCLASS_H_INCLUDED
-

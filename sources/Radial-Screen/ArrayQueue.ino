@@ -11,8 +11,8 @@
 // -------------------------------------------------------------------
 ArrayQueue::ArrayQueue()
 {
-  Front = -1;
-  Rear  = -1;
+  Front = 0;
+  Rear  = 0;
 }      
  
 // -------------------------------------------------------------------
@@ -28,8 +28,7 @@ void ArrayQueue::enQueue(int element, char* texte)
   if (this->getSize() == MAX_QUEUE_SIZE-1) 
   {
     Serial.println(F("Warning: overwriting ArrayQueue"));
-    Serial.println("  Rear="+String(Rear));
-    Serial.println("  Front="+String(Front));
+    Serial.println("  Cannot enQueue. Front=" + String(Front) + " Rear="+String(Rear));
     return;
   }
   // On stocke les données founies
@@ -37,6 +36,7 @@ void ArrayQueue::enQueue(int element, char* texte)
   Data[element] = texte;
   // Modulo is used so that rear indicator can wrap around
   Rear = ++Rear % MAX_QUEUE_SIZE;
+  // Serial.println("  Item enQueued. Front=" + String(Front) + " Rear="+String(Rear));
 }      
 
 // -------------------------------------------------------------------
@@ -50,6 +50,7 @@ int ArrayQueue::deQueue()
 
   // Modulo is used so that front indicator can wrap around
   Front = ++Front % MAX_QUEUE_SIZE;
+  // Serial.println("  Item deQueued. Front=" + String(Front) + " Rear="+String(Rear));
 
   return Value;   
 }      
@@ -65,14 +66,18 @@ int ArrayQueue::getFirst()
 }
  
 // -------------------------------------------------------------------
-// Renvoie le nombre dans la liste. Exemples:
-// xR---------  : Size = 0--1 = 1
-// --FxxxxR---  : Size = 5 -1 = 4
-// xR----Fxxxx  : Size = 0 -5 = 5
+// Renvoie le nombre d'items dans la liste. Exemples:
+// FR---------  : Size : 1-0 = 1 -> 1 item
+// --FxxxxR---  : Size : 7-2 = 5 -> 5 items
+// xR----Fxxxx  : Size : 11-6+1 = 6 -> 6 items
+// R---------F  : Size : 11-10+0= 1 -> 1 item
 // -------------------------------------------------------------------
 int ArrayQueue::getSize()
 {
-  return abs(Rear - Front);
+  if (Front <= Rear)
+    return (Rear - Front);
+  else
+    return (MAX_DATA_SIZE-Front+Rear);
 }
  
 // -------------------------------------------------------------------

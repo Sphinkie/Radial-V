@@ -283,7 +283,8 @@ void MusicPlayer::setDiffmode()
     {
       MP3player.setDifferentialOutput(1);
       Serial.println(F("Enabled."));
-    } else 
+    } 
+    else 
     {
       MP3player.setDifferentialOutput(0);
       Serial.println(F("Disabled."));
@@ -406,9 +407,10 @@ void MusicPlayer::dir()
 // ******************************************************************************
 int MusicPlayer::getStep()
 {
-  if (Step>0) Step++;
-  if (Step >MAX_STEP) Step=0;
-  return Step;
+  int CurrentStep = Step;
+  if (Step > 0) Step++;
+  if (Step > MAX_STEP) Step=0;
+  return CurrentStep;
 }
 
 

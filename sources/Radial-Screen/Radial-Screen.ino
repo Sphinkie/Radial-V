@@ -51,29 +51,31 @@ void setup()
   Serial.begin(115200);
   
   Serial.println(F("-----------------------------------"));
+  Serial.println(F("--   RADIAL SCREEN               --"));
+  Serial.println(F("-----------------------------------"));
+
   Serial.print  (F("CPU Frequency: ")); Serial.print(F_CPU/1000000);  Serial.println(F(" MHz"));
   Serial.print  (F("Free RAM: "));      Serial.print(FreeRam(), DEC); Serial.println(F(" bytes"));   // FreeRam is provided by SdFatUtil.h
   Serial.println(F("-----------------------------------"));
 
+  // Initialisation de la connection au bus IIC
+  Wire.begin(TFT_SLAVE);                // join i2c bus with address 0x02
+  Wire.onReceive(receiveEvent);         // register an event called then receiving a transmission from master
+  Wire.onRequest(requestEvent);         // register an event called then receiving a request from master
+  Serial.println(F("I2C initialization........done"));
+  
   // Initialisation de l'écran TFT
-  Serial.println(F("Loading graphical pictos"));
   LCDdisplay.initDisplay();
   LCDdisplay.setBackground(BG_R,BG_G,BG_B);
-  LCDdisplay.printLog(F("  Radial-V demarrage."));
+  // LCDdisplay.printLog(F("  Radial-V demarrage."));
+  Serial.println(F("LCD initialization........done"));
 
-  // Initialisation de la connection au bus IIC
-  Wire.begin(TFT_SLAVE);                // join i2c bus with address $2
-  Wire.onReceive(receiveEvent);         // register event
-  Serial.println(F("IIC initialization...done"));
-  Serial.println(F("-----------------------------------"));
-  
-  Serial.println(F("Loading background"));
-  LCDdisplay.setBackgroundImage("back_2.bmp");
+  LCDdisplay.setBackgroundImage("bg_RADV.bmp");
   LCDdisplay.setBacklight(0);                   // TFT Backlight OFF
 
   Ready = true;
-  Serial.println(F("End setup. Starting loop."));
   Serial.println(F("-----------------------------------"));
+
 }
 
 
@@ -111,8 +113,9 @@ void loop()
       case C_CLEARTEXT: LCDdisplay.clearAllTexts();         break;
       // Affichage des pictos
       case C_ICON0    : LCDdisplay.clearPicto();            break;
-      case C_ICON1    : LCDdisplay.showPicto(Data, 25, 14); break;    // Image size: 77x79
-      case C_ICON2    : LCDdisplay.showPicto("fun",13, 10); break;
+      case C_ICON1    : //LCDdisplay.showPicto(Data, 25, 14); break;    // Image size: 77x79
+                        printAllChars(); break;
+      case C_ICON2    : LCDdisplay.showPicto("bg_TATOO",0, 0); break;
       case C_STARS : {
                       if      (Data[0]<'0') LCDdisplay.clearStars();
                       else if (Data[0]>'5') LCDdisplay.clearStars();
@@ -120,7 +123,7 @@ void loop()
                       break;
                      }
       // Autres commandes
-      case C_BACKGROUNDIMAGE : LCDdisplay.setBackgroundImage("back_2.bmp"); break;
+      case C_BACKGROUNDIMAGE : LCDdisplay.setBackgroundImage("bg_RADV.bmp"); break;
       case C_CLEAR           : LCDdisplay.setBackground(BG_R,BG_G,BG_B);    break;
       case C_BLON            : LCDdisplay.setBacklight(255);                break;  
       case C_BLOFF           : LCDdisplay.setBacklight(0);                  break;  
@@ -134,7 +137,7 @@ void loop()
 
 
 // *******************************************************************************
-// Function that executes when data is received from master.
+// Function that executes when DATA is received from master.
 // This function is registered as an event.
 // *******************************************************************************
 void receiveEvent(int howMany)
@@ -156,4 +159,15 @@ void receiveEvent(int howMany)
 
   // On stocke les info reçues dans la fifo.
   Fifo.enQueue(Command, Data);
+}
+
+
+// *******************************************************************************
+// Function that executes when a REQUEST is received from master.
+// This function is registered as an event.
+// *******************************************************************************
+void requestEvent()
+{
+  Wire.write(1);                 // 0x01 = READY
+  Serial.println(F("I2C request received"));
 }

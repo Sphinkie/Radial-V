@@ -16,6 +16,7 @@ Utilise les librairies Arduino suivantes:
 #include <SD.h>
 #include <TFT.h>  
 #include "display.h"
+#include "Unicode.h"
 
 // On instancie la librairie TFT avec les pin utilisés
 TFT     TFTscreen(CS_LD,DC_LD,RESET);
@@ -35,7 +36,7 @@ Display::Display()
   strcpy(CurrentLog,    "");
 
   pinMode(BACKLIGHT, OUTPUT);    
-  this->setBacklight(0);  // ON
+  this->setBacklight(0);     // lum. faible
 }
 
 // **********************************************************
@@ -342,70 +343,24 @@ clearAllTexts();
 // ******************************************************************************
 void Display::cleanString(String texteIN, char* texteOUT) 
 {
-  int lettre;
+  unsigned int lettre;
   Serial.print("cleanString:"); 
   for (byte I=0; I<texteIN.length()+1; I++) 
   {
      lettre = int(texteIN[I]); 
      Serial.print(" 0x"); Serial.print(lettre,HEX); 
-     switch (lettre)
-       {
-       case -23  : { texteOUT[I] = 'e'; break;} // 0xE9  é
-       case -24  : { texteOUT[I] = 'e'; break;} // 0xE8  è
-       case -32  : { texteOUT[I] = 'a'; break;} // 0xE0  à
-       default:    { texteOUT[I] = texteIN[I];} // caractères non-accentués 
-       }
+     // On convertit de l'Unicode en ASCII
+     texteOUT[I] = UnicodeToAscii(lettre);
+     // Attention: le Genre est en UTF-8 sur 2 chars, et pas en Unicode. 
+     // Pour les caractères accentués, il faut ignorer le 1er caractère (C3) et convertir le second.
+     // texteOUT[I] = Utf8ToAscii(lettre);
+
   }
   // par sécurité, on force un Fin de Texte
   texteOUT[LINEMAX] = '\0';
   Serial.println();Serial.println(texteOUT); 
 }
   
-/*
- Dans cette table (trouvée sur internet), on converti de UTF-8 en UTF-16
-  int CAR;
-  Serial.print("cleanString:"); 
-  for (byte I=0; I<texte.length(); I++) 
-  {
-       if ((byte (texte[I]) == 0xC3)|| // Cas banal.
-           (byte (texte[I]) == 0xC2)|| // Si "µ" utilisé.
-           (byte (texte[I]) == 0xC5))  // Si "œ" utilisé. 
-          {
-            CAR = int(texte[++I]); //Serial.println(CAR); 
-            switch (CAR) 
-             {
-             case -68  : {Serial.print(char (252)); break;} // ü
-             case -69  : {Serial.print(char (251)); break;} // û
-             case -71  : {Serial.print(char (249)); break;} // ù
-             case -74  : {Serial.print(char (246)); break;} // ö
-             case -75  : {Serial.print(char (181)); break;} // µ
-             case -76  : {Serial.print(char (244)); break;} // ô
-             case -81  : {Serial.print(char (239)); break;} // ï
-             case -82  : {Serial.print(char (238)); break;} // î
-             case -85  : {Serial.print(char (235)); break;} // ë
-             case -86  : {Serial.print(char (234)); break;} // ê
-             case -87  : {Serial.print(char (233)); break;} // é
-             case -88  : {Serial.print(char (232)); break;} // è
-             case -89  : {Serial.print(char (231)); break;} // ç        
-             case -92  : {Serial.print(char (228)); break;} // ä      
-             case -94  : {Serial.print(char (226)); break;} // â
-             case -96  : {Serial.print(char (224)); break;} // à
-             case -109 : {Serial.print(char (156)); break;} // œ         
-             case -126 : {Serial.print(char (194)); break;} // Â
-             case -128 : {Serial.print(char (192)); break;} // À
-             case -108 : {Serial.print(char (212)); break;} // Ô
-             case -114 : {Serial.print(char (206)); break;} // Î
-             case -118 : {Serial.print(char (202)); break;} // Ê
-             case -119 : {Serial.print(char (201)); break;} // É            
-             case -120 : {Serial.print(char (200)); break;} // È             
-             case -121 : {Serial.print(char (199)); break;} // Ç
-             }
-          } 
-       else Serial.print(texte[I]);
-  }
-  Serial.println(); 
-}
-*/
 
 // ******************************************************************************
 // Effacement du champ rectangulaire
@@ -415,4 +370,30 @@ void Display::clearField(int X, int Y, int W, int H)
   TFTscreen.stroke(BackgroundR, BackgroundG, BackgroundB);
   TFTscreen.fill  (BackgroundR, BackgroundG, BackgroundB);
   TFTscreen.rect(X,Y,W,H);
+}
+
+
+// ******************************************************************************
+// Affiche tout les caractères de l'alphabet
+// ******************************************************************************
+void printAllChars()
+{
+  char line[32];
+  Serial.println("printAllChars");
+  TFTscreen.setTextSize(1);              
+  TFTscreen.stroke(DARK_R, DARK_G, DARK_B);          // set the font color
+  for (char y=1; y<16; y++)
+  {
+    line[0]= y>9? '1': '0';
+    line[1]= char(y%10 + '0');
+    line[2]= ' ';
+
+    for (char x=0; x<20; x++)
+    {
+      line[x+3]= char(y*20+x);
+    }
+    line[23]= '\0';   // fin de ligne
+    TFTscreen.text(line, 10, y*10);
+    Serial.println(line);
+  }
 }
