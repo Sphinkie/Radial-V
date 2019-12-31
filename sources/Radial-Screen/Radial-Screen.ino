@@ -113,8 +113,7 @@ void loop()
       case C_CLEARTEXT: LCDdisplay.clearAllTexts();         break;
       // Affichage des pictos
       case C_ICON0    : LCDdisplay.clearPicto();            break;
-      case C_ICON1    : //LCDdisplay.showPicto(Data, 25, 14); break;    // Image size: 77x79
-                        printAllChars(); break;
+      case C_ICON1    : LCDdisplay.showPicto(Data, 25, 14); break;    // Image size: 77x79
       case C_ICON2    : LCDdisplay.showPicto("bg_TATOO",0, 0); break;
       case C_STARS : {
                       if      (Data[0]<'0') LCDdisplay.clearStars();
@@ -124,11 +123,12 @@ void loop()
                      }
       // Autres commandes
       case C_BACKGROUNDIMAGE : LCDdisplay.setBackgroundImage("bg_RADV.bmp"); break;
-      case C_CLEAR           : LCDdisplay.setBackground(BG_R,BG_G,BG_B);    break;
-      case C_BLON            : LCDdisplay.setBacklight(255);                break;  
-      case C_BLOFF           : LCDdisplay.setBacklight(0);                  break;  
+      case C_CLEAR           : LCDdisplay.setBackground(BG_R,BG_G,BG_B);     break;
+      case C_BLON            : LCDdisplay.setBacklight(255);                 break;  
+      case C_BLOFF           : LCDdisplay.setBacklight(0);                   break;
+      case C_ASCII           : LCDdisplay.printAllChars();                   break;  
       // Autres cas  
-      default      : LCDdisplay.printLog("Unknown I2C command");            break;
+      default      : LCDdisplay.printLog("Unknown I2C command");             break;
       }
     }
   }
@@ -137,7 +137,7 @@ void loop()
 
 
 // *******************************************************************************
-// Function that executes when DATA is received from master.
+// Function executed when some DATA is received from master.
 // This function is registered as an event.
 // *******************************************************************************
 void receiveEvent(int howMany)
@@ -163,11 +163,12 @@ void receiveEvent(int howMany)
 
 
 // *******************************************************************************
-// Function that executes when a REQUEST is received from master.
+// Function executed when a REQUEST is received from master.
 // This function is registered as an event.
 // *******************************************************************************
 void requestEvent()
 {
+  // Le Master attend 1 octet. On envoie notre status: "Ready".
   Wire.write(1);                 // 0x01 = READY
   Serial.println(F("I2C request received"));
 }

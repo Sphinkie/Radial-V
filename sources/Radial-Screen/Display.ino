@@ -340,21 +340,37 @@ clearAllTexts();
 // ******************************************************************************
 // Enlève les accents et transforme le String en Char array
 // Attn: texteOUT est une variable de sortie!
+// Attn: le Genre est en UTF-8 sur 2 chars, et pas en Unicode. 
 // ******************************************************************************
 void Display::cleanString(String texteIN, char* texteOUT) 
 {
   unsigned int lettre;
+  unsigned int UTF8prefix = 0xFFC3;
+  byte indexOUT = 0;
+  bool isUTF8 = false;
+  
   Serial.print("cleanString:"); 
-  for (byte I=0; I<texteIN.length()+1; I++) 
+  for (byte indexIN=0; indexIN<texteIN.length()+1; indexIN++) 
   {
-     lettre = int(texteIN[I]); 
-     Serial.print(" 0x"); Serial.print(lettre,HEX); 
-     // On convertit de l'Unicode en ASCII
-     texteOUT[I] = UnicodeToAscii(lettre);
-     // Attention: le Genre est en UTF-8 sur 2 chars, et pas en Unicode. 
-     // Pour les caractères accentués, il faut ignorer le 1er caractère (C3) et convertir le second.
-     // texteOUT[I] = Utf8ToAscii(lettre);
-
+    lettre = int(texteIN[indexIN]); 
+    Serial.print(" 0x"); Serial.print(lettre,HEX);
+    
+    if (isUTF8)
+    {
+        texteOUT[indexOUT++] = ConvertUtf8ToAscii(lettre);
+        isUTF8 = false;
+    }
+    else if (lettre == UTF8prefix)
+    {
+        // c'est le premier octet d'un caractère accentué UTF-8
+        isUTF8 = true;
+    }
+    else
+    {
+        // Ce n'est pas de l'UFT8: On convertit de l'Unicode en ASCII
+        texteOUT[indexOUT++] = ConvertUnicodeToAscii(lettre);
+        isUTF8 = false;
+     }
   }
   // par sécurité, on force un Fin de Texte
   texteOUT[LINEMAX] = '\0';
@@ -374,26 +390,34 @@ void Display::clearField(int X, int Y, int W, int H)
 
 
 // ******************************************************************************
-// Affiche tout les caractères de l'alphabet
+// Affiche tout les caractères de l'alphabet. Exemple:
+//     060 <=>?@ABCDE FGHIJKLMNO
+//     080 PQRSTUVWXY Z[\]^_`abc
+//     100 defghijklm nopqrstuvw
 // ******************************************************************************
-void printAllChars()
+void Display::printAllChars()
 {
   char line[32];
   Serial.println("printAllChars");
   TFTscreen.setTextSize(1);              
   TFTscreen.stroke(DARK_R, DARK_G, DARK_B);          // set the font color
-  for (char y=1; y<16; y++)
+  for (byte y=1; y<13; y++)
   {
-    line[0]= y>9? '1': '0';
-    line[1]= char(y%10 + '0');
-    line[2]= ' ';
-
-    for (char x=0; x<20; x++)
+    line[0]= getHundrenChar(y*20);
+    line[1]= getDozenChar(y*20);
+    line[2]= getUnitChar(y*20);
+    line[3]= ' ';
+    for (byte x=0; x<10; x++)
     {
-      line[x+3]= char(y*20+x);
+      line[x+4]= char(y*20+x);
     }
-    line[23]= '\0';   // fin de ligne
-    TFTscreen.text(line, 10, y*10);
+    line[14]= ' ';   // fin de ligne
+    for (byte x=10; x<20; x++)
+    {
+      line[x+5]= char(y*20+x);
+    }
+    line[25]= '\0';   // fin de ligne
+    TFTscreen.text(line, 4, y*10);
     Serial.println(line);
   }
 }

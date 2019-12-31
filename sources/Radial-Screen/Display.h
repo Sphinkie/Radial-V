@@ -70,6 +70,7 @@ class Display
     void printGenre(String texte);
     void printLog(String texte);
     void printStars(int number);
+    void printAllChars();
     void eraseText(char* texte, int X, int Y);
     void ls();
     void clearStars();
@@ -82,7 +83,6 @@ class Display
     void cleanString(String texteIN,char* texteOUT);
     void printDirectory(File dir, int numTabs);
     void clearField(int X, int Y, int W, int H);
-    void printAllChars();
 
     PImage  StarOn;
     PImage  StarOff;

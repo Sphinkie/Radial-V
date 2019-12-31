@@ -23,4 +23,6 @@
     #define C_ICON0           15   // clear last icon
     #define C_ICON1           16   // audio icon
     #define C_ICON2           17   // dance icon
-    #define C_STATUS          18   // Request status
+    #define C_ASCII           18   // Affiche toute la table ASCII de l'afficheur TFT
+
+    
