@@ -125,12 +125,12 @@ int CapButton::captureMeanValue(int samples)
   }
   
   moyenne = somme/samples;         // moyenne varie entre 125 et 330 
-  Serial.print(F("  moyenne= "));  Serial.print(moyenne);  
+//  Serial.print(F("  moyenne= "));  Serial.print(moyenne);  
   value = log10(moyenne-MINLIM);   // value varie entre 1.2 et 2.3
   value = (value-1)*755;           // on étale entre 0 et 1023
   value = max(0,value);            // on sature aux bornes 
   value = min(value,1023);
-  Serial.print(F("  valeur lue calibree= "));  Serial.println(int(value));
+//  Serial.print(F("  valeur lue calibree= "));  Serial.println(int(value));
   return (int(value));
 }
         
@@ -173,4 +173,3 @@ void CapButton::dischargeCapacitor()
   digitalWrite(Pin_Out, LOW);
   delay (200);
 }
-

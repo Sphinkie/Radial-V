@@ -45,15 +45,46 @@ void RemoteDisplay::setBackgroundImage()
 // **********************************************************
 // Envoie un texte à afficher (Titre)
 // Attention: la library Wire tronque à 32 chars.
+// il faut donc envoyer en deux parties.
 // **********************************************************
 void RemoteDisplay::printTitle(String texte)
 {
-  Serial.println (texte);
-  if (texte.length()==0) texte= " ";
+  Serial.print(F(" I2C Sending: "));  Serial.println (texte);
+  int longeurTitre = texte.length();
+  String TitrePart1 = "";
+  String TitrePart2 = "";
+  
+  if (longeurTitre==0) texte= " ";
+
+  if (longeurTitre > 23)
+  {
+    // le texte tient sur deux lignes: il faut trouver où tronquer.
+    int cissure=longeurTitre;
+    while (cissure>23)
+    {
+      cissure = texte.lastIndexOf(' ',cissure-1);
+    }
+    TitrePart1 = texte.substring(0,cissure);
+    TitrePart2 = texte.substring(cissure+1);
+  }
+  else
+  {
+    TitrePart1 = texte;
+    TitrePart2 = "\0";
+  }
+
+  // On envoie la première partie du titre
   Wire.beginTransmission(TFT_SLAVE);    // transmit to slave device 
-  Wire.write(C_TITLE);                  // sends one byte command
-  Wire.write(texte.c_str());            // sends string
+  Wire.write(C_TITLE1);                 // sends one byte command
+  Wire.write(TitrePart1.c_str());       // sends string
   Wire.endTransmission();               // stop transmitting
+
+  // On envoie la seconde partie du titre
+  Wire.beginTransmission(TFT_SLAVE);    // transmit to slave device 
+  Wire.write(C_TITLE2);                 // sends one byte command
+  Wire.write(TitrePart2.c_str());       // sends string
+  Wire.endTransmission();               // stop transmitting
+  
 }
 
 

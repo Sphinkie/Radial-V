@@ -93,40 +93,27 @@ void Display::eraseText(char* texte, int X, int Y)
 // **********************************************************
 // Affiche un titre (sur deux lignes)
 // **********************************************************
-void Display::printTitle(String texte) 
+void Display::printTitle(int lineNb, String texte) 
 {
   // On efface le texte précédent
-  this->clearField(X_MARGIN,Y_TITLE,24*5,8);
-  this->clearField(X_MARGIN,Y_TITLE+10,24*5,8);
-  strcpy(CurrentTitle1, "");
-  strcpy(CurrentTitle2, "");
+  //this->clearField(X_MARGIN,Y_TITLE,24*5,8);
+  //this->clearField(X_MARGIN,Y_TITLE+10,24*5,8);
+  Serial.println(texte);
+  TFTscreen.setTextSize(1);                     // set the font size    
+  TFTscreen.stroke(DARK_R, DARK_G, DARK_B);     // set the font color
 
-  if (texte.length()>21)
+  // On écrit la ligne demandée
+  switch (lineNb)
   {
-    // le texte tient sur deux lignes: il faut trouver où tronquer.
-    int cissure=texte.length();
-    while (cissure>21)
-    {
-      cissure = texte.lastIndexOf(' ',cissure-1);
-    }
-    this->cleanString(texte.substring(0,cissure), CurrentTitle1);
-    this->cleanString(texte.substring(cissure+1), CurrentTitle2);
+    case 1:
+       this->cleanString(texte,CurrentTitle1);
+       TFTscreen.text(CurrentTitle1, X_MARGIN, Y_TITLE);    // print the text at X,Y
+       break;
+    case 2:
+       this->cleanString(texte,CurrentTitle2);
+       TFTscreen.text(CurrentTitle2, X_MARGIN, Y_TITLE+10); // print the text at X,Y
+       break;
   }
-  else
-  {
-    this->cleanString(texte,CurrentTitle1);
-    Serial.println(CurrentTitle1);
-  }
-  // Serial.println(CurrentTitle1);
-  // Serial.println(CurrentTitle2);
-
-  // On écrit les deux lignes
-  TFTscreen.setTextSize(1);              
-  //TFTscreen.setTextWrap(true);                       // Cette fonction est héritée de la library Adafruit GFX, mais sans effet notable ici.
-  TFTscreen.stroke(DARK_R, DARK_G, DARK_B);            // set the font color
-  TFTscreen.text(CurrentTitle1, X_MARGIN, Y_TITLE);    // print the text at X,Y
-  TFTscreen.text(CurrentTitle2, X_MARGIN, Y_TITLE+10); // print the text at X,Y
-  
 }
 
 // **********************************************************

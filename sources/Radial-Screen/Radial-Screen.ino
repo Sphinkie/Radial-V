@@ -99,12 +99,13 @@ void loop()
     // Serial.print ("deQueue Command: ");Serial.println (Command);
     // On recupère les Data associées à la commande
     Data = Fifo.getData(Command);
-    Serial.print (" deQueue Data: ");Serial.println (Data);
+    // Serial.print (" deQueue Data: ");Serial.println (Data);
     // On traite la commande
     switch (Command)
       {
       // affichage des champs textuels
-      case C_TITLE    : LCDdisplay.printTitle(Data);        break;
+      case C_TITLE1   : LCDdisplay.printTitle(1,Data);      break;
+      case C_TITLE2   : LCDdisplay.printTitle(2,Data);      break;
       case C_ARTIST   : LCDdisplay.printArtist(Data);       break;
       case C_ALBUM    : LCDdisplay.printAlbum(Data);        break;
       case C_YEAR     : LCDdisplay.printYear(Data);         break;

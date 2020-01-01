@@ -8,7 +8,8 @@
     // ------------------------------------
     // Les commandes I2C
     // ------------------------------------
-    #define C_TITLE           2   // + texte
+    #define C_TITLE1          1   // + texte
+    #define C_TITLE2          2   // + texte
     #define C_ARTIST          3   // + texte
     #define C_ALBUM           4   // + texte
     #define C_YEAR            5   // + texte

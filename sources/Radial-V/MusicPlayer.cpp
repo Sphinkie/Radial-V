@@ -183,7 +183,7 @@ void MusicPlayer::displayMediaInfo()
 }
 
 // *******************************************************************************
-// Récupère le titre (tag) du clip en cours. On tronque à 42
+// Récupère le titre (tag) du clip en cours. On tronque à 52
 // *******************************************************************************
 String MusicPlayer::getTitle()
 {
@@ -196,7 +196,7 @@ String MusicPlayer::getTitle()
   // S'il est vide, on renvoie un blanc.
   if (strlen(Buffer)==0) return " ";
   retour = String(Buffer);
-  retour.remove(42);
+  retour.remove(52);
   return (retour);
 }
 

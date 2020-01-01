@@ -307,23 +307,23 @@ void loop_mp3()
    {
     case 1: // on recupère des infos dans le catalogue
             RemoteTFT.clearBackground();
-            Serial.println(F(" clearBackground"));
             if (MusicFile == "NOISE") CurrentRatingPos = NULL; 
             else CurrentRatingPos = Catalogue.getRatingPosition();
             break;
     case 2: // On affiche les infos du clip issues du fichier MP3
-            Serial.print(F(" Affichage des infos du clip: "));
+            Serial.println(F(" Affichage Titre (from tag)"));
             RemoteTFT.printLog(MusicFile);
             if (MusicFile == "NOISE") 
             {
-              RemoteTFT.printTitle("Recherche d'un clip musical");
+              String message = F("Recherche d'un clip musical");
               switch (ModeButton.getValue())
               {
-                case 1: RemoteTFT.printAlbum("parmi les favoris"); break;
-                case 2: RemoteTFT.printArtist("annee");     break;     // préfixé par "par"
-                case 3: RemoteTFT.printArtist("genre");     break;     // préfixé par "par"
-                case 4: RemoteTFT.printAlbum("aleatoire");  break;
+                case 1: message += F(" parmi les favoris"); break;
+                case 2: message += F(" par année");         break;
+                case 3: message += F(" par genre");         break;
+                case 4: message += F(" aleatoire");         break;
               }
+              RemoteTFT.printTitle(message);
             }
             else
             {
@@ -334,7 +334,7 @@ void loop_mp3()
             }
             break;
     case 3: // On affiche la suite des infos du clip issues du fichier Catalog
-            Serial.println(F(" Affichage des infos du Catalog: Year+Genre"));
+            Serial.println(F(" Affichage Year+Genre (from Catalog)"));
             if (MusicFile == "NOISE") 
             {
               RemoteTFT.printYear(" ");
@@ -351,7 +351,7 @@ void loop_mp3()
             NextMusicFile = getNextFile();       
             break;
     case 5: // On determine le nombre d'étoiles et on l'affiche. Ca peut etre long
-            Serial.println(F(" Affichage des infos du Catalog: Stars"));
+            Serial.println(F(" Affichage du Rating (from Catalog)"));
             if (MusicFile == "NOISE") 
               RemoteTFT.printStars("-");
             else

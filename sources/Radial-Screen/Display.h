@@ -63,7 +63,7 @@ class Display
     void setBackground(int R, int G, int B);
     void setBackgroundImage(char* filename);
     void printText(char* texte);
-    void printTitle(String texte);
+    void printTitle(int lineNb, String texte);
     void printArtist(String texte);
     void printAlbum(String texte);
     void printYear(String texte);
