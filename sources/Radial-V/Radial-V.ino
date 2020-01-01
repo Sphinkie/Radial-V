@@ -62,12 +62,12 @@ over Serial or to a LCD is a really slow process, so a few extra clock cycles re
 #define PROMOTE    19   // D19  Digital In     avec hardware interrupt 4
 // I2C                  // D20  Digital In/out avec hardware interrupt 3
 // I2C                  // D21  Digital In/out avec hardware interrupt 2
-#define MP3_ON     25   // D25  input       selecteur FM/MP3 
-#define MODE_4     27   // D27  input       bouton Mode
-#define MODE_3     29   // D29  input       bouton Mode
-#define MODE_2     31   // D31  input       bouton Mode
-#define MODE_1     33   // D33  input       bouton Mode
-#define FM_ON      35   // D35  input       selecteur FM/MP3
+#define MODE_4     25   // D25  input   C-MODE-5    bouton Mode
+#define MODE_3     27   // D27  input   C-MODE-4    bouton Mode
+#define MODE_2     29   // D29  input   C-MODE-3    bouton Mode
+#define MODE_1     31   // D31  input   C-MODE-2    bouton Mode
+#define MP3_ON     33   // D33  input   C-MODE-1    selecteur FM/MP3 
+#define FM_ON      35   // D35  input   C-FMMP-1    selecteur FM/MP3
 #define SPARE_IN   37   // D37  input       Digital In/Out SPARE
 #define K1         39   // D39  Digital Out Commande du relais K1
 #define K2         41   // D41  Digital Out Commande du relais K2
