@@ -1,6 +1,14 @@
+/* ************************************************************************************************
+ *  ASCII CONVERSIONS
+ *  
+ * Convertit des caractères Unicode ou UTF-8 en ASCII-ÉTENTDU (format supporté par la carte TFT)
+ ************************************************************************************************ */
 
 #include "Unicode.h"
 
+// ----------------------------------------------------------------------------      
+// Convertit un code Unicode-Point en Extended-Ascii
+// ----------------------------------------------------------------------------      
 unsigned char ConvertUnicodeToAscii(unsigned int lettre)
 {
      switch (lettre)
@@ -69,19 +77,22 @@ unsigned char ConvertUnicodeToAscii(unsigned int lettre)
 		   case 0xFFFD: return 'y';  break;  // U+00FD  ý   LATIN SMALL LETTER Y WITH ACUTE
 		   case 0xFFFE: return 'b';  break;  // U+00FE  þ   LATIN SMALL LETTER THORN
 		   case 0xFFFF: return 0x98; break;  // U+00FF  ÿ   LATIN SMALL LETTER Y WITH DIAERESIS
-       default: return lettre;  // caractères non-accentués 
+       default: return (unsigned char)lettre;  // caractères non-accentués 
 	   }
 }
        
+// ----------------------------------------------------------------------------      
+// Convertit un code utf-8 en Extended-Ascii
+// Le mot précédent doit avior été 0xFFC3
+// ----------------------------------------------------------------------------      
 unsigned char ConvertUtf8ToAscii(unsigned int lettre)
 {
-	// La premiere lettre est un 0xFFC3
      switch (lettre)
        {
-		   case 0xFF80: return 'A'; break;  //  À   c3 80  LATIN CAPITAL LETTER A WITH GRAVE
-		   case 0xFF81: return 'A'; break;  //  Á   c3 81  LATIN CAPITAL LETTER A WITH ACUTE
-		   case 0xFF82: return 'A'; break;  //  Â   c3 82  LATIN CAPITAL LETTER A WITH CIRCUMFLEX
-		   case 0xFF83: return 'A'; break;  //  Ã   c3 83  LATIN CAPITAL LETTER A WITH TILDE
+		   case 0xFF80: return 'A';  break;  //  À   c3 80  LATIN CAPITAL LETTER A WITH GRAVE
+		   case 0xFF81: return 'A';  break;  //  Á   c3 81  LATIN CAPITAL LETTER A WITH ACUTE
+		   case 0xFF82: return 'A';  break;  //  Â   c3 82  LATIN CAPITAL LETTER A WITH CIRCUMFLEX
+		   case 0xFF83: return 'A';  break;  //  Ã   c3 83  LATIN CAPITAL LETTER A WITH TILDE
 		   case 0xFF84: return 0x8E; break;  //  Ä   c3 84  LATIN CAPITAL LETTER A WITH DIAERESIS
 		   case 0xFF85: return 0x8F; break;  //  Å   c3 85  LATIN CAPITAL LETTER A WITH RING ABOVE
 		   case 0xFF86: return 0x92; break;  //  Æ   c3 86  LATIN CAPITAL LETTER AE
@@ -142,7 +153,7 @@ unsigned char ConvertUtf8ToAscii(unsigned int lettre)
 		   case 0xFFBD: return 'y';  break;  //  ý   c3 bd  LATIN SMALL LETTER Y WITH ACUTE
 		   case 0xFFBE: return 'b';  break;  //  þ   c3 be  LATIN SMALL LETTER THORN
 		   case 0xFFBF: return 0x98; break;  //  ÿ   c3 bf  LATIN SMALL LETTER Y WITH DIAERESIS
-       default: return lettre;  // caractères non-accentués 
+       default: return (unsigned char)lettre;  // caractères non-accentués 
 	   }
 }
        
@@ -152,8 +163,8 @@ unsigned char ConvertUtf8ToAscii(unsigned int lettre)
 // ----------------------------------------------------------------------------      
 char getUnitChar(int number)
 {
- int unites = number %10;
- return (unites + '0');
+   int unites = number %10;
+   return (unites + '0');
 }
 
 // ----------------------------------------------------------------------------      
@@ -161,9 +172,9 @@ char getUnitChar(int number)
 // ----------------------------------------------------------------------------      
 char getDozenChar(int number)
 {
- int dizaines = number %100;
- dizaines = dizaines/10;    // division entière
- return (dizaines + '0');
+   int dizaines = number %100;
+   dizaines = dizaines/10;    // division entière
+   return (dizaines + '0');
 }
 
 // ----------------------------------------------------------------------------      
@@ -171,7 +182,7 @@ char getDozenChar(int number)
 // ----------------------------------------------------------------------------      
 char getHundrenChar(int number)
 {
- int centaines = number %1000;
- centaines = centaines/100;    // division entière
- return (centaines + '0');
+   int centaines = number %1000;
+   centaines = centaines/100;    // division entière
+   return (centaines + '0');
 }

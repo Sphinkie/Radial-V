@@ -1,37 +1,22 @@
 /* ************************************************************************************************
-
-    RADIAL-SCREEN
-
-Software pour la radio Radial-V.
-
-Pilotage par Arduino-MEGA d'un ecran TFT
-
-*************************************************************************************************** 
-* 1.0     03/11/2015    Creation
-*************************************************************************************************** 
-* 1.1     16/11/2015    Ensemble des commandes I2C
-*                       Elements graphiques 
-*************************************************************************************************** 
-*/
+ *
+ *   RADIAL-SCREEN
+ *
+ * Software pour la radio Radial-V.
+ *
+ * Pilotage par Arduino-MEGA d'un ecran TFT
+ *
+ *************************************************************************************************** 
+ * 03/11/2015    Creation
+ * 16/11/2015    Ensemble des commandes I2C. Elements graphiques 
+ * 02/01/2020    Modification de cablage. Ajout de la commande I2C "CTITLE2"
+ *************************************************************************************************** */
 
 #include <Wire.h>     // Librairie Arduino pour le bus I2C
-
-#include "Display.h"
 #include "RadialScreen.h"
 #include "ArrayQueue.h"
+#include "Display.h"
 
-// *******************************************************************************
-// Cablage
-// *******************************************************************************
-#define BACKLIGHT 23  // PWM
-#define RESET     25  // Reset du TFT
-#define DC_LD     27  // Data/Command du TFT
-#define CS_SD     29  // SPI Slave Select pour SD
-#define CS_LD     31  // SPI Slave Select pour ecran TFT
-#define MOSI      51  // SPI MOSI pour UNO or ICSP-4 (51 sur MEGA) (11 sur UNO)
-#define MISO      50  // SPI MISO pour UNO or ICSP-1 (50 sur MEGA) (12 sur UNO)
-#define SCK       52  // SPI SCK  pour UNO or ICSP-3 (52 sur MEGA) (13 sur UNO)
-#define SS_SLAVE  53  // SPI Slave Select pour UNO   (53 sur MEGA) (10 sur UNO) Non utilisé ici car Arduino est MASTER
 
 bool              Ready = false;
 Display           LCDdisplay;

@@ -1,56 +1,49 @@
 #ifndef DISPLAYCLASS_H_INCLUDED
-#define DISPLAYCLASS_H_INCLUDED
+   #define DISPLAYCLASS_H_INCLUDED
 
 /* ************************************************************************************************
+ *
+ * Librairie pour piloter le shield ARDUINO ROBOT LCD SCREEN
+ *
+ * Utilise les librairies Arduino suivantes:
+ * - SD    pour les accès à la carte SD du shield "Arduino Screen"
+ * - TFT   pour les accès à l'écran LCD du shield "Arduino Screen"
+ * - SPI   pour le bus SPI   (inutile: a été enlevé)
+ ************************************************************************************************** */
+   #include <SD.h>       // pour le type File
+   #include <TFT.h>      // pour le type PImage
 
-Librairie pour piloter le shield ARDUINO ROBOT LCD SCREEN
+   #define LINEMAX     32              // Taille maximum des textes. Au dela: on tronque.
 
-Utilise les librairies Arduino suivantes:
-- SD    pour les accès à la carte SD du shield "Arduino Screen"
-- TFT   pour les accès à l'écran LCD du shield "Arduino Screen"
-- SPI   pour le bus SPI   (inutile: a été enlevé)
+   // Position (verticale) des textes
+   #define Y_TOPMARGIN 5
+   #define Y_YEAR      Y_TOPMARGIN+10
+   #define Y_GENRE     Y_TOPMARGIN+10
+   #define Y_TITLE     Y_TOPMARGIN+30
+   #define Y_ARTIST    Y_TOPMARGIN+57
+   #define Y_ALBUM     Y_TOPMARGIN+72
+   #define Y_STARS     Y_TOPMARGIN+82
+   #define Y_TRACE     Y_TOPMARGIN+110
 
-*************************************************************************************************** 
-* 1.0     03/11/2015    Creation
-*************************************************************************************************** 
-*************************************************************************************************** 
-*/
+   // Position (horizontale) des textes
+   #define X_MARGIN    13
+   #define X_STARS     13
+   #define X_YEAR      X_MARGIN+14
+   #define X_GENRE     X_YEAR+30
 
-#include <SD.h>       // pour le type File
-#include <TFT.h>      // opur le type PImage
+   // Couleur des textes (hors log, qui est rouge)
+   #define DARK_R 75
+   #define DARK_G 58
+   #define DARK_B 22
+   // Couleur des textes grisés
+   #define GREYED_R 115
+   #define GREYED_G 115
+   #define GREYED_B 60
 
-
-#define LINEMAX     32              // Taille maximum des textes. Au dela: on tronque.
-
-// Position (verticale) des textes
-#define Y_TOPMARGIN 5
-#define Y_YEAR      Y_TOPMARGIN+10
-#define Y_GENRE     Y_TOPMARGIN+10
-#define Y_TITLE     Y_TOPMARGIN+30
-#define Y_ARTIST    Y_TOPMARGIN+57
-#define Y_ALBUM     Y_TOPMARGIN+72
-#define Y_STARS     Y_TOPMARGIN+82
-#define Y_TRACE     Y_TOPMARGIN+110
-
-// Position (horizontale) des textes
-#define X_MARGIN    13
-#define X_STARS     13
-#define X_YEAR      X_MARGIN+14
-#define X_GENRE     X_YEAR+30
-
-// Couleur des textes (hors log, qui est rouge)
-#define DARK_R 75
-#define DARK_G 58
-#define DARK_B 22
-// Couleur des textes grisés
-#define GREYED_R 115
-#define GREYED_G 115
-#define GREYED_B 60
-
-// Couleur du fond (jaune comme le boitier)
-#define BG_R           210
-#define BG_G           210
-#define BG_B           0
+   // Couleur du fond (jaune comme le boitier)
+   #define BG_R           210
+   #define BG_G           210
+   #define BG_B           0
 
 // **********************************************************************
 // **********************************************************************

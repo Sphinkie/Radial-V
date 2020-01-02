@@ -1,3 +1,27 @@
+/* ************************************************************************************************
+ *    RADIAL-SCREEN
+ *
+ *  Software pour la radio Radial-V.
+ *  Ce composant (SLAVE) est piloté par le Arduino MASTER.
+ *  
+ *  Ci-dessous, on configure la liste des commandes gérées par le SLAVE
+ ************************************************************************************************* */
+
+// *******************************************************************************
+// Cablage
+// *******************************************************************************
+#define BACKLIGHT 45  // PWM                              (TFT pin 2)
+#define RESET_LD  43  // Reset du TFT                     (TFT pin 3)
+#define DC_LD     41  // Data/Command du TFT              (TFT pin 4)
+#define CS_SD     39  // SPI Slave Select pour carte SD   (TFT pin 5)
+#define CS_LD     37  // SPI Slave Select pour ecran TFT  (TFT pin 6)
+
+// Sur le connecteur ICSP:
+#define MOSI      51  // SPI MOSI pour UNO or ICSP-4 (51 sur MEGA) (11 sur UNO)
+#define MISO      50  // SPI MISO pour UNO or ICSP-1 (50 sur MEGA) (12 sur UNO)
+#define SCK       52  // SPI SCK  pour UNO or ICSP-3 (52 sur MEGA) (13 sur UNO)
+#define SS_SLAVE  53  // SPI Slave Select pour UNO   (53 sur MEGA) (10 sur UNO) Non utilisé ici car Arduino est MASTER
+
 
     // ------------------------------------
     // Les interlocuteurs du bus I2C

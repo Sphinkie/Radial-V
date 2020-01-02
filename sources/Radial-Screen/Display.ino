@@ -1,25 +1,22 @@
 /* ************************************************************************************************
+ *
+ * Librairie pour piloter le shield ARDUINO ROBOT LCD SCREEN
+ *
+ * Utilise les librairies Arduino suivantes:
+ * - SD    pour les accès à la carte SD du shield "Arduino Screen"
+ * - TFT   pour les accès à l'écran LCD du shield "Arduino Screen"
+ * - SPI   pour le bus SPI   (inutile: a été enlevé)
+ * 
+ *************************************************************************************************** 
+ * 03/11/2015    Creation
+ * 30/12/2019    Ajout de Print All Chars. Gestion de la césure en amont (Arduino Master) 
+ ************************************************************************************************** */
 
-Librairie pour piloter le shield ARDUINO ROBOT LCD SCREEN
-
-Utilise les librairies Arduino suivantes:
-- SD    pour les accès à la carte SD du shield "Arduino Screen"
-- TFT   pour les accès à l'écran LCD du shield "Arduino Screen"
-- SPI   pour le bus SPI   (inutile: a été enlevé)
-
-*************************************************************************************************** 
-* 1.0     03/11/2015    Creation
-*************************************************************************************************** 
-*************************************************************************************************** 
-*/
-
-#include <SD.h>
-#include <TFT.h>  
 #include "display.h"
 #include "Unicode.h"
 
 // On instancie la librairie TFT avec les pin utilisés
-TFT     TFTscreen(CS_LD,DC_LD,RESET);
+TFT     TFTscreen(CS_LD, DC_LD, RESET_LD);
 
 
 // **********************************************************
