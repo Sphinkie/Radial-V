@@ -1,35 +1,30 @@
 /* ************************************************************************************************
-
-    RADIAL-V
-
-Software pour la radio Radial-V.
-
-Pilotage par Arduino-Mega d'un player MP3 et d'un tuner FM (+ ecran LCD)
-
-Les musiques sont sur la carte SD du player MP3, et doivent etre préparées préalablement 
-avec l'utilitaire mp3tag.exe (voir doc).
-
-Note:
-The F() macro tells the compiler to leave this particular array in PROGMEM (Flash). 
-(cela economise de la RAM programme)
-Then when it is time to access it, one byte of the data is copied to RAM at a time. 
-There’s a small performance overhead for this extra work. However, printing strings 
-over Serial or to a LCD is a really slow process, so a few extra clock cycles really won’t matter.
-
-*************************************************************************************************** 
-* 0.7  01/11/2015  Mise en commentaire de la gestion de la carte MP3 dans MusicPlayer.cpp, suite à un pb hardware.(La carte SD ne peut lus être lue).
-*                  Version non opérationnelle: conflit à la compilation entre les librairies SD et SDfat, et pb de compil avec TFT.image
-*************************************************************************************************** 
-* 0.8  01/11/2015  Rétablissement de la gestion de la carte MP3
-*************************************************************************************************** 
-* 1.0  16/11/2015  Déport de la fonction d'affichage sur un autre Arduino, piloté en I2C
-*************************************************************************************************** 
-* 1.1  23/11/2015  Implementation I2C complete. Augmentation du nombre de MP3 (env 200).
-*************************************************************************************************** 
-* 1.2  28/11/2015  Le Catalogue regroupe Random et Genre.
-*************************************************************************************************** 
-* 1.3  02/12/2015  Le Catalogue regroupe Year et Favorites. Installation des cartes d'extension.
-*************************************************************************************************** 
+ *  
+ *   RADIAL-V
+ *
+ * Software pour la radio Radial-V.
+ *
+ * Pilotage par Arduino-Mega d'un player MP3 et d'un tuner FM (+ ecran LCD)
+ *
+ * Les musiques sont sur la carte SD du player MP3, et doivent etre préparées préalablement 
+ * avec l'utilitaire mp3tag.exe (voir doc).
+ *
+ * Note:
+ *   The F() macro tells the compiler to leave this particular array in PROGMEM (Flash). 
+ *   (cela economise de la RAM programme)
+ *   Then when it is time to access it, one byte of the data is copied to RAM at a time. 
+ *   There’s a small performance overhead for this extra work. However, printing strings 
+ *   over Serial or to a LCD is a really slow process, so a few extra clock cycles really won’t matter.
+ *
+ *************************************************************************************************** 
+ * 0.7  01/11/2015  Mise en commentaire de la gestion de la carte MP3 dans MusicPlayer.cpp, suite à un pb hardware.(La carte SD ne peut lus être lue).
+ *                  Version non opérationnelle: conflit à la compilation entre les librairies SD et SDfat, et pb de compil avec TFT.image
+ * 0.8  01/11/2015  Rétablissement de la gestion de la carte MP3
+ * 1.0  16/11/2015  Déport de la fonction d'affichage sur un autre Arduino, piloté en I2C
+ * 1.1  23/11/2015  Implementation I2C complete. Augmentation du nombre de MP3 (env 200).
+ * 1.2  28/11/2015  Le Catalogue regroupe Random et Genre.
+ * 1.3  02/12/2015  Le Catalogue regroupe Year et Favorites. Installation des cartes d'extension.
+ *************************************************************************************************** 
 */
 
 
@@ -161,9 +156,7 @@ void setup()
 
 
 // *******************************************************************************
-// *******************************************************************************
 // The loop function runs over and over again forever
-// *******************************************************************************
 // *******************************************************************************
 void loop() 
 {

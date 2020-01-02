@@ -55,8 +55,8 @@ class Display
     void initDisplay();
     void setBackground(int R, int G, int B);
     void setBackgroundImage(char* filename);
-    void printText(char* texte);
     void printTitle(int lineNb, String texte);
+    void printScrollingTitle(String texte);
     void printArtist(String texte);
     void printAlbum(String texte);
     void printYear(String texte);
@@ -64,13 +64,16 @@ class Display
     void printLog(String texte);
     void printStars(int number);
     void printAllChars();
-    void eraseText(char* texte, int X, int Y);
+    void eraseText(char* texte, int X, int Y, int Size=1);
+    void scrollTitle();
     void ls();
     void clearStars();
     void clearAllTexts();
     void setBacklight(int value);
     void showPicto(String filename, int x, int y);
     void clearPicto();
+
+    bool isScrolling= false;
     
   private:
     void cleanString(String texteIN,char* texteOUT);
@@ -100,6 +103,9 @@ class Display
     byte     PictoY = 21;
     byte     PictoW = 0;
     byte     PictoH = 0;
+    // Pas de déplacement pour le scrolling du titre
+    int      Pas = 0;
+    int      PasMax = 160;
 
 };
 

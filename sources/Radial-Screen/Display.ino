@@ -34,6 +34,8 @@ Display::Display()
 
   pinMode(BACKLIGHT, OUTPUT);    
   this->setBacklight(0);     // lum. faible
+  this->isScrolling=false;
+  this->Pas=0;
 }
 
 // **********************************************************
@@ -81,8 +83,9 @@ void Display::setBackground(int R, int G, int B)
 // **********************************************************
 // Efface un texte
 // **********************************************************
-void Display::eraseText(char* texte, int X, int Y) 
+void Display::eraseText(char* texte, int X, int Y, int Size = 1)
 {
+  TFTscreen.setTextSize(Size);
   TFTscreen.stroke(BackgroundR, BackgroundG, BackgroundB);
   TFTscreen.text(texte, X, Y);
 }
@@ -92,10 +95,7 @@ void Display::eraseText(char* texte, int X, int Y)
 // **********************************************************
 void Display::printTitle(int lineNb, String texte) 
 {
-  // On efface le texte précédent
-  //this->clearField(X_MARGIN,Y_TITLE,24*5,8);
-  //this->clearField(X_MARGIN,Y_TITLE+10,24*5,8);
-  Serial.println(texte);
+  // Serial.println(texte);
   TFTscreen.setTextSize(1);                     // set the font size    
   TFTscreen.stroke(DARK_R, DARK_G, DARK_B);     // set the font color
 
@@ -114,13 +114,54 @@ void Display::printTitle(int lineNb, String texte)
 }
 
 // **********************************************************
+// Affiche un titre déroulant (sur une ligne)
+// **********************************************************
+void Display::printScrollingTitle(String texte) 
+{
+  // Serial.println(texte);
+  TFTscreen.setTextSize(2);                     // set the font size
+  TFTscreen.stroke(DARK_R, DARK_G, DARK_B);     // set the font color
+
+  // On écrit la ligne demandée
+  this->cleanString(texte,CurrentTitle1);
+  TFTscreen.text(CurrentTitle1, X_MARGIN, Y_TITLE);    // print the text at X,Y
+  this->Pas = 0;
+  this->PasMax = texte.length()*12;
+  if (texte.length()>12) 
+     this->isScrolling=true;
+  else
+     this->isScrolling=false;  
+}
+
+// **********************************************************
+// Décale le texte
+// **********************************************************
+void Display::scrollTitle()
+{
+   TFTscreen.setTextSize(2);
+   // On efface le texte
+   TFTscreen.stroke(BackgroundR, BackgroundG, BackgroundB);     // set the font color
+   TFTscreen.text(CurrentTitle1, X_MARGIN + Pas, Y_TITLE);
+   // this->clearField(0, Y_TITLE+2, 160, 24);
+   
+   // On décale vers la gauche
+   Pas -= 1;
+   if (this->Pas < -(this->PasMax) )
+       this->Pas = 160;
+   // On affiche le texte
+   TFTscreen.stroke(DARK_R, DARK_G, DARK_B);     // set the font color
+   TFTscreen.text(CurrentTitle1, X_MARGIN + Pas, Y_TITLE);
+}
+
+
+// **********************************************************
 // Affiche le nom de l'artiste
 // **********************************************************
 void Display::printArtist(String texte) 
 {
   texte.remove(21);                                     // On tronque le texte à 21 chars.
   if (texte.length()<18) texte="par "+texte;            // Si la longueur le permet, on rajoute "par"
-  this->clearField(X_MARGIN, Y_ARTIST, 24*5, 8);
+  // this->clearField(X_MARGIN, Y_ARTIST, 24*5, 8);     // plus besoin: on efface l'écran complet entre chaque clip.
   this->cleanString(texte, CurrentArtist);              // On copie le texte dans CurrentArtist
   TFTscreen.setTextSize(1);
   TFTscreen.stroke(GREYED_R, GREYED_G, GREYED_B);       // set the font color
@@ -134,13 +175,12 @@ void Display::printAlbum(String texte)
 {
   texte.remove(19);                                    // On tronque le texte à 19 chars.
   texte='"'+texte+'"';
-  this->clearField(X_MARGIN, Y_ALBUM, 24*5, 8);
+  // this->clearField(X_MARGIN, Y_ALBUM, 24*5, 8);    // plus besoin: on efface l'écran complet entre chaque clip.
   this->cleanString(texte, CurrentAlbum);             // On copie le texte dans CurrentAlbum
   TFTscreen.setTextSize(1);
   TFTscreen.stroke(GREYED_R, GREYED_G, GREYED_B);     // set the font color
   TFTscreen.text(CurrentAlbum, X_MARGIN, Y_ALBUM);    // print the text at X,Y
 }
-
 
 // **********************************************************
 // Affiche l'année
@@ -148,13 +188,12 @@ void Display::printAlbum(String texte)
 void Display::printYear(String texte) 
 {
   //this->eraseText(CurrentYear,X_YEAR, Y_YEAR);
-  this->clearField(X_YEAR,Y_YEAR,5*5,8);
+  // this->clearField(X_YEAR,Y_YEAR,5*5,8);     // plus besoin: on efface l'écran complet entre chaque clip.
   this->cleanString(texte, CurrentYear);        // On copie le texte dans CurrentYear
   TFTscreen.setTextSize(1);
   TFTscreen.stroke(DARK_R, DARK_G, DARK_B);     // set the font color
   TFTscreen.text(CurrentYear, X_YEAR, Y_YEAR);  // print the text at X,Y
 }
-
 
 // **********************************************************
 // Affiche le Genre.
@@ -162,7 +201,7 @@ void Display::printYear(String texte)
 void Display::printGenre(String texte) 
 {
   texte.remove(11);                                    // On tronque le genre à 11 chars.
-  this->clearField(X_GENRE, Y_GENRE, 11*5, 8);
+  // this->clearField(X_GENRE, Y_GENRE, 11*5, 8);      // plus besoin: on efface l'écran complet entre chaque clip.
   this->cleanString(texte, CurrentGenre);              // On copie le texte dans CurrentGenre
   TFTscreen.setTextSize(1);
   TFTscreen.stroke(DARK_R, DARK_G, DARK_B);            // set the font color
@@ -186,10 +225,9 @@ void Display::printStars(int number)
     TFTscreen.image(StarOff, X_STARS+i*24, Y_STARS);
   }
 }
-
     
 // **********************************************************
-// Affiche une ligne de log en rouge en bas de l'écran
+// Affiche une ligne en rouge en bas de l'écran
 // **********************************************************
 void Display::printLog(String  texte) 
 {
@@ -200,7 +238,6 @@ void Display::printLog(String  texte)
   TFTscreen.stroke(200, 20, 20);                  // Couleur Rouge
   TFTscreen.text(CurrentLog, X_MARGIN, Y_TRACE);  // Print the text at X,Y
 }
-
 
 // **********************************************************
 // Affiche une image de fond
@@ -224,14 +261,19 @@ void Display::clearStars()
 }
 
 // ******************************************************************************
-// Efface tous les textes par deux rectangles
+// Efface tous les textes
 // ******************************************************************************
 void Display::clearAllTexts()
 {
+  this->isScrolling = false;
+  this->Pas = 0;
+  TFTscreen.background(BackgroundR, BackgroundG, BackgroundB);
+/*
   TFTscreen.stroke(BackgroundR, BackgroundG, BackgroundB);
   TFTscreen.fill(BackgroundR, BackgroundG, BackgroundB);
   TFTscreen.rect(X_YEAR,  Y_YEAR ,16*5,30);    
   TFTscreen.rect(X_MARGIN,Y_TITLE,24*5,52);  
+*/
 }
 
 // ******************************************************************************
@@ -311,13 +353,10 @@ void Display::showPicto(String filename, int x, int y)
 // ******************************************************************************
 void Display::clearPicto()
 {
-clearAllTexts();
-
-/*  Serial.println(F(" clearPicto")); 
+  Serial.println(F(" clearPicto")); 
   TFTscreen.stroke(BackgroundR, BackgroundG, BackgroundB);
   TFTscreen.fill  (BackgroundR, BackgroundG, BackgroundB);
   TFTscreen.rect(PictoX,PictoY,PictoW,PictoH);
-  */
 }
 
 
@@ -333,11 +372,11 @@ void Display::cleanString(String texteIN, char* texteOUT)
   byte indexOUT = 0;
   bool isUTF8 = false;
   
-  Serial.print("cleanString:"); 
+  // Serial.print("cleanString:"); 
   for (byte indexIN=0; indexIN<texteIN.length()+1; indexIN++) 
   {
     lettre = int(texteIN[indexIN]); 
-    Serial.print(" 0x"); Serial.print(lettre,HEX);
+    // Serial.print(" 0x"); Serial.print(lettre,HEX);
     
     if (isUTF8)
     {
@@ -358,17 +397,16 @@ void Display::cleanString(String texteIN, char* texteOUT)
   }
   // par sécurité, on force un Fin de Texte
   texteOUT[LINEMAX] = '\0';
-  Serial.println();Serial.println(texteOUT); 
 }
   
 
 // ******************************************************************************
-// Effacement du champ rectangulaire
+// Effacement d'un rectangle
 // ******************************************************************************
 void Display::clearField(int X, int Y, int W, int H)
 {
   TFTscreen.stroke(BackgroundR, BackgroundG, BackgroundB);
-  TFTscreen.fill  (BackgroundR, BackgroundG, BackgroundB);
+  TFTscreen.fill (BackgroundR, BackgroundG, BackgroundB);
   TFTscreen.rect(X,Y,W,H);
 }
 

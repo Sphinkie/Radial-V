@@ -17,6 +17,7 @@ class RemoteDisplay
     void clearBackground();
     void setBackgroundImage();
     void printTitle(String texte);
+    void printSplitedTitle(String texte);
     void printArtist(String texte);
     void printAlbum(String texte);
     void printYear(String texte);
@@ -41,8 +42,8 @@ class RemoteDisplay
     // ------------------------------------
     // Les commandes I2C
     // ------------------------------------
-    #define C_TITLE1          1   // + texte
-    #define C_TITLE2          2   // + texte
+    #define C_TITLE1          1   // + texte (ligne 1)
+    #define C_TITLE2          2   // + texte (ligne 2)
     #define C_ARTIST          3   // + texte
     #define C_ALBUM           4   // + texte
     #define C_YEAR            5   // + texte
@@ -58,6 +59,8 @@ class RemoteDisplay
     #define C_ICON1           16   // audio icon
     #define C_ICON2           17   // dance icon
     #define C_ASCII           18   // Affiche toute la table ASCII de l'afficheur TFT
+    #define C_TITLE           19  // + texte (deroulant)
+
 
 
 

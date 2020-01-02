@@ -44,10 +44,28 @@ void RemoteDisplay::setBackgroundImage()
   
 // **********************************************************
 // Envoie un texte à afficher (Titre)
-// Attention: la library Wire tronque à 32 chars.
-// il faut donc envoyer en deux parties.
+// Notes: la library MP3 fourni un tag limité à 30 chars
+//        la library Wire tronque à 32 chars.
+// Donc le titre doit tenir dans le message à tous les coups
 // **********************************************************
 void RemoteDisplay::printTitle(String texte)
+{
+  Serial.print(F(" I2C Sending: "));  Serial.println (texte);
+  
+  if (texte.length()==0) texte= " ";
+
+  // On envoie le titre
+  Wire.beginTransmission(TFT_SLAVE);    // transmit to slave device 
+  Wire.write(C_TITLE);                  // sends one byte command
+  Wire.write(texte.c_str());            // sends string
+  Wire.endTransmission();               // stop transmitting
+}
+
+// **********************************************************
+// Envoie un texte à afficher (Titre) en deux parties.
+// Attention: la library Wire tronque à 32 chars.
+// **********************************************************
+void RemoteDisplay::printSplitedTitle(String texte)
 {
   Serial.print(F(" I2C Sending: "));  Serial.println (texte);
   int longeurTitre = texte.length();
@@ -84,9 +102,7 @@ void RemoteDisplay::printTitle(String texte)
   Wire.write(C_TITLE2);                 // sends one byte command
   Wire.write(TitrePart2.c_str());       // sends string
   Wire.endTransmission();               // stop transmitting
-  
 }
-
 
 // **********************************************************
 // Envoie un texte à afficher (Artist)

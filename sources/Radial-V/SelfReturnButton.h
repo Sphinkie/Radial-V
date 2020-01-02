@@ -1,7 +1,7 @@
 /* ***********************************************************
  *  Gestion de Bouton de type SelfReturn ou PushButton
  *  par interruption matérielle
-   ************************************************************* */
+ ************************************************************** */
 
 
 #ifndef SELFRETURNCLASS_H_INCLUDED
@@ -24,6 +24,3 @@ class SelfReturnButton
 };
 
 #endif // SELFRETURNCLASS_H_INCLUDED
-
-
-

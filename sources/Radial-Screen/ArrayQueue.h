@@ -6,7 +6,7 @@
 #ifndef ARRAYQUEUECLASS_H_INCLUDED
    #define ARRAYQUEUECLASS_H_INCLUDED
 
-   #include "Arduino.h"
+   #include "Arduino.h"            // pour le type 'String'
 
    #define MAX_QUEUE_SIZE 15       // nombre de commandes que l'on veut mémoriser dans la Fifo
    #define MAX_DATA_SIZE  50       // doit être dimensionné en fonction du nombre de commandes I2C

@@ -1,17 +1,17 @@
-/* ***********************************************************
+/* *************************************************************
  *  Gestion de Bouton de type SelfReturn ou PushButton
  *  par interruption matérielle
-   ************************************************************* */
+ *************************************************************** */
 
         
         
 #include "SelfReturnButton.h"
 
-// *******************************************************************************
+// ------------------------------------------------------------------
 // Constructor
 // Cette fonction déclare la Pin comme Entrée de type PULL-UP
 // et attache une interruption à cette Pin.
-// *******************************************************************************
+// ------------------------------------------------------------------
 SelfReturnButton::SelfReturnButton(int pin, voidFuncPtr ISR_function)
 {
   Pushed=false;
@@ -27,15 +27,13 @@ SelfReturnButton::SelfReturnButton(int pin, voidFuncPtr ISR_function)
     case 18: attachInterrupt(5, ISR_function, FALLING); break;
     // autres cas: No valid Pin number. (for Arduino Mega)  
   }
-  
 }
 
 
-
-// *******************************************************************************
+// ------------------------------------------------------------------
 // Cette fonction renvoie VRAI si le bouton a été poussé ou tourné récemment, 
 // puis remet la variable à FAUX.
-// *******************************************************************************
+// ------------------------------------------------------------------
 bool SelfReturnButton::wasPushed()
 {
   int Retour = Pushed;
@@ -44,11 +42,9 @@ bool SelfReturnButton::wasPushed()
 }
 
 
-// *******************************************************************************
-// *******************************************************************************
+// ------------------------------------------------------------------
+// ------------------------------------------------------------------
 void SelfReturnButton::setStatus(bool pushed)
 {
   Pushed = pushed;
 }
-
-

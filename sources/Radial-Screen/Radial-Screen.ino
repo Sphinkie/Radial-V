@@ -52,7 +52,6 @@ void setup()
   // Initialisation de l'écran TFT
   LCDdisplay.initDisplay();
   LCDdisplay.setBackground(BG_R,BG_G,BG_B);
-  // LCDdisplay.printLog(F("  Radial-V demarrage."));
   Serial.println(F("LCD initialization........done"));
 
   LCDdisplay.setBackgroundImage("bg_RADV.bmp");
@@ -72,8 +71,11 @@ void loop()
   int     Command;
   String  Data;
   
-  delay(500);
+  delay(40);    // 40 ms = 1 frame = 25 par secondes
 
+  // -----------------------------------------------------------------------
+  // Si le bus I2C est Ready, on traite les messages reçus
+  // -----------------------------------------------------------------------
   if (Ready) 
   {
   // A-t-on reçu une commande récemment? On consulte la FIFO...
@@ -89,6 +91,7 @@ void loop()
     switch (Command)
       {
       // affichage des champs textuels
+      case C_TITLE    : LCDdisplay.printScrollingTitle(Data);  break;
       case C_TITLE1   : LCDdisplay.printTitle(1,Data);      break;
       case C_TITLE2   : LCDdisplay.printTitle(2,Data);      break;
       case C_ARTIST   : LCDdisplay.printArtist(Data);       break;
@@ -118,6 +121,13 @@ void loop()
       }
     }
   }
+  // -----------------------------------------------------------------------
+  // Si nécessaire, on fait scroller le texte déroulant.
+  // -----------------------------------------------------------------------
+  if (LCDdisplay.isScrolling)
+  {
+    LCDdisplay.scrollTitle();
+  }
 }
 
 
@@ -128,9 +138,11 @@ void loop()
 // *******************************************************************************
 void receiveEvent(int howMany)
 {
-  Serial.print(F("I2C data received: "));
+  Serial.print(F("I2C data received "));
   // Le premier octet est une commande
   int   Command = Wire.read();  // receive byte as a integer
+  Serial.print("[");  Serial.print(Command);  Serial.print("]: ");
+  // Ensuite, on a les Data
   char  Data[howMany];
   int   i=0;
 
@@ -155,6 +167,7 @@ void receiveEvent(int howMany)
 void requestEvent()
 {
   // Le Master attend 1 octet. On envoie notre status: "Ready".
-  Wire.write(1);                 // 0x01 = READY
+  char Status = Ready? 1: 0;
+  Wire.write(Ready);                 // 0x01 = READY
   Serial.println(F("I2C request received"));
 }
