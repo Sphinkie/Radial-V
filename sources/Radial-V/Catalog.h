@@ -56,6 +56,14 @@ class Catalog
         void   debugYear();
 
     //variables:
+    public:
+        String        RequestedGenre;        // Le Genre demandé par bouton Tuning
+        int           RequestedRating;       // Le Rating demandé par bouton Tunnig
+        int           RequestedYear;         // L'Année demandée par bouton Tuning (ex: 1964)
+        int           RangeStart;            // Année demandée: Début de la période (ex: 1960)
+        int           RangeEnd;              // Année demandée: Fin de la période (ex: 1970)
+
+    private:
         // Le catalogue
         SdFile        FichierIndex;
         unsigned int  RandomMax=10;         
@@ -65,9 +73,6 @@ class Catalog
         String        Media_Genre;
         String        Media_Year;
         String        Media_Rating;
-        // Infos sur le Genre demandé
-//        int           CurrentTuning;
-        String        RequestedGenre;
         // Infos sur les genres apparaissant sur la face avant (White List)
         const String  GenreWhiteList="Classique;Blues;Jazz;Folk;Rock n'Roll;Rock;Chanson;Musiques du monde;";  // Ne pas oublier le ; final
 //        byte          GenreWhiteListSize = 8;
@@ -78,12 +83,6 @@ class Catalog
         String        FirstMediaYear;
         String        FirstMediaGenre;
         String        FirstMediaRating;
-        // Infos sur l'Année demandée
-        int           RequestedYear;
-        int           RangeStart;
-        int           RangeEnd;
-        // Infos sur le Rating demandé
-        int           RequestedRating;
         // Infos temporaires sur la ligne lue dans le catalogue
         String        Field1;       // year
         String        Field2;       // media_id

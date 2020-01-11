@@ -300,12 +300,31 @@ void loop_mp3()
    {
     case 1: // on recupère des infos dans le catalogue
             RemoteTFT.clearBackground();
+            String ModeMessage;
+            switch (ModeButton.getValue())
+            {
+                case 1: ModeMessage = F(" Musique favorite ("); 
+                        ModeMessage += String(Catalogue.RequestedRating);
+                        ModeMessage += ")";
+                        break;
+                case 2: ModeMessage = F(" Années ");
+                        ModeMessage += String(Catalogue.RangeStart);
+                        ModeMessage += "-";
+                        ModeMessage += String(Catalogue.RangeEnd);
+                        break;
+                case 3: ModeMessage = F(" Genre: ");
+                        ModeMessage += Catalogue.RequestedGenre;            
+                        break;
+                case 4: ModeMessage = F(" Musique aleatoire");
+                        break;
+            }
+            RemoteTFT.printLog(ModeMessage);
             if (MusicFile == "NOISE") CurrentRatingPos = NULL; 
             else CurrentRatingPos = Catalogue.getRatingPosition();
             break;
     case 2: // On affiche les infos du clip issues du fichier MP3
             Serial.println(F(" Affichage Titre (from tag)"));
-            RemoteTFT.printLog(MusicFile);
+            // RemoteTFT.printLog(MusicFile);
             if (MusicFile == "NOISE") 
             {
               String message = F("Recherche d'un clip musical");
