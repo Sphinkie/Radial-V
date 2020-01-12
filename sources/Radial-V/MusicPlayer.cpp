@@ -410,7 +410,7 @@ int MusicPlayer::getStep()
   int CurrentStep = Step;
   if (CurrentStep > 0) Step++;
   if (Step > MAX_STEP) Step=0;
-  Serial.print(F("  Step ")); Serial.print(CurrentStep); Serial.print(F("-->")); Serial.println(Step);
+  // Serial.print(F("  Step ")); Serial.print(CurrentStep); Serial.print(F("-->")); Serial.println(Step);
   return Step;
 }
 

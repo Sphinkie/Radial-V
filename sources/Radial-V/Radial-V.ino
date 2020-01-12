@@ -208,7 +208,7 @@ void loop()
               Serial.println(F("  Picto FM"));
               RemoteTFT.clearBackground();
               RemoteTFT.printPictoFM();
-              RemoteTFT.setBacklight(true);
+              RemoteTFT.setBacklight(false);
               break;
     }
   }
@@ -444,7 +444,7 @@ void displayRequestedMode()
             {
                 case 1: ModeMessage = F("Musique favorite "); 
                         ModeMessage += String(Catalogue.RequestedRating);
-                        ModeMessage += F(" stars");
+                        ModeMessage += F("*");
                         break;
                 case 2: ModeMessage = F("    Années ");
                         ModeMessage += String(Catalogue.RangeStart);
