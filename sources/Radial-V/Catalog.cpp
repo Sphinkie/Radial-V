@@ -125,16 +125,6 @@ long Catalog::getRatingPosition()
   return RatingPosition;
 }
 
-// *******************************************************************************
-// Incrémente le Rating mémorisé (max 5).
-// On appelle cette fonction si le Rating a été incrémenté via AddStar
-// *******************************************************************************
-void Catalog::promoteSelectedClip()
-{
-  char NewRating  = Media_Rating[0]+1;
-  Media_Rating[0] = min(NewRating,'5');  // Reco Arduino: éviter les opérations dans la fonction min.
-}
-
 // *********************************************************************
 // Renvoie le GENRE correspondant à la position du bouton TUNE
 // "Classique;Blues;Jazz;Folk;Rock n'Roll;Rock;Chanson;Musiques du monde;"
@@ -634,7 +624,7 @@ bool Catalog::isNotAsExpected(String genre)
 // *******************************************************************************
 // Ajoute +1 (max=5) au Rating du clip demandé, dans le fichier Catalog.ndx
 // *******************************************************************************
-void Catalog::addStar(long clipPosition)
+void Catalog::writeAddStar(long clipPosition)
 {
   SdFile FichierIndex;
   char   Stars='A';
@@ -676,14 +666,16 @@ void Catalog::addStar(long clipPosition)
   
   // On ferme le fichier
   FichierIndex.close();
+  
+  // Positionne le Rating du Clip En Cours.
+  Media_Rating[0] = Stars;
 }
-
 
 
 // *******************************************************************************
 // Soustrait 1 (min=0) au Rating du clip demandé, dans le fichier Catalog.ndx
 // *******************************************************************************
-void Catalog::removeStar(long clipPosition)
+void Catalog::writeRemoveStar(long clipPosition)
 {
   SdFile FichierIndex;
   char   Stars='A';
@@ -725,6 +717,8 @@ void Catalog::removeStar(long clipPosition)
   
   // On ferme le fichier
   FichierIndex.close();
+  // Positionne le Rating du Clip En Cours.
+  Media_Rating[0] = Stars;
 }
 
 // *******************************************************************************

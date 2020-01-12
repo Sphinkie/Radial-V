@@ -218,8 +218,7 @@ void loop()
   // --------------------------------------------------------------
   switch (SourceButton.getValue())
   {
-    case 0:    // NO SOURCE
-            break;
+    case 0: break;        // NO SOURCE            
     case 1: loop_mp3();   // SOURCE = MP3
             break;
     case 2:               // SOURCE = FM         
@@ -298,42 +297,25 @@ void loop_mp3()
    int Step = mp3shield.getStep();
    switch (Step)
    {
-    case 1: // on recupère des infos dans le catalogue
+    case 2: // on recupère des infos dans le catalogue
+            Serial.println(F(" Affichage Requested Mode (from Tuning)"));
             RemoteTFT.clearBackground();
-            String ModeMessage;
-            switch (ModeButton.getValue())
-            {
-                case 1: ModeMessage = F(" Musique favorite ("); 
-                        ModeMessage += String(Catalogue.RequestedRating);
-                        ModeMessage += ")";
-                        break;
-                case 2: ModeMessage = F(" Années ");
-                        ModeMessage += String(Catalogue.RangeStart);
-                        ModeMessage += "-";
-                        ModeMessage += String(Catalogue.RangeEnd);
-                        break;
-                case 3: ModeMessage = F(" Genre: ");
-                        ModeMessage += Catalogue.RequestedGenre;            
-                        break;
-                case 4: ModeMessage = F(" Musique aleatoire");
-                        break;
-            }
-            RemoteTFT.printLog(ModeMessage);
+            displayRequestedMode();
             if (MusicFile == "NOISE") CurrentRatingPos = NULL; 
             else CurrentRatingPos = Catalogue.getRatingPosition();
             break;
-    case 2: // On affiche les infos du clip issues du fichier MP3
+    case 3: // On affiche les infos du clip issues du fichier MP3
             Serial.println(F(" Affichage Titre (from tag)"));
             // RemoteTFT.printLog(MusicFile);
             if (MusicFile == "NOISE") 
             {
-              String message = F("Recherche d'un clip musical");
+              String message = F("Rech.");
               switch (ModeButton.getValue())
               {
                 case 1: message += F(" parmi les favoris"); break;
                 case 2: message += F(" par année");         break;
                 case 3: message += F(" par genre");         break;
-                case 4: message += F(" aleatoire");         break;
+                case 4: message += F(" aléatoire");         break;
               }
               RemoteTFT.printTitle(message);
             }
@@ -345,7 +327,7 @@ void loop_mp3()
               CurrentRatingPos = Catalogue.getRatingPosition();
             }
             break;
-    case 3: // On affiche la suite des infos du clip issues du fichier Catalog
+    case 4: // On affiche la suite des infos du clip issues du fichier Catalog
             Serial.println(F(" Affichage Year+Genre (from Catalog)"));
             if (MusicFile == "NOISE") 
             {
@@ -358,19 +340,19 @@ void loop_mp3()
               RemoteTFT.printGenre(Catalogue.getSelectedClipGenre());
             }
             break;
-    case 4: // On détermine le morceau MP3 suivant
+    case 5: // On détermine le morceau MP3 suivant
             Serial.println(F(">>Recherche du prochain clip"));
             NextMusicFile = getNextFile();       
             break;
-    case 5: // On determine le nombre d'étoiles et on l'affiche. Ca peut etre long
+    case 6: // On determine le nombre d'étoiles et on l'affiche. Ca peut etre long
             Serial.println(F(" Affichage du Rating (from Catalog)"));
             if (MusicFile == "NOISE") 
               RemoteTFT.printStars("-");
             else
               RemoteTFT.printStars(Catalogue.getSelectedClipRating());
             break;
-    case 10: // on surveille la RAM consommée
-            Serial.print  (F("Free RAM (bytes)= "));
+    case 12: // on surveille la RAM consommée
+            Serial.print  (F(" Free RAM (bytes)= "));
             Serial.println(FreeRam(), DEC);
             // On baisse l'intensité de l'affichage
             RemoteTFT.setBacklight(false);
@@ -390,7 +372,8 @@ void loop_mp3()
                         NextButton.wasPushed();   
                         Serial.println("NEXT !");    
                         mp3shield.stopTrack();    
-                        Catalogue.removeStar(CurrentRatingPos); // On édite le catalog pendant que le clip est stoppé.
+                        Catalogue.writeRemoveStar(CurrentRatingPos); // On édite le catalog pendant que le clip est stoppé.
+                        RemoteTFT.printStars(Catalogue.getSelectedClipRating());
                         break; 
        case _AGAIN: // On ajoute une étoile, et on reprend le clip du début
                         Action=_IDLE; 
@@ -398,11 +381,11 @@ void loop_mp3()
                         Serial.println("AGAIN !");   
                         digitalWrite(LED_1,LOW); // Allume la Led témoin SPI BUSY
                         mp3shield.pauseDataStream();
-                        Catalogue.addStar(CurrentRatingPos);
+                        Catalogue.writeAddStar(CurrentRatingPos);
                         mp3shield.resumeDataStream();
                         digitalWrite(LED_1,HIGH); // Eteint la Led témoin SPI BUSY
                         mp3shield.restartTrack();
-                        Catalogue.promoteSelectedClip();
+                        RemoteTFT.printStars(Catalogue.getSelectedClipRating());
                         break;
        case _PROMOTE: // On ajoute une étoile
                         Action=_IDLE; 
@@ -410,11 +393,10 @@ void loop_mp3()
                         Serial.println("PROMOTE !"); 
                         digitalWrite(LED_1,LOW); // Allume la Led témoin SPI BUSY
                         mp3shield.pauseDataStream();
-                        Catalogue.addStar(CurrentRatingPos);    
+                        Catalogue.writeAddStar(CurrentRatingPos);    
                         mp3shield.resumeDataStream();
                         digitalWrite(LED_1,HIGH); // Eteint la Led témoin SPI BUSY
                         Serial.println(F(" display: Stars"));
-                        Catalogue.promoteSelectedClip();
                         RemoteTFT.printStars(Catalogue.getSelectedClipRating());
                         break; 
   }
@@ -452,7 +434,32 @@ String getNextFile()
   return NextClip;
 }
 
-
+// *******************************************************************************
+// envioe un messaeg à l'Arduino Slave, pour afficher le mode demandé
+// *******************************************************************************
+void displayRequestedMode()
+{
+            String ModeMessage;
+            switch (ModeButton.getValue())
+            {
+                case 1: ModeMessage = F("Musique favorite "); 
+                        ModeMessage += String(Catalogue.RequestedRating);
+                        ModeMessage += F(" stars");
+                        break;
+                case 2: ModeMessage = F("    Années ");
+                        ModeMessage += String(Catalogue.RangeStart);
+                        ModeMessage += "-";
+                        ModeMessage += String(Catalogue.RangeEnd);
+                        break;
+                case 3: ModeMessage = F("Genre: ");
+                        ModeMessage += Catalogue.RequestedGenre;            
+                        break;
+                case 4: ModeMessage = F("   Musique aleatoire");
+                        break;
+            }
+            RemoteTFT.printLog(ModeMessage);
+  
+}
 
 
 // *******************************************************************************

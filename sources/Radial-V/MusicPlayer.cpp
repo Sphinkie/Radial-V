@@ -402,15 +402,16 @@ void MusicPlayer::dir()
 
 
 // ******************************************************************************
-// Un petit séquenceur d'étapes (de 1 à N). 0 si inactif.
-// Il part de 1 chaque fois qu'un nouveau clip commence à être joué.
+// Un petit séquenceur d'étapes (de 1 à MAX_STEP). 0 si inactif.
+// Il part de 1 chaque fois qu'un nouveau clip commence à être joué (etat transitoire).
 // ******************************************************************************
 int MusicPlayer::getStep()
 {
   int CurrentStep = Step;
-  if (Step > 0) Step++;
+  if (CurrentStep > 0) Step++;
   if (Step > MAX_STEP) Step=0;
-  return CurrentStep;
+  Serial.print(F("  Step ")); Serial.print(CurrentStep); Serial.print(F("-->")); Serial.println(Step);
+  return Step;
 }
 
 

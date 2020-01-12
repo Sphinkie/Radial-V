@@ -30,10 +30,9 @@ class Catalog
         String getSelectedClipYear();
         String getSelectedClipRating();
         long   getRatingPosition();
-        void   promoteSelectedClip();
         // Accès au fichier Catalog.ndx
-        void   addStar(long clipPosition);
-        void   removeStar(long clipPosition);
+        void   writeAddStar(long clipPosition);
+        void   writeRemoveStar(long clipPosition);
       
     private:
         bool   openCatalogAtPosition(long pos);
