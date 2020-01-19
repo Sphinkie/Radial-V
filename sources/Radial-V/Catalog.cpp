@@ -4,7 +4,6 @@
 // Cet objet permet de gérer le Catalogue des clips mp3.
 // *******************************************************************************
 
-
 #include <SdFat.h>
 #include "Catalog.h"
 

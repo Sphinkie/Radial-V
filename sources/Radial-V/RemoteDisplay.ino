@@ -44,9 +44,9 @@ void RemoteDisplay::setBackgroundImage()
   
 // **********************************************************
 // Envoie un texte à afficher (Titre)
-// Notes: la library MP3 fourni un tag limité à 30 chars
+// Notes: la library MP3 fournit un tag limité à 30 chars
 //        la library Wire tronque à 32 chars.
-// Donc le titre doit tenir dans le message à tous les coups
+// Donc le titre fourni par le MP3 doit tenir dans le message I2C à tous les coups.
 // **********************************************************
 void RemoteDisplay::printTitle(String texte)
 {

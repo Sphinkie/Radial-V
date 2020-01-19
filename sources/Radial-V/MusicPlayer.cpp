@@ -1,9 +1,8 @@
-
 /* ***********************************************************
  *  MUSIC PLAYER
  *  
  *  Gestion de la carte Sparkfun MP3 player, en utilisant la 
- *  librairie "SFE-MP3-Shield" de William Greiman
+ *  librairie "SFE-MP3-Shield" de William Greiman et le bus SPI
  *  
  ************************************************************* */
 
@@ -13,10 +12,12 @@
 #include <SFEMP3Shield.h>
 #include "MusicPlayer.h"
 
+// ******************************************************************************
+// Déclaration des objets (en dehors de la classe)
+// ******************************************************************************
 // Mode réel        
-        SdFat        sd;    
-        SFEMP3Shield MP3player;
-
+SdFat        sd;    
+SFEMP3Shield MP3player;
 
 // Mode simulé
 // #include "Bouchon.h"
@@ -35,7 +36,7 @@ MusicPlayer::MusicPlayer(byte pinSD_CS)
   // La solution qui semble marcher est de mettre les pins SS à HIGH( inactif) dès le début. 
   // Sinon les lecteurs SD peuvent recevoir des parasites sur la ligne SPI, et se bloquer...
   pinMode(pinSD_CS, OUTPUT);  digitalWrite(pinSD_CS, HIGH);   
-  pinMode(53, OUTPUT);        digitalWrite(53, HIGH); 
+  pinMode(53, OUTPUT);        digitalWrite(53, HIGH);   // SPI_SS = 53
   /***************************************************************/
 }
 

@@ -35,6 +35,7 @@
 
 #include "Radial-V.h"
 #include "MusicPlayer.h"
+#include "FMplayer.h"
 #include "RotaryButton.h"
 #include "CapButton.h"
 #include "SelfReturnButton.h"
@@ -52,31 +53,35 @@
 #define MP3_CS     6    // D6   MP3 CS      (MP3 shield)
 #define MP3_DCS    7    // D7   MP3 data CS (MP3 shield)
 #define SD_CS      9    // D9   SD CS       (MP3 shield)
-                        // D10  input       bouton Tuning Fav (option)
+                        // D10
+                        // D11  
 #define NEXT       18   // D18  Digital In     avec hardware interrupt 5
 #define PROMOTE    19   // D19  Digital In     avec hardware interrupt 4
-// I2C                  // D20  Digital In/out avec hardware interrupt 3
-// I2C                  // D21  Digital In/out avec hardware interrupt 2
+// ------------------Définis dans FMplayer.h 
+// #define SDIO      20 // D20 I2C Bus - Digital In/out avec hardware interrupt 3
+// #define SCLK      21 // D21 I2C Bus - Digital In/out avec hardware interrupt 2
+// #define FM_RESET  23 // D23 output : FM shield reset command (active LOW)
+                        // D24
 #define MODE_4     25   // D25  input   C-MODE-5    bouton Mode
 #define MODE_3     27   // D27  input   C-MODE-4    bouton Mode
 #define MODE_2     29   // D29  input   C-MODE-3    bouton Mode
 #define MODE_1     31   // D31  input   C-MODE-2    bouton Mode
 #define MP3_ON     33   // D33  input   C-MODE-1    selecteur FM/MP3 
 #define FM_ON      35   // D35  input   C-FMMP-1    selecteur FM/MP3
-#define SPARE_IN   37   // D37  input       Digital In/Out SPARE
+// #define FM_STC    37 // D37 input  : FM shield pulse received then Seek/Tune completed. (pin GPI02 du shield FM Si7403)  
 #define K1         39   // D39  Digital Out Commande du relais K1
 #define K2         41   // D41  Digital Out Commande du relais K2
 #define SPARE_LED  43   // D43  input       SPARE LED
-#define LED_1      45   // D45  input       LED
-#define LED_2      47   // D47  input       LED
-// SPI MISO             // D50  input  
-// SPI MOSI             // D51  output 
-// SPI SCLK             // D52  output 
-// SPI SS               // D53  input  (configuré en output car Master)
+#define LED_1      45   // D45  output     LED
+#define LED_2      47   // D47  output     LED
+// SPI_MISO             // D50  input  
+// SPI_MOSI             // D51  output 
+// SPI_SCLK             // D52  output 
+// SPI_SS               // D53  input  (configuré en output car Master)
 
 
 #define TUNE_OUT   A12    // A12  analog output for bouton Tune (charge pin)
-#define TUNE_IN    A14    // A14  analog input for bouton Tune (discharge pin)
+#define TUNE_IN    A14    // A14  analog input for bouton Tune  (discharge pin)
 
 
 
@@ -84,6 +89,7 @@
 // variables globales
 // *******************************************************************************
 MusicPlayer        mp3shield(SD_CS);
+FMplayer           FmShield();
 Catalog            Catalogue;
 Rotary             ModeButton(MODE_1,MODE_2,MODE_3,MODE_4); 
 Rotary             SourceButton(MP3_ON, FM_ON); 

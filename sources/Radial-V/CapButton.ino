@@ -13,7 +13,7 @@
 #include "CapButton.h"
 
 // **********************************************************
-// Contructor
+// Constructor
 // **********************************************************
 CapButton::CapButton(int in_pin, int out_pin)
 {
@@ -45,7 +45,7 @@ void CapButton::begin()
 }
 
 // **********************************************************
-// On lit et renvoie la position de l'entrée digitale (valeur de 0 à 1023)
+// On lit et renvoie la position de l'entrée analogique (valeur de 0 à 1023)
 // Capacitor under test between Pin_out and Pin_In
 // **********************************************************
 int CapButton::readValue()
@@ -144,13 +144,12 @@ int CapButton::chargeAndMesure()
   int measure;
    // On génère un Front Montant (charge) sur Pin_Out
    pinMode(Pin_In, INPUT);
-   digitalWrite(Pin_Out, HIGH);
+   digitalWrite(Pin_Out, HIGH);   // Durée = environ 2ms
    // On lit la valeur sur Pin_In (pendant la décharge)
-  measure = analogRead(Pin_In);
-
-  // On redescend le niveau sur Pin_Out (le creneau a duré 0.1 ms)
-  digitalWrite(Pin_Out, LOW);
-  pinMode(Pin_In, OUTPUT);
+   measure = analogRead(Pin_In);  // Durée environ 0.1ms
+   // On redescend le niveau sur Pin_Out (le creneau a duré 0.1 ms)
+   digitalWrite(Pin_Out, LOW);
+   pinMode(Pin_In, OUTPUT);
 
   // on calcule la valeur en pF
   // float capacitance = (float)measure * IN_CAP_TO_GND / (float)(MAX_ADC_VALUE - measure);
