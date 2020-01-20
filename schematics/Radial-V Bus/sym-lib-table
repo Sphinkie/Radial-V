@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name Radial-V_Bus-eagle-import)(type Legacy)(uri ${KIPRJMOD}/Radial-V_Bus-eagle-import.lib)(options "")(descr ""))
+)
