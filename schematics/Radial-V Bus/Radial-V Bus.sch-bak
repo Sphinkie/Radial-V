@@ -4,7 +4,7 @@ EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
-Title "RADIAL-V Bus Board"
+Title "RADIAL-V : Bus Board"
 Date "2020-01-19"
 Rev "2"
 Comp "David"
@@ -277,17 +277,6 @@ F 3 "" H 3250 3850 50  0001 C CNN
 $EndComp
 Text Notes 3590 4500 0    59   ~ 0
 1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13
-$Comp
-L Radial-V_Bus-eagle-import:DINA4_L #FRAME1
-U 2 1 DF320C8D
-P 5600 8050
-F 0 "#FRAME1" H 5600 8050 50  0001 C CNN
-F 1 "RADIAL-V BUS BOARD" H 5600 8050 50  0001 C CNN
-F 2 "" H 5600 8050 50  0001 C CNN
-F 3 "" H 5600 8050 50  0001 C CNN
-	2    5600 8050
-	1    0    0    -1  
-$EndComp
 Text Notes 2790 4500 0    59   ~ 0
 14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\nX
 NoConn ~ 2950 4450
@@ -304,19 +293,6 @@ NoConn ~ 8650 1550
 NoConn ~ 8750 1550
 NoConn ~ 8850 1550
 NoConn ~ 9850 1550
-$Comp
-L Connector_Generic:Conn_01x02 J2
-U 1 1 5E2B59C0
-P 10050 400
-F 0 "J2" V 10014 212 50  0000 R CNN
-F 1 "Conn_Reset" V 10150 550 50  0000 R CNN
-F 2 "Connector_Molex:Molex_KK-254_AE-6410-02A_1x02_P2.54mm_Vertical" H 10050 400 50  0001 C CNN
-F 3 "~" H 10050 400 50  0001 C CNN
-	1    10050 400 
-	0    -1   -1   0   
-$EndComp
-Wire Wire Line
-	10150 600  10150 1400
 NoConn ~ 9850 950 
 NoConn ~ 9750 950 
 NoConn ~ 9650 950 
@@ -328,14 +304,10 @@ NoConn ~ 9150 950
 NoConn ~ 9250 950 
 NoConn ~ 9550 950 
 NoConn ~ 9150 1550
-Text Label 9850 1400 0    50   ~ 0
+Text Label 10400 1350 0    50   ~ 0
 RESET
 Wire Wire Line
 	9250 1550 9250 1250
-Wire Wire Line
-	9250 1250 10050 1250
-Wire Wire Line
-	10050 1250 10050 600 
 Text Label 9250 1500 1    50   ~ 0
 GND
 Text Label 9350 1500 1    50   ~ 0
@@ -343,9 +315,7 @@ GND
 Text Label 9450 1500 1    50   ~ 0
 5V
 Wire Wire Line
-	9650 1550 9650 1400
-Wire Wire Line
-	9650 1400 10150 1400
+	9650 1550 9650 1350
 NoConn ~ 9750 1550
 Wire Wire Line
 	9550 1550 9550 1300
@@ -656,4 +626,19 @@ Wire Wire Line
 	4300 3250 4300 6000
 Wire Wire Line
 	4300 2850 6250 2850
+$Comp
+L Connector_Generic:Conn_01x02 J2
+U 1 1 5E2B59C0
+P 10950 1250
+F 0 "J2" V 10914 1062 50  0000 R CNN
+F 1 "Conn_Reset" V 11050 1400 50  0000 R CNN
+F 2 "Connector_Molex:Molex_KK-254_AE-6410-02A_1x02_P2.54mm_Vertical" H 10950 1250 50  0001 C CNN
+F 3 "~" H 10950 1250 50  0001 C CNN
+	1    10950 1250
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9650 1350 10750 1350
+Wire Wire Line
+	9250 1250 10750 1250
 $EndSCHEMATC
