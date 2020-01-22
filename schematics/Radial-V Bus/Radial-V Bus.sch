@@ -70,19 +70,9 @@ D35
 Text Label 3750 3950 0    47   ~ 0
 D35
 Wire Wire Line
-	6250 3550 4750 3550
+	800  2600 800  3850
 Wire Wire Line
-	4750 3550 4750 2550
-Wire Wire Line
-	4750 2550 1950 2550
-Wire Wire Line
-	1950 2550 1950 3850
-Wire Wire Line
-	1950 3850 2950 3850
-Text Label 5750 3550 0    50   ~ 0
-D37
-Text Label 2550 3850 0    50   ~ 0
-D37
+	800  3850 2950 3850
 Wire Wire Line
 	6250 3450 4550 3450
 Wire Wire Line
@@ -407,13 +397,13 @@ D17
 $Comp
 L Connector_Generic:Conn_01x02 J1
 U 1 1 5E4E56BA
-P 9500 2550
-F 0 "J1" V 9464 2362 50  0000 R CNN
-F 1 "Conn_Alim" V 9600 2700 50  0000 R CNN
-F 2 "Connector_Molex:Molex_KK-254_AE-6410-02A_1x02_P2.54mm_Vertical" H 9500 2550 50  0001 C CNN
-F 3 "~" H 9500 2550 50  0001 C CNN
-	1    9500 2550
-	1    0    0    -1  
+P 9500 2650
+F 0 "J1" V 9464 2462 50  0000 R CNN
+F 1 "Conn_Alim" V 9600 2800 50  0000 R CNN
+F 2 "Connector_Molex:Molex_KK-254_AE-6410-02A_1x02_P2.54mm_Vertical" H 9500 2650 50  0001 C CNN
+F 3 "~" H 9500 2650 50  0001 C CNN
+	1    9500 2650
+	1    0    0    1   
 $EndComp
 NoConn ~ 6750 2950
 NoConn ~ 6750 3050
@@ -582,7 +572,7 @@ U 1 1 5E2B59C0
 P 10950 1250
 F 0 "J2" V 10914 1062 50  0000 R CNN
 F 1 "Conn_Reset" V 11050 1400 50  0000 R CNN
-F 2 "Connector_Molex:Molex_KK-254_AE-6410-02A_1x02_P2.54mm_Vertical" H 10950 1250 50  0001 C CNN
+F 2 "Connector_JST:JST_EH_B2B-EH-A_1x02_P2.50mm_Vertical" H 10950 1250 50  0001 C CNN
 F 3 "~" H 10950 1250 50  0001 C CNN
 	1    10950 1250
 	1    0    0    -1  
@@ -643,4 +633,7 @@ Wire Wire Line
 Wire Wire Line
 	2300 3250 2950 3250
 Connection ~ 6000 4650
+NoConn ~ 6250 3550
+Text Label 800  2600 0    50   ~ 0
+RESET
 $EndSCHEMATC
