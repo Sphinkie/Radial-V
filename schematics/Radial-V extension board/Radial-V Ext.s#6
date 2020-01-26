@@ -8221,7 +8221,7 @@ DIN A4, landscape with extra doc field</description>
 <part name="R5" library="rcl" deviceset="R-US_" device="0411/15" value="1k"/>
 <part name="C-FM-MP" library="con-molex" deviceset="22-?-02" device="27-2021"/>
 <part name="RN1" library="resistor-sil" deviceset="G08R" device="" value="10k"/>
-<part name="JP8" library="pinhead" deviceset="PINHD-1X3" device="" value="TUNE (Test points)"/>
+<part name="JP8" library="pinhead" deviceset="PINHD-1X3" device="" value="SPI"/>
 <part name="CNX-PUSH" library="con-molex" deviceset="22-?-04" device="27-2041"/>
 <part name="C-AUDIO-OUT" library="con-molex" deviceset="22-?-04" device="27-2041"/>
 <part name="C-MODE" library="con-molex" deviceset="22-?-06" device="27-2061"/>
@@ -8274,7 +8274,7 @@ DIN A4, landscape with extra doc field</description>
 <sheets>
 <sheet>
 <plain>
-<text x="439.42" y="139.7" size="1.778" layer="91">Capacitor Sensor</text>
+<text x="586.74" y="149.86" size="1.778" layer="91">Capacitor Sensor</text>
 <text x="580.898" y="-11.176" size="1.778" layer="91">DAVID</text>
 <text x="557.276" y="-3.81" size="1.778" layer="91">Carte d'extension pour RADIAL-V
   - Connecteurs IN/OUT: Capacité Variable (Tuning) + Spares
@@ -8294,7 +8294,6 @@ Shield Sparfun FM Radio</text>
   - Commande des relais pour la sélection de l'audio (MP3 ou FM).
   - Connecteurs bus I2C (avec Level Shifter pour Slave sous 3v3)</text>
 <text x="637.54" y="-15.24" size="1.778" layer="91">2</text>
-<text x="637.54" y="-208.28" size="1.778" layer="91">2</text>
 </plain>
 <instances>
 <instance part="RN2" gate="A" x="485.14" y="-93.98" rot="R270"/>
@@ -8303,9 +8302,9 @@ Shield Sparfun FM Radio</text>
 <instance part="CNX-SPARE1" gate="-3" x="401.32" y="-2.54" rot="R180"/>
 <instance part="C-I2C" gate="-1" x="401.32" y="-55.88" rot="R180"/>
 <instance part="C-I2C" gate="-2" x="401.32" y="-53.34" rot="R180"/>
-<instance part="CNX-TUNE" gate="-1" x="480.06" y="129.54" rot="MR180"/>
-<instance part="CNX-TUNE" gate="-2" x="480.06" y="132.08" rot="MR180"/>
-<instance part="CNX-TUNE" gate="-3" x="480.06" y="134.62" rot="MR180"/>
+<instance part="CNX-TUNE" gate="-1" x="627.38" y="139.7" rot="MR180"/>
+<instance part="CNX-TUNE" gate="-2" x="627.38" y="142.24" rot="MR180"/>
+<instance part="CNX-TUNE" gate="-3" x="627.38" y="144.78" rot="MR180"/>
 <instance part="R1" gate="G$1" x="579.12" y="50.8"/>
 <instance part="R2" gate="G$1" x="579.12" y="38.1"/>
 <instance part="R3" gate="G$1" x="579.12" y="22.86"/>
@@ -8333,7 +8332,7 @@ Shield Sparfun FM Radio</text>
 <instance part="C-FM-MP" gate="-1" x="622.3" y="81.28" rot="MR180"/>
 <instance part="C-FM-MP" gate="-2" x="622.3" y="83.82" rot="MR180"/>
 <instance part="RN1" gate="G$1" x="589.28" y="91.44" rot="MR180"/>
-<instance part="JP8" gate="A" x="482.6" y="116.84" rot="MR180"/>
+<instance part="JP8" gate="A" x="604.52" y="124.46" rot="MR270"/>
 <instance part="CNX-PUSH" gate="-1" x="401.32" y="48.26" rot="R180"/>
 <instance part="CNX-PUSH" gate="-2" x="401.32" y="50.8" rot="R180"/>
 <instance part="CNX-PUSH" gate="-3" x="401.32" y="53.34" rot="R180"/>
@@ -8380,7 +8379,7 @@ Shield Sparfun FM Radio</text>
 <instance part="P+10" gate="VCC" x="434.34" y="88.9"/>
 <instance part="P+11" gate="VCC" x="525.78" y="10.16"/>
 <instance part="GND10" gate="1" x="495.3" y="-208.28"/>
-<instance part="X1" gate="-2" x="401.32" y="129.54" rot="MR0"/>
+<instance part="X1" gate="-2" x="548.64" y="139.7" rot="MR0"/>
 <instance part="X1" gate="-3" x="551.18" y="30.48" rot="MR0"/>
 <instance part="X1" gate="-4" x="551.18" y="33.02" rot="MR0"/>
 <instance part="X1" gate="-5" x="513.08" y="43.18"/>
@@ -8392,20 +8391,20 @@ Shield Sparfun FM Radio</text>
 <instance part="X1" gate="-11" x="624.84" y="-53.34" rot="MR180"/>
 <instance part="X1" gate="-12" x="393.7" y="-68.58" rot="R180"/>
 <instance part="X1" gate="-13" x="624.84" y="-55.88"/>
-<instance part="X1" gate="-14" x="401.32" y="132.08" rot="MR0"/>
+<instance part="X1" gate="-14" x="548.64" y="142.24" rot="MR0"/>
 <instance part="X1" gate="-15" x="551.18" y="27.94" rot="R180"/>
 <instance part="X1" gate="-16" x="469.9" y="-7.62"/>
 <instance part="X1" gate="-17" x="421.64" y="-7.62" rot="MR180"/>
 <instance part="X1" gate="-18" x="513.08" y="53.34"/>
 <instance part="X1" gate="-19" x="452.12" y="-195.58" rot="R180"/>
-<instance part="X1" gate="-20" x="548.64" y="137.16" rot="R180"/>
+<instance part="X1" gate="-20" x="454.66" y="106.68"/>
 <instance part="X1" gate="-21" x="548.64" y="101.6" rot="R180"/>
 <instance part="X1" gate="-22" x="548.64" y="106.68" rot="R180"/>
 <instance part="X1" gate="-23" x="548.64" y="111.76" rot="R180"/>
 <instance part="X1" gate="-24" x="624.84" y="-50.8"/>
 <instance part="X1" gate="-25" x="393.7" y="-66.04" rot="R180"/>
 <instance part="X1" gate="-G" x="535.94" y="2.54" rot="MR90"/>
-<instance part="X1" gate="-1" x="401.32" y="134.62" rot="MR0"/>
+<instance part="X1" gate="-1" x="548.64" y="144.78" rot="MR0"/>
 <instance part="CNX-ALIM" gate="-1" x="497.84" y="-7.62" rot="R180"/>
 <instance part="CNX-ALIM" gate="-2" x="497.84" y="-5.08" rot="R180"/>
 <instance part="LED1" gate="-1" x="624.84" y="40.64"/>
@@ -8418,7 +8417,7 @@ Shield Sparfun FM Radio</text>
 <instance part="FRAME1" gate="G$2" x="543.56" y="-22.86"/>
 <instance part="FRAME2" gate="G$1" x="381" y="-215.9"/>
 <instance part="FRAME2" gate="G$2" x="543.56" y="-215.9"/>
-<instance part="JP1" gate="G$1" x="607.06" y="137.16" rot="R180"/>
+<instance part="JP1" gate="G$1" x="396.24" y="106.68" rot="R180"/>
 <instance part="P+14" gate="VCC" x="419.1" y="-162.56"/>
 <instance part="P+15" gate="VCC" x="508" y="-162.56"/>
 <instance part="+3V1" gate="G$1" x="447.04" y="-68.58"/>
@@ -8647,44 +8646,41 @@ Shield Sparfun FM Radio</text>
 </net>
 <net name="A14" class="0">
 <segment>
-<label x="408.94" y="129.54" size="1.778" layer="95"/>
-<label x="464.82" y="129.54" size="1.778" layer="95"/>
+<label x="556.26" y="139.7" size="1.778" layer="95"/>
+<label x="612.14" y="139.7" size="1.778" layer="95"/>
 <pinref part="JP8" gate="A" pin="3"/>
-<wire x1="403.86" y1="129.54" x2="459.74" y2="129.54" width="0.1524" layer="91"/>
+<wire x1="607.06" y1="139.7" x2="607.06" y2="127" width="0.1524" layer="91"/>
+<wire x1="551.18" y1="139.7" x2="607.06" y2="139.7" width="0.1524" layer="91"/>
 <pinref part="X1" gate="-2" pin="F"/>
 <pinref part="CNX-TUNE" gate="-1" pin="S"/>
-<wire x1="477.52" y1="129.54" x2="459.74" y2="129.54" width="0.1524" layer="91"/>
-<junction x="459.74" y="129.54"/>
-<wire x1="480.06" y1="119.38" x2="459.74" y2="119.38" width="0.1524" layer="91"/>
-<wire x1="459.74" y1="119.38" x2="459.74" y2="129.54" width="0.1524" layer="91"/>
+<wire x1="624.84" y1="139.7" x2="607.06" y2="139.7" width="0.1524" layer="91"/>
+<junction x="607.06" y="139.7"/>
 </segment>
 </net>
-<net name="A12" class="0">
+<net name="A23" class="0">
 <segment>
-<label x="408.94" y="132.08" size="1.778" layer="95"/>
+<label x="556.26" y="142.24" size="1.778" layer="95"/>
 <pinref part="CNX-TUNE" gate="-2" pin="S"/>
-<wire x1="477.52" y1="132.08" x2="457.2" y2="132.08" width="0.1524" layer="91"/>
+<wire x1="624.84" y1="142.24" x2="604.52" y2="142.24" width="0.1524" layer="91"/>
 <pinref part="JP8" gate="A" pin="2"/>
-<label x="464.82" y="132.08" size="1.778" layer="95"/>
-<junction x="457.2" y="132.08"/>
-<wire x1="403.86" y1="132.08" x2="457.2" y2="132.08" width="0.1524" layer="91"/>
+<label x="612.14" y="142.24" size="1.778" layer="95"/>
+<wire x1="604.52" y1="142.24" x2="604.52" y2="127" width="0.1524" layer="91"/>
+<junction x="604.52" y="142.24"/>
+<wire x1="551.18" y1="142.24" x2="604.52" y2="142.24" width="0.1524" layer="91"/>
 <pinref part="X1" gate="-14" pin="F"/>
-<wire x1="480.06" y1="116.84" x2="457.2" y2="116.84" width="0.1524" layer="91"/>
-<wire x1="457.2" y1="116.84" x2="457.2" y2="132.08" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="GND-ARD" class="0">
 <segment>
-<label x="408.94" y="134.62" size="1.778" layer="95"/>
+<label x="556.26" y="144.78" size="1.778" layer="95"/>
 <pinref part="JP8" gate="A" pin="1"/>
-<label x="464.82" y="134.62" size="1.778" layer="95"/>
-<wire x1="403.86" y1="134.62" x2="454.66" y2="134.62" width="0.1524" layer="91"/>
+<wire x1="601.98" y1="144.78" x2="601.98" y2="127" width="0.1524" layer="91"/>
+<label x="612.14" y="144.78" size="1.778" layer="95"/>
+<wire x1="551.18" y1="144.78" x2="601.98" y2="144.78" width="0.1524" layer="91"/>
 <pinref part="X1" gate="-1" pin="F"/>
 <pinref part="CNX-TUNE" gate="-3" pin="S"/>
-<wire x1="477.52" y1="134.62" x2="454.66" y2="134.62" width="0.1524" layer="91"/>
-<junction x="454.66" y="134.62"/>
-<wire x1="480.06" y1="114.3" x2="454.66" y2="114.3" width="0.1524" layer="91"/>
-<wire x1="454.66" y1="114.3" x2="454.66" y2="134.62" width="0.1524" layer="91"/>
+<wire x1="624.84" y1="144.78" x2="601.98" y2="144.78" width="0.1524" layer="91"/>
+<junction x="601.98" y="144.78"/>
 </segment>
 </net>
 <net name="D47" class="0">
@@ -9085,7 +9081,7 @@ Shield Sparfun FM Radio</text>
 <wire x1="508" y1="-185.42" x2="508" y2="-182.88" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="D37" class="0">
+<net name="OLD-A12" class="0">
 <segment>
 <pinref part="CNX-SPARE1" gate="-1" pin="S"/>
 <wire x1="403.86" y1="-7.62" x2="419.1" y2="-7.62" width="0.1524" layer="91"/>
@@ -9093,7 +9089,7 @@ Shield Sparfun FM Radio</text>
 <pinref part="X1" gate="-17" pin="F"/>
 </segment>
 </net>
-<net name="D49" class="0">
+<net name="OLD-A14" class="0">
 <segment>
 <pinref part="CNX-SPARE2" gate="-1" pin="S"/>
 <wire x1="452.12" y1="-7.62" x2="467.36" y2="-7.62" width="0.1524" layer="91"/>
@@ -9120,6 +9116,15 @@ Shield Sparfun FM Radio</text>
 <pinref part="R1" gate="G$1" pin="2"/>
 <pinref part="JP5" gate="A" pin="3"/>
 <wire x1="584.2" y1="50.8" x2="596.9" y2="50.8" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="RESET" class="0">
+<segment>
+<pinref part="X1" gate="-20" pin="F"/>
+<wire x1="452.12" y1="106.68" x2="398.78" y2="106.68" width="0.1524" layer="91"/>
+<pinref part="JP1" gate="G$1" pin="1"/>
+<label x="406.4" y="106.68" size="1.778" layer="95"/>
+<label x="447.04" y="106.68" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="+3V3" class="0">
@@ -9151,13 +9156,6 @@ Shield Sparfun FM Radio</text>
 <pinref part="+3V4" gate="G$1" pin="+3V3"/>
 <wire x1="520.7" y1="-45.72" x2="520.7" y2="-55.88" width="0.1524" layer="91"/>
 <junction x="520.7" y="-55.88"/>
-</segment>
-</net>
-<net name="RESET" class="0">
-<segment>
-<pinref part="X1" gate="-20" pin="F"/>
-<wire x1="551.18" y1="137.16" x2="607.06" y2="137.16" width="0.1524" layer="91"/>
-<label x="558.8" y="137.16" size="1.778" layer="95"/>
 </segment>
 </net>
 </nets>
