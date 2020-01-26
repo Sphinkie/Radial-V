@@ -24,14 +24,14 @@ SDA
 Text Label 2450 4350 0    50   ~ 0
 SDA
 Wire Wire Line
-	2950 3450 900  3450
+	2950 3450 2350 3450
 Text Label 5950 1350 0    50   ~ 0
 A14
-Text Label 2300 3250 0    50   ~ 0
+Text Label 2350 3250 0    50   ~ 0
 A14
 Wire Wire Line
-	2950 3550 900  3550
-Text Label 4150 3350 0    50   ~ 0
+	2950 3550 2350 3550
+Text Label 3900 3350 0    50   ~ 0
 A12
 Text Label 5750 2850 0    50   ~ 0
 D51-MOSI
@@ -177,7 +177,7 @@ Wire Wire Line
 	6750 2750 7450 2750
 Wire Wire Line
 	7450 2750 7450 3450
-Text Label 6800 2750 0    50   ~ 0
+Text Label 6850 2750 0    50   ~ 0
 D52-SCLK
 Wire Wire Line
 	6750 2850 7350 2850
@@ -580,7 +580,7 @@ D25
 Wire Wire Line
 	6250 2950 5750 2950
 Wire Wire Line
-	4150 3350 3550 3350
+	4050 3350 3550 3350
 Wire Wire Line
 	4300 2650 4300 3250
 Wire Wire Line
@@ -589,8 +589,8 @@ Connection ~ 6000 2650
 Text Label 5750 2950 0    50   ~ 0
 D49
 Wire Wire Line
-	2300 3250 2950 3250
-NoConn ~ 6250 3550
+	2350 3250 2950 3250
+NoConn ~ 6250 2750
 $Comp
 L Connector_Generic:Conn_01x02 J1
 U 1 1 5E4E56BA
@@ -676,12 +676,12 @@ Text Notes 7600 1150 0    50   ~ 0
 Arduino Mega
 Text Label 5950 1250 0    50   ~ 0
 A12
-Text Label 900  3450 0    50   ~ 0
+Text Label 2350 3450 0    50   ~ 0
 D49
-Text Label 5750 2750 0    50   ~ 0
-D34
+Text Label 5750 3550 0    50   ~ 0
+D37
+Text Label 2350 3550 0    50   ~ 0
+D37
 Wire Wire Line
-	6250 2750 5750 2750
-Text Label 900  3550 0    50   ~ 0
-D34
+	6250 3550 5750 3550
 $EndSCHEMATC

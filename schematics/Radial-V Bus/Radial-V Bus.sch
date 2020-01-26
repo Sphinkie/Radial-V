@@ -24,14 +24,14 @@ SDA
 Text Label 2450 4350 0    50   ~ 0
 SDA
 Wire Wire Line
-	2950 3450 900  3450
+	2950 3450 2350 3450
 Text Label 5950 1350 0    50   ~ 0
 A14
-Text Label 2300 3250 0    50   ~ 0
+Text Label 2350 3250 0    50   ~ 0
 A14
 Wire Wire Line
-	2950 3550 900  3550
-Text Label 4150 3350 0    50   ~ 0
+	2950 3550 2350 3550
+Text Label 3900 3350 0    50   ~ 0
 A12
 Text Label 5750 2850 0    50   ~ 0
 D51-MOSI
@@ -174,13 +174,13 @@ D23
 Text Label 3900 4250 0    47   ~ 0
 D23
 Wire Wire Line
-	6750 2750 7450 2750
+	6750 2750 6850 2750
 Wire Wire Line
 	7450 2750 7450 3450
-Text Label 6800 2750 0    50   ~ 0
+Text Label 6850 2750 0    50   ~ 0
 D52-SCLK
 Wire Wire Line
-	6750 2850 7350 2850
+	6750 2850 6850 2850
 Wire Wire Line
 	7350 2850 7350 3550
 Text Label 6850 2850 0    50   ~ 0
@@ -192,7 +192,7 @@ Wire Wire Line
 Wire Wire Line
 	6250 2650 6000 2650
 Wire Wire Line
-	7050 2650 6750 2650
+	7050 2650 6850 2650
 Text Label 7650 2300 0    50   ~ 0
 GND-ARD
 Wire Wire Line
@@ -482,20 +482,20 @@ $EndComp
 $Comp
 L Connector_Generic:Conn_02x18_Odd_Even ARD-C4
 U 1 1 5E5F46C1
-P 6550 3550
-F 0 "ARD-C4" H 6600 2425 50  0000 C CNN
-F 1 "D22-D53" H 6600 2516 50  0000 C CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_2x18_P2.54mm_Vertical" H 6550 3550 50  0001 C CNN
-F 3 "~" H 6550 3550 50  0001 C CNN
-	1    6550 3550
-	-1   0    0    1   
+P 6450 3550
+F 0 "ARD-C4" H 6500 2425 50  0000 C CNN
+F 1 "D22-D53" H 6500 2516 50  0000 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_2x18_P2.54mm_Vertical" H 6450 3550 50  0001 C CNN
+F 3 "~" H 6450 3550 50  0001 C CNN
+	1    6450 3550
+	1    0    0    1   
 $EndComp
 Wire Wire Line
 	8250 2650 10750 2650
 Wire Wire Line
 	7050 2300 8250 2300
 Wire Wire Line
-	6750 4350 7050 4350
+	6750 4350 6850 4350
 Wire Wire Line
 	7050 4350 7050 3050
 Wire Wire Line
@@ -580,7 +580,7 @@ D25
 Wire Wire Line
 	6250 2950 5750 2950
 Wire Wire Line
-	4150 3350 3550 3350
+	4050 3350 3550 3350
 Wire Wire Line
 	4300 2650 4300 3250
 Wire Wire Line
@@ -589,7 +589,7 @@ Connection ~ 6000 2650
 Text Label 5750 2950 0    50   ~ 0
 D49
 Wire Wire Line
-	2300 3250 2950 3250
+	2350 3250 2950 3250
 NoConn ~ 6250 2750
 $Comp
 L Connector_Generic:Conn_01x02 J1
@@ -676,12 +676,24 @@ Text Notes 7600 1150 0    50   ~ 0
 Arduino Mega
 Text Label 5950 1250 0    50   ~ 0
 A12
-Text Label 900  3450 0    50   ~ 0
+Text Label 2350 3450 0    50   ~ 0
 D49
 Text Label 5750 3550 0    50   ~ 0
 D37
-Text Label 900  3550 0    50   ~ 0
+Text Label 2350 3550 0    50   ~ 0
 D37
 Wire Wire Line
 	6250 3550 5750 3550
+Connection ~ 6850 4350
+Wire Wire Line
+	6850 4350 7050 4350
+Connection ~ 6850 2850
+Wire Wire Line
+	6850 2850 7350 2850
+Connection ~ 6850 2750
+Wire Wire Line
+	6850 2750 7450 2750
+Connection ~ 6850 2650
+Wire Wire Line
+	6850 2650 6750 2650
 $EndSCHEMATC
