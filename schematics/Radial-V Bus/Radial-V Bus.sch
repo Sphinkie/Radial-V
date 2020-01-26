@@ -24,16 +24,14 @@ SDA
 Text Label 2450 4350 0    50   ~ 0
 SDA
 Wire Wire Line
-	2950 3450 1150 3450
-Text Label 5750 1150 0    50   ~ 0
+	2950 3450 900  3450
+Text Label 5950 1350 0    50   ~ 0
 A14
-Text Label 2350 3450 0    50   ~ 0
+Text Label 2300 3250 0    50   ~ 0
 A14
 Wire Wire Line
-	2950 3550 1250 3550
-Text Label 5750 1350 0    50   ~ 0
-A12
-Text Label 2350 3550 0    50   ~ 0
+	2950 3550 900  3550
+Text Label 4150 3350 0    50   ~ 0
 A12
 Text Label 5750 2850 0    50   ~ 0
 D51-MOSI
@@ -448,7 +446,6 @@ Wire Wire Line
 	9850 6150 9850 5900
 Text Label 9850 6100 1    50   ~ 0
 SCLK
-NoConn ~ 6250 2750
 $Comp
 L Connector_Generic:Conn_01x08 ARD-C1
 U 1 1 5E5E81E0
@@ -514,19 +511,15 @@ Wire Wire Line
 Wire Wire Line
 	8250 2550 8250 2300
 Wire Wire Line
-	7150 1550 7150 1150
+	7150 1550 7150 1350
 Wire Wire Line
-	7350 1550 7350 1350
+	7350 1550 7350 1250
 NoConn ~ 7250 1550
 NoConn ~ 7450 1550
 Wire Wire Line
-	1150 1150 7150 1150
+	5950 1350 7150 1350
 Wire Wire Line
-	1150 1150 1150 3450
-Wire Wire Line
-	1250 1350 7350 1350
-Wire Wire Line
-	1250 1350 1250 3550
+	5950 1250 7350 1250
 Wire Wire Line
 	4700 4350 4700 5200
 Wire Wire Line
@@ -585,11 +578,9 @@ Wire Wire Line
 Text Label 2350 4150 0    50   ~ 0
 D25
 Wire Wire Line
-	6250 2950 4400 2950
+	6250 2950 5750 2950
 Wire Wire Line
-	4400 2950 4400 3350
-Wire Wire Line
-	4400 3350 3550 3350
+	4150 3350 3550 3350
 Wire Wire Line
 	4300 2650 4300 3250
 Wire Wire Line
@@ -597,16 +588,9 @@ Wire Wire Line
 Connection ~ 6000 2650
 Text Label 5750 2950 0    50   ~ 0
 D49
-Text Label 3900 3350 0    50   ~ 0
-D49
-Wire Wire Line
-	6000 4700 2300 4700
-Wire Wire Line
-	2300 4700 2300 3250
 Wire Wire Line
 	2300 3250 2950 3250
-Connection ~ 6000 4700
-NoConn ~ 6250 3550
+NoConn ~ 6250 2750
 $Comp
 L Connector_Generic:Conn_01x02 J1
 U 1 1 5E4E56BA
@@ -628,8 +612,6 @@ Wire Wire Line
 	4300 2650 6000 2650
 Text Label 3900 3250 0    50   ~ 0
 GND-ARD
-Text Label 2350 3250 0    50   ~ 0
-5V
 Text Label 3550 3450 0    24   ~ 0
 X1-3
 Text Label 3550 3550 0    24   ~ 0
@@ -692,4 +674,14 @@ Wire Notes Line
 	5400 1050 10150 1050
 Text Notes 7600 1150 0    50   ~ 0
 Arduino Mega
+Text Label 5950 1250 0    50   ~ 0
+A12
+Text Label 900  3450 0    50   ~ 0
+D49
+Text Label 5750 3550 0    50   ~ 0
+D37
+Text Label 900  3550 0    50   ~ 0
+D37
+Wire Wire Line
+	6250 3550 5750 3550
 $EndSCHEMATC
