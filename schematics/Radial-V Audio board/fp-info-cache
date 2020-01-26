@@ -1,4 +1,4 @@
-15167075016043898
+15170235005488529
 Battery
 BatteryHolder_Bulgin_BX0036_1xC
 Bulgin Battery Holder, BX0036, Battery Type C (https://www.bulgin.com/products/pub/media/bulgin/data/Battery_holders.pdf)
@@ -45233,6 +45233,20 @@ Yellow 5381 Series LED
 0
 2
 2
+MesModules
+Bloc_de_jonction_CI-MPT_2.54mm_01x02
+Bloc de jonction C.I., section nominale: 0,5 mm², pas: 2,54 mm, 2 pôles, Raccordement vissé avec bague
+
+0
+2
+2
+MesModules
+Bloc_de_jonction_CI-MPT_2.54mm_01x03
+Bloc de jonction C.I., section nominale: 0,5 mm², pas: 2,54 mm, 2 pôles, Raccordement vissé avec bague
+
+0
+3
+3
 MesModules
 HE10-26P
 <b>CONNECTOR</b>

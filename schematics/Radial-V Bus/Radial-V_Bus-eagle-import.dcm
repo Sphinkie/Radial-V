@@ -1,3 +1,8 @@
 EESchema-DOCLIB  Version 2.0
 #
+$CMP 26H
+D Custom connector, double row, 02x13, David
+K HE10, connector
+$ENDCMP
+#
 #End Doc Library
