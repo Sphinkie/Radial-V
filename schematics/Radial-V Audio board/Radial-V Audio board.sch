@@ -5,8 +5,8 @@ $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
 Title "RADIAL-V Audio Board"
-Date "2020-01-25"
-Rev ""
+Date "2020-01-26"
+Rev "1"
 Comp "David"
 Comment1 ""
 Comment2 ""

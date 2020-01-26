@@ -352,28 +352,6 @@ F 3 "~" H 1500 2050 50  0001 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L Graphic:SYM_Radio_Waves_Small #SYM1
-U 1 1 5E2D6C30
-P 10750 6250
-F 0 "#SYM1" H 10750 6390 50  0001 C CNN
-F 1 "SYM_Radio_Waves_Small" H 10750 6125 50  0001 C CNN
-F 2 "" H 10750 6075 50  0001 C CNN
-F 3 "~" H 10780 6050 50  0001 C CNN
-	1    10750 6250
-	1    0    0    -1  
-$EndComp
-$Comp
-L Mechanical:MountingHole H3
-U 1 1 5E2D7F45
-P 10150 6300
-F 0 "H3" H 10100 6450 50  0000 L CNN
-F 1 "MountingHole" H 9900 6200 50  0000 L CNN
-F 2 "MountingHole:MountingHole_3.2mm_M3" H 10150 6300 50  0001 C CNN
-F 3 "~" H 10150 6300 50  0001 C CNN
-	1    10150 6300
-	1    0    0    -1  
-$EndComp
-$Comp
 L Mechanical:MountingHole H2
 U 1 1 5E2D8A0D
 P 9600 6300

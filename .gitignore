@@ -9,4 +9,8 @@
 *.b$?
 *.s$?
 *.l$?
+*.sch-bak
 
+# Fichier Gerber
+*.gbr
+*.drl

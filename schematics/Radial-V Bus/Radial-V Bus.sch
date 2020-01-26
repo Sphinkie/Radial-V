@@ -5,7 +5,7 @@ $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
 Title "RADIAL-V : Bus Board"
-Date "2020-01-19"
+Date "2020-01-26"
 Rev "2"
 Comp "David"
 Comment1 ""
@@ -174,13 +174,9 @@ D23
 Text Label 3900 4250 0    47   ~ 0
 D23
 Wire Wire Line
-	6750 2750 6850 2750
-Wire Wire Line
 	7450 2750 7450 3450
 Text Label 6850 2750 0    50   ~ 0
 D52-SCLK
-Wire Wire Line
-	6750 2850 6850 2850
 Wire Wire Line
 	7350 2850 7350 3550
 Text Label 6850 2850 0    50   ~ 0
@@ -191,8 +187,6 @@ Wire Wire Line
 	6000 2300 6000 2650
 Wire Wire Line
 	6250 2650 6000 2650
-Wire Wire Line
-	7050 2650 6850 2650
 Text Label 7650 2300 0    50   ~ 0
 GND-ARD
 Wire Wire Line
@@ -495,8 +489,6 @@ Wire Wire Line
 Wire Wire Line
 	7050 2300 8250 2300
 Wire Wire Line
-	6750 4350 6850 4350
-Wire Wire Line
 	7050 4350 7050 3050
 Wire Wire Line
 	7050 3050 8250 3050
@@ -684,16 +676,12 @@ Text Label 2350 3550 0    50   ~ 0
 D37
 Wire Wire Line
 	6250 3550 5750 3550
-Connection ~ 6850 4350
 Wire Wire Line
-	6850 4350 7050 4350
-Connection ~ 6850 2850
+	6750 2750 7450 2750
 Wire Wire Line
-	6850 2850 7350 2850
-Connection ~ 6850 2750
+	6750 2850 7350 2850
 Wire Wire Line
-	6850 2750 7450 2750
-Connection ~ 6850 2650
+	6750 2650 7050 2650
 Wire Wire Line
-	6850 2650 6750 2650
+	6750 4350 7050 4350
 $EndSCHEMATC
