@@ -5,15 +5,17 @@ SparkFun FM Tuner Basic Breakout - Si4703
 
 [*SparkFun FM Tuner Basic Breakout - Si4703 (BOB-11083)*](https://www.sparkfun.com/products/11083)
 
- This breakout for the Silicon Laboratories Si4703 FM tuner chip is a little more stripped down than our FM Tuner Evaluation Board. 
+This breakout for the Silicon Laboratories Si4703 FM tuner chip is a little more stripped down than our FM Tuner Evaluation Board. 
  If your project already has an amp and just needs a full-featured FM tuner, this is the board for you. 
- 
+
+
+
 Repository Contents
 -------------------
 
 * **/Firmware** - Example code 
 * **/Hardware** - Eagle design files (.brd, .sch)
-* **/Libraries** - Libraries for use with the <PRODUCT NAME>
+* **/Libraries** - Libraries for use with the shield
 * **/Production** - Production panel files (.brd)
 
 Documentation
@@ -22,9 +24,13 @@ Documentation
 * **[SparkFun Fritzing repo](https://github.com/sparkfun/Fritzing_Parts)** - Fritzing diagrams for SparkFun products.
 * **[SparkFun 3D Model repo](https://github.com/sparkfun/3D_Models)** - 3D models of SparkFun products. 
 
+| **L OUT** | **R OUT** | **GND** | **VCC**   | **SDIO** | **SCLK** | **SEN\*** | **RST\*** | **GPIO1** | **GPIO2** |
+| --------- | --------- | ------- | --------- | -------- | -------- | --------- | --------- | --------- | --------- |
+| audio     | audio     | ground  | 3,3 volts | bus I2C  | bus I2C  | N/U       | Reset     | N/U       | info STC  |
 
 License Information
 -------------------
+
 This product is _**open source**_! 
 
 The **hardware** is released under [Creative Commons ShareAlike 4.0 International](https://creativecommons.org/licenses/by-sa/4.0/).
