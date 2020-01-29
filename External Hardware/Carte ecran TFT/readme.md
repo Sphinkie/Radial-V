@@ -28,7 +28,7 @@ Arduino LCD Screen is open-source hardware! You can build your own board using t
 
 ## Hardware
 
-![GLCD_pins](D:\My Projects\Programmes\Radial-V\External Hardware\Carte ecran TFT\GLCD_pins.png)
+![GLCD_pins](GLCD_pins.png)
 
 The screen is 1.77" diagonal, with 160 x 128 pixel resolution. The  TFT library interfaces with the screen's controller through SPI when  using the [TFT library](https://www.arduino.cc/en/Reference/TFTLibrary). Refer to the [screen's data sheet](https://www.arduino.cc/en/uploads/Main/HTF0177SN-01-SPEC.pdf) for complete details.
 
