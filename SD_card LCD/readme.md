@@ -2,7 +2,7 @@
 
 ## SD Card LCD
 
-![i_AUDIO](SD-Card\fun.bmp)
+![Background sample](SD-card/fun.bmp)
 
 Ce dossier contient les éléments nécessaires pour la carte SD du shield "Ecran LCD":
 
