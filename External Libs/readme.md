@@ -1,8 +1,9 @@
+#Radial-V
 
-# Utilisation des librairies:
+## Utilisation des librairies:
 
 
-## Possibilité 1:
+### Possibilité 1:
 
 Ajouter la librairie à l'environnement IDE Arduino.
 
@@ -11,7 +12,7 @@ Menu -> Include Library -> Add .zip library ...
 `#include <NewLib.h>`
 
 
-## Possibilité 2:
+### Possibilité 2:
 
 Ajouter manuellement la librairie à l'environnement IDE Arduino.
 
@@ -19,9 +20,7 @@ Dezipper la librarie dans `Documents\Arduino\libraries` et relancer l'IDE Arduin
 
 `#include <NewLib.h>`
 
-
-
-## Possibilité 3:
+### Possibilité 3:
 
 Donner le chemin de la librairie (*à vérifier*):
 

@@ -89,7 +89,7 @@
 // variables globales
 // *******************************************************************************
 MusicPlayer        mp3shield(SD_CS);
-FMplayer           FmShield();
+//FMplayer           FmShield();
 Catalog            Catalogue;
 Rotary             ModeButton(MODE_1,MODE_2,MODE_3,MODE_4); 
 Rotary             SourceButton(MP3_ON, FM_ON); 
@@ -123,8 +123,9 @@ void setup()
   Serial.println(F("================================="));
   Serial.println(F("==    RADIAL-V                 =="));
   Serial.println(F("================================="));
-  Serial.print  (F("CPU Frequency (MHz)= ")); Serial.println(F_CPU/1000000);
-  Serial.print  (F("Free RAM (bytes)= "));    Serial.println(FreeRam(), DEC);    // FreeRam is provided by SdFatUtil.h
+  Serial.print  (F("CPU Frequency: ")); Serial.print(F_CPU/1000000); Serial.println(F(" MHz"));
+  Serial.print  (F("Free RAM: "));      Serial.print(FreeRam(),DEC); Serial.println(F(" bytes"));
+  // FreeRam is provided by SdFatUtil.h
 
   pinMode(LED_1, OUTPUT); // Led SPI BUSY (Catalog accede à la carte SD)
   pinMode(LED_2, OUTPUT);
