@@ -2,7 +2,7 @@
 
 ## SD Card LCD
 
-![Background sample](SD-card/fun.bmp)
+![Background sample](LCD-font.jpg)
 
 Ce dossier contient les éléments nécessaires pour la carte SD du shield "Ecran LCD":
 
