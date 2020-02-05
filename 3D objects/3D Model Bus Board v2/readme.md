@@ -14,5 +14,5 @@ La carte est un peu plus grande, mais l'encombrement devrait etre diminué car l
 
 ### Vue 3D de la carte:
 
- [3D Model](Radial-V-Bus.stl)
+ [STL 3D model](Radial-V-Bus.stl)
 
