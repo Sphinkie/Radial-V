@@ -8,6 +8,6 @@ Le système comporte deux cartes Arduino Mega: ARD1 (Master) et ARD2 (Slave).
 
 Les deux Arduino communiquent en I2C.
 
-![Vue du modèle 3D](Arduino_Mega_2560.stl)
+[Vue du modèle 3D](Arduino_Mega_2560.stl)
 
 ![Vue de la carte](Arduino_Mega_2560.png)
