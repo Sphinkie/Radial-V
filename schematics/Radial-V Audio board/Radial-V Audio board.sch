@@ -30,7 +30,7 @@ U 1 1 5E2B90E2
 P 3400 1300
 F 0 "J3" V 3565 1230 50  0000 C CNN
 F 1 "Slot PreAmplifier" V 3474 1230 50  0000 C CNN
-F 2 "Connector_JST:JST_VH_B10P-VH-B_1x10_P3.96mm_Vertical" H 3400 1300 50  0001 C CNN
+F 2 "MesModules:Edge_Connector_10P_1x10_P3.96mm_Vertical" H 3400 1300 50  0001 C CNN
 F 3 "~" H 3400 1300 50  0001 C CNN
 	1    3400 1300
 	0    -1   -1   0   
