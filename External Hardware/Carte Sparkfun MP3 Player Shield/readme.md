@@ -14,7 +14,7 @@ Le Player MP3 de Sparkfun est un shield pour Arduino, piloté en I2C, comprenant
 
 ## Dossiers
 
-* **/Documentation**: les PDF contenant toute la documentation de cette carte.
-* **/Pictures**: images de la carte
-* **/Plug-in for VSLI**: le chipset a besoin d'être patché avec ces fichiers binaires, qui contiennent quelques correctifs du fabriquant.
-* **/Sparkfun Repository**: le repository GitHub de la carte, contenant essentiellement son schéma électronique, et quelques exemples de code.
+* **/Documentation** - PDF contenant toute la documentation de cette carte.
+* **/Pictures** - Images de la carte
+* **/Plug-in for VSLI** - Le chipset a besoin d'être patché avec ces fichiers binaires, qui contiennent quelques correctifs du fabriquant.
+* **/Sparkfun Repository** - Le repository GitHub de la carte, contenant essentiellement son schéma électronique, et quelques exemples de code.
