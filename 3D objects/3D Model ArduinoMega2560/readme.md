@@ -1,5 +1,5 @@
 # RADIAL-V
-## Arduino Mega
+## 3D model: Arduino Mega
 
 Le système comporte deux cartes Arduino Mega: ARD1 (Master) et ARD2 (Slave).
 
@@ -8,6 +8,6 @@ Le système comporte deux cartes Arduino Mega: ARD1 (Master) et ARD2 (Slave).
 
 Les deux Arduino communiquent en I2C.
 
-[Vue du modèle 3D](Arduino_Mega_2560.stl)
+[Vue du modèle 3D](ArduinoMega2560.stl)
 
-![Vue de la carte](Arduino_Mega_2560.png)
+![Vue de la carte](ArduinoMega2560.png)

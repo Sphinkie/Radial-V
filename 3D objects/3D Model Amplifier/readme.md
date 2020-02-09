@@ -1,7 +1,9 @@
 # RADIAL-V
 
-## 3D Model : Amplifier board
+## 3D model : Amplifier Board
 
-[Vue du modèle 3D](Velleman Amplifier VM114.stl)
+Amplificateur audio mono 4W.
 
-![Velleman_Amplifier_VM114](D:\My Projects\Programmes\Radial-V\3D objects\3D Model Amplifier\Velleman_Amplifier_VM114.png)
+[Vue du modèle 3D](Velleman_Amplifier_VM114.stl)
+
+![Vue de la carte](Velleman_Amplifier_VM114.png)

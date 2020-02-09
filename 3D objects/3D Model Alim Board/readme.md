@@ -7,6 +7,6 @@ Cette carte est alimentée par l’alimentation générale. Elle répartit l’a
 * Carte Audio Board: Pré-Ampli et Ampli (12v)
 * Lampes de la face avant (5v)
 
-[Vue du modèle 3D](Radial-V-Alim-Board.stl)
+[Vue du modèle 3D](Radial-V%20Alim%20Board.stl)
 
 ![Vue de la carte](Radial-V-AlimBoard-02.png)
