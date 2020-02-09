@@ -4,8 +4,8 @@ EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
-Title "Preamplfier K2572"
-Date "2020-01-01"
+Title "Audio Stereo PreAmplifier K2572"
+Date "2020-02-09"
 Rev "1"
 Comp "Velleman"
 Comment1 ""
