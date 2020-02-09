@@ -184,7 +184,7 @@ U 1 1 5E0D612E
 P 5650 3100
 F 0 "RV1" H 5581 3146 50  0000 R CNN
 F 1 "R_POT" H 5581 3055 50  0000 R CNN
-F 2 "Potentiometer_THT:Potentiometer_Runtron_RM-065_Vertical" H 5650 3100 50  0001 C CNN
+F 2 "MesModules:Potentiometer_ACP_CA9-H2,5_Horizontal" H 5650 3100 50  0001 C CNN
 F 3 "~" H 5650 3100 50  0001 C CNN
 	1    5650 3100
 	1    0    0    -1  
@@ -195,7 +195,7 @@ U 1 1 5E0D68D0
 P 5650 5250
 F 0 "RV2" H 5581 5296 50  0000 R CNN
 F 1 "R_POT" H 5581 5205 50  0000 R CNN
-F 2 "Potentiometer_THT:Potentiometer_Runtron_RM-065_Vertical" H 5650 5250 50  0001 C CNN
+F 2 "MesModules:Potentiometer_ACP_CA9-H2,5_Horizontal" H 5650 5250 50  0001 C CNN
 F 3 "~" H 5650 5250 50  0001 C CNN
 	1    5650 5250
 	1    0    0    -1  
