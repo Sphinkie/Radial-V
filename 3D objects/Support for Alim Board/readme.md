@@ -3,7 +3,9 @@
 
 Support pour fixer la carte **Alim board** au chassis Radial-V.
 
-[Vue du modèle 3D](Support%20Audio%20Board.stl)
-![Vue du support nu](Support_Audio_Board_naked.png)
+[Vue du modèle 3D](Radial-V-ALIM.BOARD-Support.stl)
 
-![Vue du support avec les cartes](Support_Audio_Board_boarded.png)
+![Vue du support nu](Radial-V-ALIM.BOARD-Support_Naked.png)
+
+![Vue du support avec la carte](Radial-V-ALIM.BOARD-Support_boarded.png)
+
