@@ -24,9 +24,10 @@
  * 1.1  23/11/2015  Implementation I2C complete. Augmentation du nombre de MP3 (env 200).
  * 1.2  28/11/2015  Le Catalogue regroupe Random et Genre.
  * 1.3  02/12/2015  Le Catalogue regroupe Year et Favorites. Installation des cartes d'extension.
+ * 2.0  02/12/2019  Gestion des versions sous GitHub
+ * 2.1  23/02/2020  Remapping des E/S : adaptation à la nouvelle carte "Bus Board v2"
  *************************************************************************************************** 
 */
-
 
 #include <SPI.h>
 #include <SdFat.h>
@@ -53,27 +54,29 @@
 #define MP3_CS     6    // D6   MP3 CS      (MP3 shield)
 #define MP3_DCS    7    // D7   MP3 data CS (MP3 shield)
 #define SD_CS      9    // D9   SD CS       (MP3 shield)
-                        // D10
-                        // D11  
+
 #define NEXT       18   // D18  Digital In     avec hardware interrupt 5
 #define PROMOTE    19   // D19  Digital In     avec hardware interrupt 4
+
 // ------------------Définis dans FMplayer.h 
+// #define FM_RESET  17 // D17 output : FM shield RST* Command (active LOW)
 // #define SDIO      20 // D20 I2C Bus - Digital In/out avec hardware interrupt 3
 // #define SCLK      21 // D21 I2C Bus - Digital In/out avec hardware interrupt 2
-// #define FM_RESET  23 // D23 output : FM shield reset command (active LOW)
-                        // D24
+// #define FM_GPIO2  23 // D23 input  : FM shield pulse received then Seek/Tune completed. (pin GPI02 du shield FM Si7403)
+
 #define MODE_4     25   // D25  input   C-MODE-5    bouton Mode
 #define MODE_3     27   // D27  input   C-MODE-4    bouton Mode
 #define MODE_2     29   // D29  input   C-MODE-3    bouton Mode
 #define MODE_1     31   // D31  input   C-MODE-2    bouton Mode
 #define MP3_ON     33   // D33  input   C-MODE-1    selecteur FM/MP3 
 #define FM_ON      35   // D35  input   C-FMMP-1    selecteur FM/MP3
-// #define FM_STC    37 // D37 input  : FM shield pulse received then Seek/Tune completed. (pin GPI02 du shield FM Si7403)  
+#define SPARE1     37   // D37  Spare1 Connector
 #define K1         39   // D39  Digital Out Commande du relais K1
 #define K2         41   // D41  Digital Out Commande du relais K2
-#define SPARE_LED  43   // D43  input       SPARE LED
-#define LED_1      45   // D45  output     LED
-#define LED_2      47   // D47  output     LED
+#define SPARE_LED  43   // D43  input   SPARE LED (connector JP5)
+#define LED_1      45   // D45  output  LED
+#define LED_2      47   // D47  output  LED
+#define SPARE2     49   // D49  Spare2 Connector
 // SPI_MISO             // D50  input  
 // SPI_MOSI             // D51  output 
 // SPI_SCLK             // D52  output 

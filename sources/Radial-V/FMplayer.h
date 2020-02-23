@@ -29,8 +29,8 @@ class FMplayer
     // --------------------------------------------------------------------
     #define SDIO       20     // I2C communication
     #define SCLK       21     // I2C communication
-    #define FM_RESET   23     // D23 output : FM shield reset command (active LOW)
-    #define FM_STC     37     // D37 input  : FM shield pulse received then Seek/Tune completed. (pin GPI02 du shield FM Si7403)  
+    #define FM_RESET   17     // D17 output : FM shield RST* command (active LOW)
+    #define FM_STC     23     // D23 input  : FM shield pulse received then Seek/Tune completed. (pin GPI02 du shield FM Si7403)  
 
     // SI4703 = 0x10;              // I2C address of Si4703. Prédéfini dans la librarie <SparkFunSi4703>
     // PIN_SEN* = Choix du mode de fonctionnement: HIGH=2 fils (default, car pullup interne) | LOW=3 fils => Pas besoin de la cabler car on utilise la valeur par défaut.
