@@ -23,6 +23,28 @@ void RemoteDisplay::begin()
 }
 
 // **********************************************************
+// Vérifie si le Slave est connecté au bus I2C
+// Note: Aucune des deux méthodes testées n'est efficace.
+// **********************************************************
+bool RemoteDisplay::isSlavePresent()
+{
+   return false;
+   // -------------------
+   //   Methode 1:
+   /* char SlaveArduinoStatus = 0;
+   SlaveArduinoStatus = this->requestStatus();
+   return (SlaveArduinoStatus==0?false:true);       // return True if a STATUS is received
+   */
+   // -------------------
+   //   Methode 2:
+   /* int result;
+   Wire.beginTransmission(TFT_SLAVE);   // transmit to slave device
+   result = Wire.endTransmission();     // end transmission and store answer
+   return (result==0?false:true);       // return True if ACK received
+   */
+}
+
+// **********************************************************
 // Demande d'effacer l'écran
 // **********************************************************
 void RemoteDisplay::clearBackground()

@@ -124,7 +124,7 @@ void setup()
   while (!Serial)   { ; } // wait for serial port to connect. Needed for native USB port only
   
   Serial.println(F("================================="));
-  Serial.println(F("==    RADIAL-V                 =="));
+  Serial.println(F("==    RADIAL-V     v2.1        =="));
   Serial.println(F("================================="));
   Serial.print  (F("CPU Frequency: ")); Serial.print(F_CPU/1000000); Serial.println(F(" MHz"));
   Serial.print  (F("Free RAM: "));      Serial.print(FreeRam(),DEC); Serial.println(F(" bytes"));
@@ -153,13 +153,14 @@ void setup()
   NextMusicFile = "NOISE" ;   // ID du prochain clip MP3 à jouer ("STARTER")
   Action = _IDLE;
 
-  Serial.println(F("Waiting I2C Salve ready..."));
+  Serial.println(F("Waiting I2C Slave ready..."));
   // -----------------------------------------------------------------------------
   // On attend que le TFT soit prêt (status 0x01 = READY)
   // -----------------------------------------------------------------------------
   while (SlaveArduinoStatus!=0)
   {
-    SlaveArduinoStatus=RemoteTFT.requestStatus();
+     SlaveArduinoStatus=RemoteTFT.requestStatus();
+     delay(100);
   }
   Serial.println(F("================================="));
 }
@@ -190,14 +191,19 @@ void loop()
     {
       // on vient de passer sur la source MUTE
       case 0: 
-              Serial.println(F(">>Source has changed: MUTE")); 
+              Serial.println(F(">>Source has changed: MUTE"));
               // On coupe le MP3
               mp3shield.stopTrack();
               TuneButton.dischargeCapacitor();
               Serial.println(F("  Picto Mute"));
-              RemoteTFT.clearBackground();
-              RemoteTFT.printPictoMute();
-              RemoteTFT.setBacklight(false);
+              if (RemoteTFT.isSlavePresent())
+                 {
+                 RemoteTFT.clearBackground();
+                 RemoteTFT.printPictoMute();
+                 RemoteTFT.setBacklight(false);
+                 }
+              else
+                 Serial.println(F("  TFT_SLAVE absent"));
               break;
 
       // on vient de passer sur la source MP3
@@ -205,8 +211,13 @@ void loop()
               Serial.println(F(">>Source has changed: MP3")); 
               setRelay(HIGH);
               Serial.println(F("  Picto OFF"));
-              RemoteTFT.clearBackground();
-              RemoteTFT.setBacklight(true);
+              if (RemoteTFT.isSlavePresent())
+                 {
+                 RemoteTFT.clearBackground();
+                 RemoteTFT.setBacklight(true);
+                 }
+              else  
+                 Serial.println(F("  TFT_SLAVE absent"));
               break;
    
       // on vient de passer sur la source FM
@@ -216,9 +227,14 @@ void loop()
               // On coupe le MP3
               mp3shield.stopTrack();
               Serial.println(F("  Picto FM"));
-              RemoteTFT.clearBackground();
-              RemoteTFT.printPictoFM();
-              RemoteTFT.setBacklight(false);
+              if (RemoteTFT.isSlavePresent())
+                 {
+                 RemoteTFT.clearBackground();
+                 RemoteTFT.printPictoFM();
+                 RemoteTFT.setBacklight(false);
+                 }
+              else
+                 Serial.println(F("  TFT_SLAVE absent"));
               break;
     }
   }
@@ -509,7 +525,7 @@ void ISR_PromoteButton()
 // *******************************************************************************
 void setRelay(int relaisposition) 
 {
-   Serial.print(" setRelay ");
+   Serial.print(F("  setRelay "));
    Serial.println(relaisposition);
    digitalWrite(K1,relaisposition);           // Commutation relay
    digitalWrite(K2,relaisposition);           // Commutation relay

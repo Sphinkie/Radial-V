@@ -1,4 +1,4 @@
-15170235290478721
+15173397685869263
 Battery
 BatteryHolder_Bulgin_BX0036_1xC
 Bulgin Battery Holder, BX0036, Battery Type C (https://www.bulgin.com/products/pub/media/bulgin/data/Battery_holders.pdf)
@@ -45248,6 +45248,13 @@ Bloc de jonction C.I., section nominale: 0,5 mm², pas: 2,54 mm, 2 pôles, Racco
 3
 3
 MesModules
+Edge_Connector_10P_1x10_P3.96mm_Vertical
+JST VH series connector, B10P-VH (http://www.jst-mfg.com/product/pdf/eng/eVH.pdf), generated with kicad-footprint-generator
+connector JST VH vertical
+0
+10
+10
+MesModules
 HE10-26P
 Connecteur pour nappe 26. Coudé. Pas de 2.54mm.
 
@@ -45261,6 +45268,13 @@ connector Molex KK-254 side entry
 0
 2
 2
+MesModules
+Potentiometer_ACP_CA9-H2,5_Horizontal
+Potentiometer, horizontal, ACP CA9-H2,5, http://www.acptechnologies.com/wp-content/uploads/2017/05/02-ACP-CA9-CE9.pdf
+Potentiometer horizontal ACP CA9-H2,5
+0
+3
+3
 Module
 A20_OLINUXINO_LIME2
 A20 Olinuxino LIME2, 1.2GHz, 512-1024MB RAM, Micro-SD, NAND or eMMC, 1000Mbit Ethernet

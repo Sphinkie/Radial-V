@@ -14,6 +14,7 @@ class RemoteDisplay
   public:
     RemoteDisplay();
     void begin();
+    bool isSlavePresent();
     void clearBackground();
     void setBackgroundImage();
     void printTitle(String texte);
