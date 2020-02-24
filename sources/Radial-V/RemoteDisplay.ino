@@ -9,10 +9,13 @@
 #include "RemoteDisplay.h"
 
 // **********************************************************
-// Contructor
+// Constructor
 // **********************************************************
 RemoteDisplay::RemoteDisplay()
-{}
+{
+   // Par defaut, on considère que l'Arduino Slave est connecté au bus I2C.
+   this->I2Cconnected = true;
+}
 
 // **********************************************************
 // Initialise la connexion I2C en tant que Master.
@@ -26,9 +29,13 @@ void RemoteDisplay::begin()
 // Vérifie si le Slave est connecté au bus I2C
 // Note: Aucune des deux méthodes testées n'est efficace.
 // **********************************************************
+void RemoteDisplay::setSlavePresent(bool present)
+{
+     this->I2Cconnected = present;
+}
 bool RemoteDisplay::isSlavePresent()
 {
-   return false;
+   return this->I2Cconnected;
    // -------------------
    //   Methode 1:
    /* char SlaveArduinoStatus = 0;
@@ -49,6 +56,7 @@ bool RemoteDisplay::isSlavePresent()
 // **********************************************************
 void RemoteDisplay::clearBackground()
 {
+  if (!I2Cconnected) return;
   Wire.beginTransmission(TFT_SLAVE);  // transmit to slave device
   Wire.write(C_CLEAR);                // sends one byte command
   Wire.endTransmission();             // stop transmitting
@@ -59,6 +67,7 @@ void RemoteDisplay::clearBackground()
 // **********************************************************
 void RemoteDisplay::setBackgroundImage()
 {
+  if (!I2Cconnected) return;
   Wire.beginTransmission(TFT_SLAVE);   // transmit to slave device
   Wire.write(C_BACKGROUNDIMAGE);       // sends one byte command
   Wire.endTransmission();              // stop transmitting
@@ -72,6 +81,7 @@ void RemoteDisplay::setBackgroundImage()
 // **********************************************************
 void RemoteDisplay::printTitle(String texte)
 {
+  if (!I2Cconnected) return;
   Serial.print(F(" I2C Sending: "));  Serial.println (texte);
   
   if (texte.length()==0) texte= " ";
@@ -89,6 +99,7 @@ void RemoteDisplay::printTitle(String texte)
 // **********************************************************
 void RemoteDisplay::printSplitedTitle(String texte)
 {
+  if (!I2Cconnected) return;
   Serial.print(F(" I2C Sending: "));  Serial.println (texte);
   int longeurTitre = texte.length();
   String TitrePart1 = "";
@@ -131,6 +142,7 @@ void RemoteDisplay::printSplitedTitle(String texte)
 // **********************************************************
 void RemoteDisplay::printArtist(String texte)
 {
+  if (!I2Cconnected) return;
   if (texte.length()==0) texte= " ";
   Wire.beginTransmission(TFT_SLAVE);    // transmit to slave device 
   Wire.write(C_ARTIST);                 // sends one byte command
@@ -143,6 +155,7 @@ void RemoteDisplay::printArtist(String texte)
 // **********************************************************
 void RemoteDisplay::printAlbum(String texte)
 {
+  if (!I2Cconnected) return;
   if (texte.length()==0) texte= " ";
   Wire.beginTransmission(TFT_SLAVE);    // transmit to slave device 
   Wire.write(C_ALBUM);                  // sends one byte command
@@ -155,6 +168,7 @@ void RemoteDisplay::printAlbum(String texte)
 // **********************************************************
 void RemoteDisplay::printYear(String texte)
 {
+  if (!I2Cconnected) return;
   if (texte.length()==0) texte= " ";
   if (texte=="0000"    ) texte= " ";
   Wire.beginTransmission(TFT_SLAVE);    // transmit to slave device 
@@ -168,6 +182,7 @@ void RemoteDisplay::printYear(String texte)
 // **********************************************************
 void RemoteDisplay::printGenre(String texte)
 {
+  if (!I2Cconnected) return;
   if (texte.length()==0) texte= " ";
   Wire.beginTransmission(TFT_SLAVE);    // transmit to slave device 
   Wire.write(C_GENRE);                  // sends one byte command
@@ -180,6 +195,7 @@ void RemoteDisplay::printGenre(String texte)
 // **********************************************************
 void RemoteDisplay::printLog(String texte)
 {
+  if (!I2Cconnected) return;
   if (texte.length()==0) texte= " ";
   Wire.beginTransmission(TFT_SLAVE);    // transmit to slave device 
   Wire.write(C_LOG);                    // sends one byte command
@@ -192,6 +208,7 @@ void RemoteDisplay::printLog(String texte)
 // **********************************************************
 void RemoteDisplay::printStars(String texte)
 {
+  if (!I2Cconnected) return;
   Wire.beginTransmission(TFT_SLAVE);    // transmit to slave device 
   Wire.write(C_STARS);                  // sends one byte command
   Wire.write(texte[0]);                 // sends one char
@@ -204,6 +221,7 @@ void RemoteDisplay::printStars(String texte)
 // **********************************************************
 void RemoteDisplay::clearPicto()
 {
+  if (!I2Cconnected) return;
   Wire.beginTransmission(TFT_SLAVE);    // transmit to slave device 
   Wire.write(C_ICON0);                  // sends one byte command
   Wire.endTransmission();               // stop transmitting
@@ -214,6 +232,7 @@ void RemoteDisplay::clearPicto()
 // **********************************************************
 void RemoteDisplay::clearAllText()
 {
+  if (!I2Cconnected) return;
   Wire.beginTransmission(TFT_SLAVE);    // transmit to slave device 
   Wire.write(C_CLEARTEXT);              // sends one byte command
   Wire.endTransmission();               // stop transmitting
@@ -224,6 +243,7 @@ void RemoteDisplay::clearAllText()
 // **********************************************************
 void RemoteDisplay::printPictoMute()
 {
+  if (!I2Cconnected) return;
   Wire.beginTransmission(TFT_SLAVE);    // transmit to slave device 
   Wire.write(C_ICON1);                  // sends one byte command
   Wire.write("i_MUTE");                 // sends string
@@ -235,6 +255,7 @@ void RemoteDisplay::printPictoMute()
 // **********************************************************
 void RemoteDisplay::printPictoFM()
 {
+  if (!I2Cconnected) return;
   Wire.beginTransmission(TFT_SLAVE);    // transmit to slave device 
   Wire.write(C_ICON1);                  // sends one byte command
   Wire.write("i_FM");                   // sends string
@@ -247,6 +268,7 @@ void RemoteDisplay::printPictoFM()
 // **********************************************************
 void RemoteDisplay::setBacklight(bool on)
 {
+  if (!I2Cconnected) return;
   Wire.beginTransmission(TFT_SLAVE);    // transmit to slave device 
   if (on)
     Wire.write(C_BLON);                 // sends one byte command

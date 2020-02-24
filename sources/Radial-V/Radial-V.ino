@@ -163,6 +163,9 @@ void setup()
      delay(100);
   }
   Serial.println(F("================================="));
+  // Pour le debug: On peut mettre FALSE pour tester avec un seul Arduino. 
+  // Pour la prod: Mettre TRUE.
+  RemoteTFT.setSlavePresent(false);
 }
 
 
@@ -196,14 +199,9 @@ void loop()
               mp3shield.stopTrack();
               TuneButton.dischargeCapacitor();
               Serial.println(F("  Picto Mute"));
-              if (RemoteTFT.isSlavePresent())
-                 {
-                 RemoteTFT.clearBackground();
-                 RemoteTFT.printPictoMute();
-                 RemoteTFT.setBacklight(false);
-                 }
-              else
-                 Serial.println(F("  TFT_SLAVE absent"));
+              RemoteTFT.clearBackground();
+              RemoteTFT.printPictoMute();
+              RemoteTFT.setBacklight(false);
               break;
 
       // on vient de passer sur la source MP3
@@ -211,13 +209,8 @@ void loop()
               Serial.println(F(">>Source has changed: MP3")); 
               setRelay(HIGH);
               Serial.println(F("  Picto OFF"));
-              if (RemoteTFT.isSlavePresent())
-                 {
-                 RemoteTFT.clearBackground();
-                 RemoteTFT.setBacklight(true);
-                 }
-              else  
-                 Serial.println(F("  TFT_SLAVE absent"));
+              RemoteTFT.clearBackground();
+              RemoteTFT.setBacklight(true);
               break;
    
       // on vient de passer sur la source FM
@@ -227,14 +220,9 @@ void loop()
               // On coupe le MP3
               mp3shield.stopTrack();
               Serial.println(F("  Picto FM"));
-              if (RemoteTFT.isSlavePresent())
-                 {
-                 RemoteTFT.clearBackground();
-                 RemoteTFT.printPictoFM();
-                 RemoteTFT.setBacklight(false);
-                 }
-              else
-                 Serial.println(F("  TFT_SLAVE absent"));
+              RemoteTFT.clearBackground();
+              RemoteTFT.printPictoFM();
+              RemoteTFT.setBacklight(false);
               break;
     }
   }

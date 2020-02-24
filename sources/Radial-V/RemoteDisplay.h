@@ -15,6 +15,7 @@ class RemoteDisplay
     RemoteDisplay();
     void begin();
     bool isSlavePresent();
+    void setSlavePresent(bool present);
     void clearBackground();
     void setBackgroundImage();
     void printTitle(String texte);
@@ -33,6 +34,8 @@ class RemoteDisplay
     char requestStatus();
     
   private:
+
+    bool I2Cconnected;
     
     // ------------------------------------
     // Les interlocuteurs du bus I2C
