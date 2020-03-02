@@ -232,7 +232,8 @@ void loop()
   // --------------------------------------------------------------
   switch (SourceButton.getValue())
   {
-    case 0: break;        // NO SOURCE            
+    case 0: TuneButton.readValue();
+            break;        // NO SOURCE            
     case 1: loop_mp3();   // SOURCE = MP3
             break;
     case 2:               // SOURCE = FM         
@@ -256,7 +257,7 @@ void loop_mp3()
   // --------------------------------------------------------------
   // Gestion du bouton TUNING
   // --------------------------------------------------------------
- int tuning = TuneButton.readValue();
+ int tuning = TuneButton.readValue(true);
   
   if (TuneButton.hasChanged())  
   {
@@ -264,7 +265,7 @@ void loop_mp3()
       Serial.print(F(">>Tuning has changed: ")); Serial.println(tuning); 
      // Si le bouton TUNE a bougé, on est peut-être sur une autre année, ou un autre genre, ou autre rating.
      Catalogue.setNewRequestedValues(tuning); 
-     // On redétermine donc l'année,genre correspondant à ce réglage.
+     // On redétermine donc l'année/genre correspondant à ce réglage.
       digitalWrite(LED_1,LOW); // Allume la Led témoin SPI BUSY
       mp3shield.pauseDataStream();
       if (ModeButton.getValue()==YEAR)  Catalogue.findFirstClipForRequestedYear();        // utilise RequestedYear

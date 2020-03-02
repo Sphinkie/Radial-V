@@ -13,16 +13,17 @@ class CapButton
     public:
         CapButton(int in_pin,int out_pin);
         void   begin();
-        int    readValue();
+        int    readValue(bool debug = false);
         int    getValue();
         int    getLastValue();
         bool   hasChanged();
         void   dischargeCapacitor();
         
     private:
-        int    captureMeanValue(int samples);
+        int    captureMeanValue(int samples, int ecart=5);
         int    chargeAndMesure();
-
+        int    normalizeValue(float value);
+        
     //variables:
         int   Value;
         int   LastValue;

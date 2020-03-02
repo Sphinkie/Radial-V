@@ -31,7 +31,9 @@ void RemoteDisplay::begin()
 // **********************************************************
 void RemoteDisplay::setSlavePresent(bool present)
 {
-     this->I2Cconnected = present;
+   this->I2Cconnected = present;
+   Serial.print(F("Set I2C Slave: "));
+   Serial.println(present?F("Present"):F("NOT Present"));
 }
 bool RemoteDisplay::isSlavePresent()
 {

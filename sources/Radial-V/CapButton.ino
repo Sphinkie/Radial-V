@@ -18,8 +18,8 @@
 CapButton::CapButton(int in_pin, int out_pin)
 {
  // On initialise les variables
-  Pin_In        = in_pin;
-  Pin_Out       = out_pin;
+  Pin_In        = in_pin;   // Charge pin
+  Pin_Out       = out_pin;  // Discharge pin
   PrevPrevValue = 0;
   LastValue     = 0;
   Value         = 0;
@@ -45,17 +45,17 @@ void CapButton::begin()
 }
 
 // **********************************************************
-// On lit et renvoie la position de l'entrée analogique (valeur de 0 à 1023)
+// On lit et renvoie la position de l'entrée analogique
 // Capacitor under test between Pin_out and Pin_In
 // **********************************************************
-int CapButton::readValue()
+int CapButton::readValue(bool debug = false)
 {
   // On met à jour l'historique
   PrevPrevValue=LastValue;
   LastValue=Value;
 
   // On mesure la valeur courante (moyenne de plusieurs captures)
-  Value = this->captureMeanValue(7);
+  Value = this->captureMeanValue(4);
 
   // Au debut,on aligne les 3 valeurs de l'historique
   if (PrevPrevValue==0) PrevPrevValue=LastValue=Value;
@@ -67,13 +67,14 @@ int CapButton::readValue()
   // Il y a changement si la dernière valeur lue s'écarte de la précédente +/- IMPRECISION.
   if ( (abs(Value-LastValue)>IMPRECISION) and (abs(LastValue-PrevPrevValue)>IMPRECISION) ) {Changed=true;  Stabilized=false; }
 
-/*
-  Serial.print(F("Value = ")); Serial.print(Value);  
-  Serial.print(" Delta= ");   Serial.print(abs(Value-LastValue));  
-  Serial.print(" Changed=");  Serial.print(Changed);  
-  Serial.print(" Stabilized=");  Serial.print(Stabilized);  
-  Serial.println(F(". "));
-*/
+  if (debug)
+  {
+     Serial.print(F(" Value="  ));    Serial.print(Value);  
+     Serial.print(F(" Delta="  ));    Serial.print(abs(Value-LastValue));  
+     Serial.print(F(" Changed="));    Serial.print(Changed);  
+     Serial.print(F(" Stabilized=")); Serial.print(Stabilized);  
+     Serial.println(".");
+  }
   return Value;
 }
 
@@ -106,42 +107,38 @@ bool CapButton::hasChanged()
 }
         
 // **********************************************************
-// Effectue plusieurs mesures pour obtenir une moyenne
-// Les valeurs mesurées vont de 340 à 120 (cad une amplitude de 220 env).
+// Effectue plusieurs mesures pour obtenir une moyenne.
+//   samples = nombre de mesures
+//   ecart   = ecart entre les chaque mesure (en ms)
 // On les étale entre 0 et 1023.
 // **********************************************************
-int CapButton::captureMeanValue(int samples)
+int CapButton::captureMeanValue(int samples, int ecart=5)
 {
   float somme   = 0;
   float moyenne = 0;
-  double value  = 0;
-  #define MINLIM 80               // la valeur la plus petite, jamais mesurée est de 90
+  int   value  = 0;
   
   for (int i=0; i<samples; i++)
   {
-    int measure = this->chargeAndMesure();
-    delay(1);
-    somme +=measure;
+     int measure = this->chargeAndMesure();
+     delay(ecart);
+     somme +=measure;
   }
   
-  moyenne = somme/samples;         // moyenne varie entre 125 et 330 
-//  Serial.print(F("  moyenne= "));  Serial.print(moyenne);  
-  value = log10(moyenne-MINLIM);   // value varie entre 1.2 et 2.3
-  value = (value-1)*755;           // on étale entre 0 et 1023
-  value = max(0,value);            // on sature aux bornes 
-  value = min(value,1023);
-//  Serial.print(F("  valeur lue calibree= "));  Serial.println(int(value));
-  return (int(value));
+  moyenne = somme/samples;
+  Serial.print(F("  moyenne= "));  Serial.print(moyenne);
+  value=this->normalizeValue(moyenne);
+  Serial.print(F("  valeur lue calibree= "));  Serial.println(int(value));
+  return (value);
 }
         
 // **********************************************************
-// Effectue une lecture de la valeur.
-// On envoie une impulsion sur Pin_Out
-// et 0.1ms plus tard, on lit la valeur de Pin_In
+// Effectue une lecture de Pin_In (mesure théoriquement entre 0 et 1023).
+// On envoie une impulsion sur Pin_Out et 0.1ms plus tard, on lit la valeur de Pin_In
 // **********************************************************
 int CapButton::chargeAndMesure()
 {
-  int measure;
+   int measure;
    // On génère un Front Montant (charge) sur Pin_Out
    pinMode(Pin_In, INPUT);
    digitalWrite(Pin_Out, HIGH);   // Durée = environ 2ms
@@ -151,10 +148,10 @@ int CapButton::chargeAndMesure()
    digitalWrite(Pin_Out, LOW);
    pinMode(Pin_In, OUTPUT);
 
+  // on trace la valeur mesurée
+  // Serial.print(F("   measure = "));  Serial.println(measure);  
   // on calcule la valeur en pF
   // float capacitance = (float)measure * IN_CAP_TO_GND / (float)(MAX_ADC_VALUE - measure);
-  // on trace les valeurs lue et calculée
-  // Serial.print(F("   measure = "));  Serial.println(measure);  
   // Serial.print(F("Capacitance Value = "));  Serial.print(capacitance, 3);  Serial.print(F(" pF "));
 
  return (measure);
@@ -162,13 +159,36 @@ int CapButton::chargeAndMesure()
 
 
 // **********************************************************
-// Décharge la Capa en mettant la masse sur les deux pins
+// Décharge la Capa en mettant les deux pins à LOW (=GND)
 // **********************************************************
 void CapButton::dischargeCapacitor()
 {
-  pinMode(Pin_Out, OUTPUT);
-  pinMode(Pin_In,  OUTPUT);
-  digitalWrite(Pin_In,  LOW);
-  digitalWrite(Pin_Out, LOW);
-  delay (200);
+   pinMode(Pin_Out, OUTPUT);
+   pinMode(Pin_In,  OUTPUT);
+   digitalWrite(Pin_In,  LOW);
+   digitalWrite(Pin_Out, LOW);
+   delay (200);
+}
+
+
+// **********************************************************
+// Normalise la valeur
+// **********************************************************
+int CapButton::normalizeValue(float value)
+{
+  const float MIN_VALUE = 30.0;   // la valeur la plus petite, jamais mesurée.
+  const float MAX_VALUE = 300.0;  // la valeur la plus grande, jamais mesurée.
+  const float FACTOR = 1023.0/MAX_VALUE;
+
+  // Normalisation linéaire:
+  value = value - MIN_VALUE;
+  value = value * FACTOR;
+  // Normalisation logarithmique:
+  // value = log10(value-MIN_VALUE);  // value varie entre 1.2 et 2.3
+  // value = (value-1)*755;           // on étale entre 0 et 1023
+  // Gestion des limites:
+  value = max(0,value);
+  value = min(value,1023);
+
+ return (int(value));
 }
