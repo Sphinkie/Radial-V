@@ -169,12 +169,8 @@ void CapButton::dischargeCapacitor()
 // **********************************************************
 int CapButton::normalizeValue(float value)
 {
-  const float MIN_VALUE = 0.0;    // la valeur la plus petite, jamais mesurée.
-  const float MAX_VALUE = 400.0;  // la valeur la plus grande, jamais mesurée.
-  const float FACTOR = 1023.0/MAX_VALUE;
-
-  // Normalisation linéaire:
-  value = value - MIN_VALUE;
+  // Normalisation linéaire inversée:
+  value = MAX_VALUE - value;
   value = value * FACTOR;
   // Normalisation logarithmique:
   // value = log10(value-MIN_VALUE);  // value varie entre 1.2 et 2.3

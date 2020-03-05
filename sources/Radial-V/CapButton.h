@@ -32,14 +32,17 @@ class CapButton
         bool  Stabilized;
         int   Pin_In,Pin_Out;
 
-      // Le status hasChanged est positionné si la variation est supérieure à l'imprecision
-      // (en effet la valeur lue oscille légèrement)
-      #define IMPRECISION  5
-      
-      const float IN_STRAY_CAP_TO_GND = 26.32; //initially this was 30.00
-      const float IN_EXTRA_CAP_TO_GND = 0.0;
-      const float IN_CAP_TO_GND       = IN_STRAY_CAP_TO_GND + IN_EXTRA_CAP_TO_GND;
-      const int   MAX_ADC_VALUE       = 1023;
+        const float MIN_VALUE = 30.0;   // la valeur la plus petite, jamais mesurée.
+        const float MAX_VALUE = 400.0;  // la valeur la plus grande, jamais mesurée.
+        const float FACTOR = 1023.0/(MAX_VALUE-MIN_VALUE);
+        // Le status hasChanged est positionné si la variation est supérieure à l'imprecision
+        // (en effet la valeur lue oscille légèrement)
+        const int  IMPRECISION = 2*FACTOR;
+
+        const float IN_STRAY_CAP_TO_GND = 26.32; //initially this was 30.00
+        const float IN_EXTRA_CAP_TO_GND = 0.0;
+        const float IN_CAP_TO_GND       = IN_STRAY_CAP_TO_GND + IN_EXTRA_CAP_TO_GND;
+        const int   MAX_ADC_VALUE       = 1023;
 
 /*
  * Etalonnage: 
