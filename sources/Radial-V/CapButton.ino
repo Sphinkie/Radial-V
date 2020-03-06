@@ -40,7 +40,7 @@ void CapButton::begin()
 {
   this->dischargeCapacitor();
   // On dépoussière en lisant quelques premières valeurs
-  this->captureMeanValue(4);
+  this->captureMeanValue();
 
 }
 
@@ -54,26 +54,35 @@ int CapButton::readValue(bool debug = false)
   LastValue=Value;
 
   // On mesure la valeur courante (moyenne de plusieurs captures)
-  Value = this->captureMeanValue(4);
-
-  // Au debut,on aligne les 3 valeurs de l'historique
+  Value = this->captureMeanValue();
+  // Au debut, on aligne les 3 valeurs de l'historique
   if (PrevPrevValue==0) PrevPrevValue=LastValue=Value;
-  // Serial.print(F("  PrevPrevValue=")); Serial.print(PrevPrevValue); Serial.print(F(" LastValue=")); Serial.print(LastValue); Serial.print(F(" Value=")); Serial.println(Value);
+
+  // On détermine les variations
+  int Variation = abs(Value-LastValue);
+  int PreviousVariation = abs(LastValue-PrevPrevValue);
+  int GlobalVariation   = abs(Value-PrevPrevValue);
+  
+  // Il y a changement si la dernière valeur lue s'écarte de la précédente de +/- IMPRECISION.
+  if (Variation>IMPRECISION) {Changed=true;  Stabilized=false; }
+  // On vérifie si le changement n'a pas été éphémère.
+  // (cad si la variation actuelle ne fait que compenser la variation précédente).
+  if ((Variation>IMPRECISION) and (GlobalVariation<IMPRECISION)) {Changed=false; }
 
   // Il y a Stabilisation si les trois valeurs de l'historique sont identiques (a l'imprécision près)
-  if ( (abs(Value-LastValue)<IMPRECISION) and (abs(LastValue-PrevPrevValue)<IMPRECISION) ) Stabilized=true;
-  //if (Stabilized) Serial.print("Stabilized ");
-  // Il y a changement si la dernière valeur lue s'écarte de la précédente +/- IMPRECISION.
-  if ( (abs(Value-LastValue)>IMPRECISION) and (abs(LastValue-PrevPrevValue)>IMPRECISION) ) {Changed=true;  Stabilized=false; }
-
+  Stabilized = (Variation<STABILITY) and (PreviousVariation<STABILITY);
+    
+  /*  
   if (debug)
   {
-     Serial.print(F(" Value="  ));    Serial.print(Value);  
-     Serial.print(F(" Delta="  ));    Serial.print(abs(Value-LastValue));  
-     Serial.print(F(" Changed="));    Serial.print(Changed);  
-     Serial.print(F(" Stabilized=")); Serial.print(Stabilized);  
-     Serial.println(".");
-  }
+    Serial.print("  PrevPrevValue="+String(PrevPrevValue)); 
+    Serial.print(" LastValue="+String(LastValue)); 
+    Serial.print(" Value="+String(Value));
+    if (Changed) Serial.print(F(" Changed"));
+    if (Variation>IMPRECISION) Serial.print(" ("+String(Value-LastValue)+")");
+    if (Stabilized) Serial.print(" Stabilized ("+String(PreviousVariation)+") ("+String(Variation)+")");
+    Serial.println();
+  } */
   return Value;
 }
 
@@ -101,33 +110,49 @@ int CapButton::getLastValue()
 bool CapButton::hasChanged()
 {
   bool ChangedAndStabilized = (Changed and Stabilized);
-  if (ChangedAndStabilized) Changed = false;
+  if (ChangedAndStabilized) 
+  {
+     Changed = false;
+     Serial.print(F("  IMPRECISION=")); Serial.print(IMPRECISION);
+     Serial.print(F("  STABILITY=")); Serial.println(STABILITY);
+  }
   return ChangedAndStabilized;
 }
         
 // **********************************************************
-// Effectue plusieurs mesures pour obtenir une moyenne.
-//   samples = nombre de mesures
+// Effectue plusieurs mesures pour obtenir une valeur estimée.
 //   ecart   = ecart entre chaque mesure (en ms)
-// On les étale entre 0 et 1023.
+// On la normalise [entre 0 et 1023].
 // **********************************************************
-int CapButton::captureMeanValue(int samples, int ecart=5)
+int CapButton::captureMeanValue(int ecart=4)
 {
-  float somme   = 0;
-  float moyenne = 0;
-  int   value  = 0;
+  int  nbsamples =11;  // prendre un nombre impair
+  int  index_mediane = (int)(nbsamples/2)+1;
+  int  mediane;
+  int  value;
+  int  tableau[nbsamples];
   
-  for (int i=0; i<samples; i++)
+  // On met les mesures dans un tableau
+  for (int i=0; i<nbsamples; i++)
   {
-     int measure = this->chargeAndMesure();
+     tableau[i] = this->chargeAndMesure();
      delay(ecart);
-     somme +=measure;
   }
+
+  // On trie le tableau
+  qsort(tableau, nbsamples, sizeof(int), sort_function);
+  //for (int i=0; i<nbsamples; i++) {Serial.print(" "); Serial.print(tableau[i]);}  Serial.println();
   
-  moyenne = somme/samples;
-  Serial.print(F("  moyenne= "));  Serial.print(moyenne);
-  value=this->normalizeValue(moyenne);
-  Serial.print(F("  valeur lue calibree= "));  Serial.println(int(value));
+  /* Il y a plusieurs façons d'estimer la valeur vraie:
+   * Méthode 1: la médiane (la moitié des mesures sont en dessous de la médiane)
+   * Méthode 2: la moyennne réduite (on enlève 1 (ou 2) valeur à chaque extrémité, et on fait la moyenne).
+   * Méthode 3: on enleve les mesures aberrantes que l'on peut trouver grace à la méthode de Dixon ou de Gubbs.
+   */
+  
+  mediane = tableau[index_mediane];
+  value=this->normalizeValue(mediane);
+  // Serial.print(F("  mediane= ")); Serial.print(mediane);
+  // Serial.print(F("  valeur lue calibree= "));  Serial.print(value);
   return (value);
 }
         
@@ -180,4 +205,18 @@ int CapButton::normalizeValue(float value)
   value = min(value,1023);
 
  return (int(value));
+}
+
+
+
+// **********************************************************
+// Fonction statique de tri pour Qsort
+// **********************************************************
+int sort_function(const void* a, const void* b)
+{
+    // Cast les void * en int *
+    const int* ia = (const int*)a;
+    const int* ib = (const int*)b;
+    // Comparaison (positif pour mettre "a" en fin de tableau)
+    return (*ia  - *ib);
 }

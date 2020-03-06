@@ -257,7 +257,7 @@ void loop_mp3()
   // --------------------------------------------------------------
   // Gestion du bouton TUNING
   // --------------------------------------------------------------
- int tuning = TuneButton.readValue(true);
+ int tuning = TuneButton.readValue();
   
   if (TuneButton.hasChanged())  
   {
@@ -265,7 +265,7 @@ void loop_mp3()
       Serial.print(F(">>Tuning has changed: ")); Serial.println(tuning); 
      // Si le bouton TUNE a bougé, on est peut-être sur une autre année, ou un autre genre, ou autre rating.
      Catalogue.setNewRequestedValues(tuning); 
-     // On redétermine donc l'année/genre correspondant à ce réglage.
+/*     // On redétermine donc l'année/genre correspondant à ce réglage.
       digitalWrite(LED_1,LOW); // Allume la Led témoin SPI BUSY
       mp3shield.pauseDataStream();
       if (ModeButton.getValue()==YEAR)  Catalogue.findFirstClipForRequestedYear();        // utilise RequestedYear
@@ -275,7 +275,8 @@ void loop_mp3()
      // On change le morceau MP3 suivant (qui avait été choisit en étape 4)
      Serial.println(F("  Recherche du prochain clip"));
      NextMusicFile = getNextFile();    
-  }
+*/
+}
 
   // --------------------------------------------------------------
   // Gestion du bouton MODE (FAV/YEAR/GENRE/RANDOM)
@@ -292,6 +293,7 @@ void loop_mp3()
        if (ModeButton.getValue()==GENRE) Catalogue.findFirstClipForRequestedGenre(tuning);
       mp3shield.resumeDataStream();
       digitalWrite(LED_1,HIGH); // Eteint la Led témoin SPI BUSY
+
   }
   
   // --------------------------------------------------------------
@@ -300,7 +302,8 @@ void loop_mp3()
   if (!mp3shield.isPlaying())      // S'il n'y a pas de morceau en cours, on en joue un.
   {
       Serial.println(F("No clip playing. Play another one."));
-      MusicFile = NextMusicFile;        // Le Next devient le Courant
+      MusicFile = getNextFile();        // on trouve le prochain clip en fonction du mode et du tuning
+      //MusicFile = NextMusicFile;      // Le Next devient le Courant
       NextMusicFile = "NOISE";          // Initialisation au cas où on ne trouve pas de suivant.
       Serial.println(F("---------------"));
       mp3shield.playTrack(MusicFile);   // On joue le MP3 
@@ -436,10 +439,10 @@ String getNextFile()
   switch (ModeButton.getValue())
   {
     
-    case YEAR  : NextClip=Catalogue.selectClipForRequestedYear();   break;
+    case YEAR  : NextClip=Catalogue.selectClipForRequestedYear();         break;
     case GENRE : NextClip=Catalogue.selectClipForRequestedGenre(tuning);  break;
-    case FAV   : NextClip=Catalogue.selectClipForRequestedRating(); break;
-    case RANDOM: NextClip=Catalogue.selectRandomClip();             break;
+    case FAV   : NextClip=Catalogue.selectClipForRequestedRating();       break;
+    case RANDOM: NextClip=Catalogue.selectRandomClip();                   break;
   }
 
   mp3shield.resumeDataStream();

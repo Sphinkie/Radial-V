@@ -20,7 +20,7 @@ class CapButton
         void   dischargeCapacitor();
         
     private:
-        int    captureMeanValue(int samples, int ecart=5);
+        int    captureMeanValue(int ecart=4);
         int    chargeAndMesure();
         int    normalizeValue(float value);
         
@@ -34,17 +34,19 @@ class CapButton
 
         const float MIN_VALUE = 30.0;   // la valeur la plus petite, jamais mesurée.
         const float MAX_VALUE = 400.0;  // la valeur la plus grande, jamais mesurée.
-        const float FACTOR = 1023.0/(MAX_VALUE-MIN_VALUE);
+        // le FACTOR sert à normaliser les mesures
+        const float FACTOR = 1023.0/(MAX_VALUE-MIN_VALUE);   // 2.76
         // Le status hasChanged est positionné si la variation est supérieure à l'imprecision
-        // (en effet la valeur lue oscille légèrement)
-        const int  IMPRECISION = 2*FACTOR;
+        const int  IMPRECISION = 3*FACTOR;                   // 8.00
+        // On considère que la valeur est stable une fois qu'elle ne varie plus que dans +/- STABILITY
+        const int  STABILITY   = 2*FACTOR;                   // 5.00
 
+/*
         const float IN_STRAY_CAP_TO_GND = 26.32; //initially this was 30.00
         const float IN_EXTRA_CAP_TO_GND = 0.0;
         const float IN_CAP_TO_GND       = IN_STRAY_CAP_TO_GND + IN_EXTRA_CAP_TO_GND;
         const int   MAX_ADC_VALUE       = 1023;
 
-/*
  * Etalonnage: 
  *  Pour avoir une meilleure précison, il faut connaitre la valeur de la capacité parasite C1.
  *  Elle est d'environ 30pF, mais il faut être plus précis, et faire un calibrage.

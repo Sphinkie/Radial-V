@@ -126,40 +126,20 @@ long Catalog::getRatingPosition()
 
 // *********************************************************************
 // Renvoie le GENRE correspondant à la position du bouton TUNE
-// "Classique;Blues;Jazz;Folk;Rock n'Roll;Rock;Chanson;Musiques du monde;"
+//   "Classique;Blues;Jazz;Folk;Rock n'Roll;Rock;Chanson;Musiques du monde;"
+// On positionne aussi GenreLength qui correspond à la 'largeur' de ce genre
 // *********************************************************************
 String Catalog::getGenreLabel(int tuning)
 {
-  if (tuning < 200)  {GenreLength=200; return "*"; }  
-  if (tuning < 400)  {GenreLength=200; return "Musiques du monde"; }
-  if (tuning < 540)  {GenreLength=140; return "Chanson"; }  
-  if (tuning < 590)  {GenreLength=50;  return "Rock"; }  
-  if (tuning < 690)  {GenreLength=100; return "Rock n'Roll"; }  
-  if (tuning < 790)  {GenreLength=100; return "Folk"; }  
-  if (tuning < 850)  {GenreLength=60;  return "Jazz"; }  
-  if (tuning < 950)  {GenreLength=100; return "Blues"; }  
-  if (tuning < 1024) {GenreLength=74;  return "Classique"; }  
-
-/* Méthode par répartition équitable: non utilisé  
-  int    GenreNumber;
-  String RequestedGenreFound;
-  int    Separ=0;
-  int    SeparFin=1;
-
-  GenreNumber       = int(tuning / GenreLength);   // ex: tuning 500 => 500/127.8 = 3.9 => 3eme genre
-  CurrentGenreStart = GenreNumber*GenreLength;     // ex: start = 3*127.8=383
-  
-  // On cherche le Nième ';'
-  for (int i=0; i<GenreNumber; i++)
-  {
-    Separ = GenreWhiteList.indexOf(';',Separ)+1;  
-  }
-  SeparFin = GenreWhiteList.indexOf(';',Separ);  
-  RequestedGenreFound    = GenreWhiteList.substring(Separ,SeparFin);
-  if (RequestedGenreFound.length()==0) RequestedGenreFound="*";
-*/
-  
-  return "*";
+  if (tuning < 360)  {GenreLength=360; return "Classique"; }
+  if (tuning < 450)  {GenreLength=90;  return "Blues"; }
+  if (tuning < 530)  {GenreLength=80;  return "Jazz"; }
+  if (tuning < 630)  {GenreLength=100; return "Folk"; }
+  if (tuning < 700)  {GenreLength=70;  return "Rock n'Roll"; }
+  if (tuning < 750)  {GenreLength=50;  return "Rock"; }
+  if (tuning < 840)  {GenreLength=90;  return "Chanson"; }
+  if (tuning < 890)  {GenreLength=50;  return "Musiques du monde"; }
+  return "*";    // Genre "Autres"
 }
 
 
@@ -168,12 +148,12 @@ String Catalog::getGenreLabel(int tuning)
 // *********************************************************************
 int Catalog::getStarsValue(int value)
 {
-  if (value < 500)  {return 5; }  /* 000..500  : 5 étoiles   */
-  if (value < 600)  {return 4; }  /* 500..600  : 4 étoiles   */  
-  if (value < 700)  {return 3; }  /* 600..700  : 3 étoiles   */
-  if (value < 850)  {return 2; }  /* 700..900  : 2 étoiles   */
-  if (value < 980)  {return 1; }  /* 800..980  : 1 étoile    */
-  else  {return 0; }              /* 980..1023 : sans étoile */
+  if (value < 300)  {return 0; }   /* 000..300  : 0 étoile  */
+  if (value < 450)  {return 1; }   /* 300..450  : 1 étoile  */  
+  if (value < 580)  {return 2; }   /* 450..580  : 2 étoiles */
+  if (value < 680)  {return 3; }   /* 580..680  : 3 étoiles */
+  if (value < 780)  {return 4; }   /* 680..780  : 4 étoiles */
+  else  {return 5; }               /* 780..1023 : 5 étoiles */
 }
 
 // *********************************************************************
@@ -181,27 +161,26 @@ int Catalog::getStarsValue(int value)
 // *********************************************************************
 int Catalog::getYearValue(int tuning)
 {
-/*  if (tuning < 370)          {RangeStart=2000; RangeEnd=2050; return (2000+ (tuning-950));      }
-  if (tuning < 500)          {RangeStart=1980; RangeEnd=2000; return (1980+ (tuning-800) *0.1); }  //1980..2000
-  if (tuning < 600)          {RangeStart=1970; RangeEnd=1980; return (1970+ (tuning-700) *0.1); }  //1970..1980
-  if (tuning < 700)          {RangeStart=1960; RangeEnd=1970; return (1960+ (tuning-600) *0.1); }  //1960..1970
-  if (tuning < 770)          {RangeStart=1950; RangeEnd=1960; return (1950+ (tuning-500) *0.1); }  //1950..1960
-  if (tuning < 840)          {RangeStart=1940; RangeEnd=1950; return (1940+ (tuning-400) *0.1); }  //1940..1950
-  if (tuning < 900)          {RangeStart=1900; RangeEnd=1940; return (1900+ (tuning-300) *0.4); }  //1900..1940
-  if (tuning < 950)          {RangeStart=1800; RangeEnd=1900; return (1800+ (tuning-200));}        //1800..1900
-  if (tuning <1000)          {RangeStart=1700; RangeEnd=1800; return (1700+ (tuning-100));}        //1700..1800
-  if (tuning <1024)          {RangeStart=0;    RangeEnd=1700; return (      (tuning    ) *170);}   //   0..1700
-*/
-  if (tuning < 370)          {RangeStart=2000; RangeEnd=2050; return map(tuning, 370,   0,RangeStart,RangeEnd);    }
-  if (tuning < 500)          {RangeStart=1980; RangeEnd=2000; return map(tuning, 500, 370,RangeStart,RangeEnd);    }
-  if (tuning < 600)          {RangeStart=1970; RangeEnd=1980; return map(tuning, 600, 500,RangeStart,RangeEnd);    }
-  if (tuning < 700)          {RangeStart=1960; RangeEnd=1970; return map(tuning, 700, 600,RangeStart,RangeEnd);    }
-  if (tuning < 770)          {RangeStart=1950; RangeEnd=1960; return map(tuning, 770, 700,RangeStart,RangeEnd);    }
-  if (tuning < 840)          {RangeStart=1940; RangeEnd=1950; return map(tuning, 840, 770,RangeStart,RangeEnd);    }
-  if (tuning < 900)          {RangeStart=1900; RangeEnd=1940; return map(tuning, 900, 840,RangeStart,RangeEnd);    }
-  if (tuning < 950)          {RangeStart=1800; RangeEnd=1900; return map(tuning, 950, 900,RangeStart,RangeEnd);    }
-  if (tuning <1000)          {RangeStart=1700; RangeEnd=1800; return map(tuning,1000, 950,RangeStart,RangeEnd);    }
-  if (tuning <1024)          {RangeStart=0;    RangeEnd=1700; return map(tuning,1024,1000,RangeStart,RangeEnd);    }
+  /*
+   map(value, fromLow, fromHigh, toLow, toHigh)
+   Parameters
+     value: the number to map.
+     fromLow:  the lower bound of the value’s current range.
+     fromHigh: the upper bound of the value’s current range.
+     toLow:  the lower bound of the value’s target range.
+     toHigh: the upper bound of the value’s target range.
+  */
+  if (tuning < 270)          {RangeStart=0;    RangeEnd=1700; return map(tuning,   0, 270,RangeStart,RangeEnd);    } // 0000...1700
+  if (tuning < 360)          {RangeStart=1700; RangeEnd=1800; return map(tuning, 270, 360,RangeStart,RangeEnd);    } // 1700...1800
+  if (tuning < 410)          {RangeStart=1800; RangeEnd=1900; return map(tuning, 360, 410,RangeStart,RangeEnd);    } // 1800...1900
+  if (tuning < 460)          {RangeStart=1900; RangeEnd=1940; return map(tuning, 410, 460,RangeStart,RangeEnd);    } // 1900...1940
+  if (tuning < 540)          {RangeStart=1940; RangeEnd=1950; return map(tuning, 460, 530,RangeStart,RangeEnd);    } // 40's
+  if (tuning < 600)          {RangeStart=1950; RangeEnd=1960; return map(tuning, 530, 600,RangeStart,RangeEnd);    } // 50's
+  if (tuning < 700)          {RangeStart=1960; RangeEnd=1970; return map(tuning, 600, 700,RangeStart,RangeEnd);    } // 60's
+  if (tuning < 790)          {RangeStart=1970; RangeEnd=1980; return map(tuning, 700, 790,RangeStart,RangeEnd);    } // 70's
+  if (tuning < 840)          {RangeStart=1980; RangeEnd=1990; return map(tuning, 790, 840,RangeStart,RangeEnd);    } // 80's
+  if (tuning < 860)          {RangeStart=1990; RangeEnd=2000; return map(tuning, 840, 860,RangeStart,RangeEnd);    } // 1990...2000
+  if (tuning < 1023)         {RangeStart=2000; RangeEnd=2050; return map(tuning, 860,1023,RangeStart,RangeEnd);    } // 2000...2050
 
 }
 
@@ -560,8 +539,8 @@ void Catalog::findFirstClipForRequestedGenre(int tuning)
     // en fonction d'un current tuning entre [Gdeb .. Gfin]
 /*    
  *     Algo:
- *     Pour le genre G, on a un tuning compris   entre Gdeb et Gfin.
- *     La Position 'f' dans le fichier en % sera entre   0  et  1 
+ *     Pour le genre G, le tuning est compris    entre Gdeb et Gfin.
+ *     La Position 'f' dans le fichier en % sera entre  0   et  1 
  *     f = (tuning-Gdeb)/(Gfin-Gdeb) = (tuning-Gdeb)/(GenreLength)
  */
     float f = float(tuning-CurrentGenreStart)/GenreLength;
