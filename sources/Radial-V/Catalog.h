@@ -1,13 +1,11 @@
-
-/* ***********************************************************
+/* *******************************************************************************
  *  Gestion du fichier catalogue des MP3
- ************************************************************* */
+ ********************************************************************************/
 
 #ifndef CATALOGCLASS_H_INCLUDED
 #define CATALOGCLASS_H_INCLUDED
 
-#define MAX_TUNING    1023        // Les entrées Analog renvioent une valeur entre 0 et 1023
-#define STEP_TUNING   102.3       // Pour les Years, on divise le Tunig en 10 zones (de 102.3 chacune)
+#define MAX_TUNING    1023        // Les entrées Analog renvoient une valeur entre 0 et 1023
 #define MAX_LG_LINE   40          // longueur maximale prévisionelle des lignes du catalogue
 
 class Catalog
@@ -75,7 +73,7 @@ class Catalog
         // Infos sur les genres apparaissant sur la face avant (White List)
         const String  GenreWhiteList="Classique;Blues;Jazz;Folk;Rock n'Roll;Rock;Chanson;Musiques du monde;";  // Ne pas oublier le ; final
 //        byte          GenreWhiteListSize = 8;
-        float         GenreLength; //   = float(MAX_TUNING / GenreWhiteListSize);    // ex: 1023/8 = 127.8
+        float         GenreLength;
         int           CurrentGenreStart;
         // Infos sur le premier Media ayant la date demandée
         String        FirstMediaID;

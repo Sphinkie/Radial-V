@@ -1,5 +1,5 @@
 /* ***********************************************************
- * Gestion de Bouton de type Capacimetre
+ *  Mesure de la capacité variable
  *  
  * Capacité à mesurer:
  *   La capacité à mesure est entre in_pin (Analog) et out_pin (Analog)
@@ -210,7 +210,7 @@ int CapButton::normalizeValue(float value)
 
 
 // **********************************************************
-// Fonction statique de tri pour Qsort
+// Fonction statique de tri pour Qsort (tri de tableau)
 // **********************************************************
 int sort_function(const void* a, const void* b)
 {

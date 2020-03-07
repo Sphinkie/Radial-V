@@ -1,8 +1,8 @@
 /* ***********************************************************
  *  FM PLAYER
  *  
- *  Gestion de la carte Sparkfun FM player, en utilisant la 
- *  librairie "SparkFunSi4703" (qui utilise le bus I2C via la librarie <Wire.h>)
+ *  Gestion de la carte Sparkfun FM player,
+ *  Utilise la librairie "SparkFunSi4703" (qui utilise le bus I2C via la librarie <Wire.h>)
  *    
  ************************************************************* */
 
@@ -10,19 +10,8 @@
 #include <Wire.h>             // Library pour bus I2C
 #include "FMplayer.h"
 
-int PIN_FM_RST = 2;     // RST* is used to reset the module (active LOW)
-int PIN_STC = 3;        // Output Pin for the pulse indicating "Seek/Tune Completed"
-
-// ---------------------------------------------------------------------
-/*
- * Quelques pb: 
- * 
- *    FM_RST : la libraire a besoin d'une pin dédiée à la commande du RST du shield.... pas prévu.... peut-on en trouver une  de dispo ?
- *    STC    : ce pulse arrive de la pin GPI02 du ship... laquelle n'est pas cablée du tout!
- *    SEN    : Pas besoin de la cabler.
- *    STC : la librairie fait un traitement sous forme de wait until... serait-ce bloquant ? une interruption serait sans doute mieux.
- * 
- */
+//int PIN_FM_RST = 2;     // RST* is used to reset the module (active LOW)
+//int PIN_STC = 3;        // Output Pin for the pulse indicating "Seek/Tune Completed"
 
 // ******************************************************************************
 // Déclaration des objets (en dehors de la classe)
@@ -48,7 +37,6 @@ void FMplayer::initialize()
   radio.setVolume(0);
   volume=0;
   Serial.println(F(" FM player initialized."));
-
 }
 
 // ------------------------------------------------------------------

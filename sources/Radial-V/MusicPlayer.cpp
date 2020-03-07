@@ -2,7 +2,7 @@
  *  MUSIC PLAYER
  *  
  *  Gestion de la carte Sparkfun MP3 player, en utilisant la 
- *  librairie "SFE-MP3-Shield" de William Greiman et le bus SPI
+ *  librairie "SFE-MP3-Shield" de William Greiman et le bus SPI.
  *  
  ************************************************************* */
 
@@ -42,7 +42,7 @@ MusicPlayer::MusicPlayer(byte pinSD_CS)
 
 
 // ******************************************************************************
-// Initialise la carte MP3 et la carte SD incluse
+// Initialise la carte MP3 et la carte SD incluse.
 // Cette carte utilise les pins suivantes:
 // - SPI (MISO MOSI SCLK) 
 // - SPI SlaveSelect :
@@ -149,7 +149,6 @@ void MusicPlayer::restartTrack()
 }
 
 
-
 // *******************************************************************************
 // Affiche les informations (tags) sur le clip en cours
 // *******************************************************************************
@@ -157,8 +156,8 @@ void MusicPlayer::displayMediaInfo()
 {
   // Note these buffer may be desired to exist globably. but do take much space if only needed temporarily, hence they are here.
   char title[30];   // buffer to contain the extract the Title from the current filehandles
-  char artist[30];  // buffer to contain the extract the artist name from the current filehandles
   char album[30];   // buffer to contain the extract the album name from the current filehandles
+  char artist[30];  // buffer to contain the extract the artist name from the current filehandles
 
   strcpy(title, "Current title");
   strcpy(artist,"Current artist");
@@ -172,11 +171,10 @@ void MusicPlayer::displayMediaInfo()
   MP3player.trackArtist((char*)&artist);
   MP3player.trackAlbum((char*)&album);
 
-
   //print out the arrays of track information
-//  Serial.print(F(" title:  "));   Serial.write((byte*)&title, 30);  Serial.println();
-//  Serial.print(F(" by:     "));   Serial.write((byte*)&artist,30);  Serial.println();
-//  Serial.print(F(" album:  "));   Serial.write((byte*)&album, 30);  Serial.println();
+  // Serial.print(F(" title:  "));   Serial.write((byte*)&title, 30);  Serial.println();
+  // Serial.print(F(" by:     "));   Serial.write((byte*)&artist,30);  Serial.println();
+  // Serial.print(F(" album:  "));   Serial.write((byte*)&album, 30);  Serial.println();
 
   Serial.print(F(" title:  "));   Serial.println(title);
   Serial.print(F(" by:     "));   Serial.println(artist);
@@ -291,7 +289,6 @@ void MusicPlayer::setDiffmode()
       Serial.println(F("Disabled."));
     }
 }
-
 
 
 // ******************************************************************************

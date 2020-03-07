@@ -83,8 +83,8 @@
 // SPI_SS               // D53  input  (configuré en output car Master)
 
 
-#define TUNE_OUT   A12    // Analog output for bouton Tune (charge pin) Créneaux de 5v.
-#define TUNE_IN    A14    // Analog input  for bouton Tune (discharge pin)
+#define TUNE_OUT   A12    // Analog output for bouton Tune (charge pin): Créneaux de 5v.
+#define TUNE_IN    A14    // Analog input for bouton Tune: Read value
 
 
 
