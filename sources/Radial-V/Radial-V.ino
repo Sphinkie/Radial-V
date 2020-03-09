@@ -114,7 +114,7 @@ char               SlaveArduinoStatus=0;       // Status de l'Arduino Slave I2C 
 // *******************************************************************************
 void setup() 
 {
-  // Des le début, on met les SlaveSelect du bus SPI au niveau haut, pour qu'ils ne reçiovent pas de messages parasites.
+  // Des le début, on met les SlaveSelect du bus SPI au niveau haut, pour qu'ils ne reçoivent pas de messages parasites.
   pinMode(53,      OUTPUT);    digitalWrite(53,      HIGH);   
   pinMode(MP3_CS,  OUTPUT);    digitalWrite(MP3_CS,  HIGH);   
   pinMode(MP3_DCS, OUTPUT);    digitalWrite(MP3_DCS, HIGH);   
@@ -165,7 +165,7 @@ void setup()
   Serial.println(F("================================="));
   // Pour le debug: On peut mettre FALSE pour tester avec un seul Arduino. 
   // Pour la prod: Mettre TRUE.
-  RemoteTFT.setSlavePresent(false);
+  RemoteTFT.setSlavePresent(true);
 }
 
 
@@ -175,7 +175,7 @@ void setup()
 void loop() 
 {
   // -----------------------------------------------------------------------------
-  // Au démarrage, on fait monter le son progressivement, pour faire un effet de "Mise en route avec chauffage".
+  // Au démarrage, on fait monter le son progressivement, pour produire un effet de "Mise en route avec chauffage".
   // -----------------------------------------------------------------------------
   if (Volume>MAX_VOLUME+20)   // pour niveau final à peine audible, mettre +60
   {
@@ -184,9 +184,9 @@ void loop()
      // Serial.println("Volume:"+String(Volume));
   }
   
-  // --------------------------------------------------------------
+  // -----------------------------------------------------------------------------
   // En cas de changement de source 
-  // --------------------------------------------------------------
+  // -----------------------------------------------------------------------------
   SourceButton.readPosition();
   if (SourceButton.hasChanged())
   {
@@ -232,7 +232,7 @@ void loop()
   // --------------------------------------------------------------
   switch (SourceButton.getValue())
   {
-    case 0: TuneButton.readValue();
+    case 0: TuneButton.readValue(true);
             break;        // NO SOURCE            
     case 1: loop_mp3();   // SOURCE = MP3
             break;
@@ -265,7 +265,7 @@ void loop_mp3()
       Serial.print(F(">>Tuning has changed: ")); Serial.println(tuning); 
      // Si le bouton TUNE a bougé, on est peut-être sur une autre année, ou un autre genre, ou autre rating.
      Catalogue.setNewRequestedValues(tuning); 
-/*     // On redétermine donc l'année/genre correspondant à ce réglage.
+     // On redétermine donc l'année/genre correspondant à ce réglage.
       digitalWrite(LED_1,LOW); // Allume la Led témoin SPI BUSY
       mp3shield.pauseDataStream();
       if (ModeButton.getValue()==YEAR)  Catalogue.findFirstClipForRequestedYear();        // utilise RequestedYear
@@ -275,7 +275,7 @@ void loop_mp3()
      // On change le morceau MP3 suivant (qui avait été choisit en étape 4)
      Serial.println(F("  Recherche du prochain clip"));
      NextMusicFile = getNextFile();    
-*/
+
 }
 
   // --------------------------------------------------------------
@@ -316,14 +316,14 @@ void loop_mp3()
    switch (Step)
    {
     case 2: // on recupère des infos dans le catalogue
-            Serial.println(F(" Affichage Requested Mode (from Tuning)"));
+            Serial.println(F("  Send Requested Mode to TFT (from Tuning)"));
             RemoteTFT.clearBackground();
             displayRequestedMode();
             if (MusicFile == "NOISE") CurrentRatingPos = NULL; 
             else CurrentRatingPos = Catalogue.getRatingPosition();
             break;
     case 3: // On affiche les infos du clip issues du fichier MP3
-            Serial.println(F(" Affichage Titre (from tag)"));
+            Serial.println(F("  Send Title to TFT (from tag)"));
             // RemoteTFT.printLog(MusicFile);
             if (MusicFile == "NOISE") 
             {
@@ -346,7 +346,7 @@ void loop_mp3()
             }
             break;
     case 4: // On affiche la suite des infos du clip issues du fichier Catalog
-            Serial.println(F(" Affichage Year+Genre (from Catalog)"));
+            Serial.println(F("  Send Year+Genre to TFT (from Catalog)"));
             if (MusicFile == "NOISE") 
             {
               RemoteTFT.printYear(" ");
@@ -362,20 +362,18 @@ void loop_mp3()
             Serial.println(F(">>Recherche du prochain clip"));
             NextMusicFile = getNextFile();       
             break;
-    case 6: // On determine le nombre d'étoiles et on l'affiche. Ca peut etre long
-            Serial.println(F(" Affichage du Rating (from Catalog)"));
+    case 6: // On determine le nombre d'étoiles et on l'affiche.
+            Serial.println(F("  Send Rating to TFT (from Catalog)"));
             if (MusicFile == "NOISE") 
               RemoteTFT.printStars("-");
             else
               RemoteTFT.printStars(Catalogue.getSelectedClipRating());
             break;
     case 12: // on surveille la RAM consommée
-            Serial.print  (F(" Free RAM (bytes)= "));
-            Serial.println(FreeRam(), DEC);
+            Serial.print(F(" Free RAM (bytes)= ")); Serial.println(FreeRam(), DEC);
             // On baisse l'intensité de l'affichage
             RemoteTFT.setBacklight(false);
             break;
-
    }
 
 
@@ -418,7 +416,6 @@ void loop_mp3()
                         RemoteTFT.printStars(Catalogue.getSelectedClipRating());
                         break; 
   }
-
 }
 
 
@@ -453,7 +450,7 @@ String getNextFile()
 }
 
 // *******************************************************************************
-// envioe un messaeg à l'Arduino Slave, pour afficher le mode demandé
+// Envoie un message à l'Arduino Slave, pour afficher le mode demandé
 // *******************************************************************************
 void displayRequestedMode()
 {

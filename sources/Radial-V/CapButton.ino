@@ -1,4 +1,4 @@
-/* ***********************************************************
+/* *******************************************************************************
  *  Mesure de la capacité variable
  *  
  * Capacité à mesurer:
@@ -8,13 +8,13 @@
  *   Capacitance between Pin_In and Ground.
  *   Stray capacitance is always present. 
  *   Extra capacitance can be added to allow higher capacitance to be measured.
- ************************************************************* */
+ ******************************************************************************* */
 
 #include "CapButton.h"
 
-// **********************************************************
+// *******************************************************************************
 // Constructor
-// **********************************************************
+// *******************************************************************************
 CapButton::CapButton(int in_pin, int out_pin)
 {
  // On initialise les variables
@@ -33,9 +33,9 @@ CapButton::CapButton(int in_pin, int out_pin)
   digitalWrite(in_pin, LOW);
 }
 
-// **********************************************************
+// *******************************************************************************
 // Initialisations
-// **********************************************************
+// *******************************************************************************
 void CapButton::begin()
 {
   this->dischargeCapacitor();
@@ -44,9 +44,9 @@ void CapButton::begin()
 
 }
 
-// **********************************************************
+// *******************************************************************************
 // On lit et renvoie la position de l'entrée analogique
-// **********************************************************
+// *******************************************************************************
 int CapButton::readValue(bool debug = false)
 {
   // On met à jour l'historique
@@ -72,58 +72,59 @@ int CapButton::readValue(bool debug = false)
   // Il y a Stabilisation si les trois valeurs de l'historique sont identiques (a l'imprécision près)
   Stabilized = (Variation<STABILITY) and (PreviousVariation<STABILITY);
     
-  /*  
   if (debug)
   {
-    Serial.print("  PrevPrevValue="+String(PrevPrevValue)); 
+    Serial.print(Value);
+    /*
+    Serial.print(": PrevPrevValue="+String(PrevPrevValue)); 
     Serial.print(" LastValue="+String(LastValue)); 
     Serial.print(" Value="+String(Value));
     if (Changed) Serial.print(F(" Changed"));
     if (Variation>IMPRECISION) Serial.print(" ("+String(Value-LastValue)+")");
     if (Stabilized) Serial.print(" Stabilized ("+String(PreviousVariation)+") ("+String(Variation)+")");
+    */
     Serial.println();
-  } */
+  }
   return Value;
 }
 
-// **********************************************************
+// *******************************************************************************
 // On renvoie la position lue la plus récente (valeur de 0 à 1023)
-// **********************************************************
+// *******************************************************************************
 int CapButton::getValue()
 {
-//  Changed = false;
   return Value;
 }
 
-// **********************************************************
+// *******************************************************************************
 // On renvoie la position lue précédente (valeur de 0 à 1023)
-// **********************************************************
+// *******************************************************************************
 int CapButton::getLastValue()
 {
     return LastValue;
 }
 
-// **********************************************************
+// *******************************************************************************
 // Indique si le bouton a changé de position depuis le dernier appel à la fonction
 // et s'est stabilisé.
-// **********************************************************
+// *******************************************************************************
 bool CapButton::hasChanged()
 {
   bool ChangedAndStabilized = (Changed and Stabilized);
   if (ChangedAndStabilized) 
   {
      Changed = false;
-     Serial.print(F("  IMPRECISION=")); Serial.print(IMPRECISION);
-     Serial.print(F("  STABILITY=")); Serial.println(STABILITY);
+     // Serial.print(F("  IMPRECISION=")); Serial.print(IMPRECISION);
+     // Serial.print(F("  STABILITY=")); Serial.println(STABILITY);
   }
   return ChangedAndStabilized;
 }
         
-// **********************************************************
+// *******************************************************************************
 // Effectue plusieurs mesures pour obtenir une valeur estimée.
 //   ecart   = ecart entre chaque mesure (en ms)
 // On la normalise [entre 0 et 1023].
-// **********************************************************
+// *******************************************************************************
 int CapButton::captureMeanValue(int ecart=4)
 {
   int  nbsamples =11;  // prendre un nombre impair
@@ -156,10 +157,10 @@ int CapButton::captureMeanValue(int ecart=4)
   return (value);
 }
         
-// **********************************************************
+// *******************************************************************************
 // Effectue une lecture de Pin_In (mesure théoriquement entre 0 et 1023).
 // On envoie une impulsion sur Pin_Out et 0.1ms plus tard, on lit la valeur de Pin_In
-// **********************************************************
+// *******************************************************************************
 int CapButton::chargeAndMesure()
 {
    int measure;
@@ -176,9 +177,9 @@ int CapButton::chargeAndMesure()
 }
 
 
-// **********************************************************
+// *******************************************************************************
 // Décharge la Capa en mettant les deux pins à LOW (=GND)
-// **********************************************************
+// *******************************************************************************
 void CapButton::dischargeCapacitor()
 {
    pinMode(Pin_Out, OUTPUT);
@@ -189,9 +190,9 @@ void CapButton::dischargeCapacitor()
 }
 
 
-// **********************************************************
+// *******************************************************************************
 // Normalise la valeur
-// **********************************************************
+// *******************************************************************************
 int CapButton::normalizeValue(float value)
 {
   // Normalisation linéaire inversée:
@@ -208,10 +209,9 @@ int CapButton::normalizeValue(float value)
 }
 
 
-
-// **********************************************************
+// *******************************************************************************
 // Fonction statique de tri pour Qsort (tri de tableau)
-// **********************************************************
+// *******************************************************************************
 int sort_function(const void* a, const void* b)
 {
     // Cast les void * en int *

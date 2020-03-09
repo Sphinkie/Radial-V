@@ -51,7 +51,7 @@ void setup()
   
   // Initialisation de l'écran TFT
   LCDdisplay.initDisplay();
-  LCDdisplay.setBackground(BG_R,BG_G,BG_B);
+  LCDdisplay.setBackgroundColor(BG_R,BG_G,BG_B);
   Serial.println(F("LCD initialization........done"));
 
   LCDdisplay.setBackgroundImage("bg_RADV.bmp");
@@ -102,8 +102,8 @@ void loop()
       case C_CLEARTEXT: LCDdisplay.clearAllTexts();         break;
       // Affichage des pictos
       case C_ICON0    : LCDdisplay.clearPicto();            break;
-      case C_ICON1    : LCDdisplay.showPicto(Data, 25, 14); break;    // Image size: 77x79
-      case C_ICON2    : LCDdisplay.showPicto("bg_TATOO",0, 0); break;
+      case C_ICON1    : LCDdisplay.showPicto(Data, 40, 20); break;    // Image size: 80x80
+      case C_ICON2    : LCDdisplay.showPicto("i_AUDIO",40, 20); break;
       case C_STARS : {
                       if      (Data[0]<'0') LCDdisplay.clearStars();
                       else if (Data[0]>'5') LCDdisplay.clearStars();
@@ -112,15 +112,19 @@ void loop()
                      }
       // Autres commandes
       case C_BACKGROUNDIMAGE : LCDdisplay.setBackgroundImage("bg_RADV.bmp"); break;
-      case C_CLEAR           : LCDdisplay.setBackground(BG_R,BG_G,BG_B);     break;
+      case C_CLEAR           : LCDdisplay.setBackgroundColor(BG_R,BG_G,BG_B);break;
       case C_BLON            : LCDdisplay.setBacklight(255);                 break;  
       case C_BLOFF           : LCDdisplay.setBacklight(0);                   break;
       case C_ASCII           : LCDdisplay.printAllChars();                   break;  
       // Autres cas  
-      default      : LCDdisplay.printLog("Unknown I2C command");             break;
+      default      : 
+          LCDdisplay.showPicto("i_AUDIO",40, 20);
+          LCDdisplay.printLog("Unknown I2C command");             
+          break;
       }
     }
   }
+  
   // -----------------------------------------------------------------------
   // Si nécessaire, on fait scroller le texte déroulant.
   // -----------------------------------------------------------------------
@@ -128,6 +132,43 @@ void loop()
   {
     LCDdisplay.scrollTitle();
   }
+
+  bool debug = true;
+  // -----------------------------------------------------------------------
+  // Si debug, on écoute le port série, pour recevoir des commandes .
+  //   a-z-e : augmente les valeurs rgb
+  //   q-s-d : augmente les valeurs rgb
+  // -----------------------------------------------------------------------
+  if (debug)
+  {
+    int commande = 0;
+    commande = Serial.read();
+    // if (commande >0) {Serial.print("Received: "); Serial.println(commande, DEC);}
+    switch (commande)
+    {
+      case 'a':
+        LCDdisplay.adjustBackgroundColor(1,0,0);
+        break;
+    case 'q':
+        LCDdisplay.adjustBackgroundColor(-1,0,0);
+        break;
+    case 'z': 
+        LCDdisplay.adjustBackgroundColor(0,1,0);
+        break;
+    case 's': 
+        LCDdisplay.adjustBackgroundColor(0,-1,0);
+        break;
+    case 'e': 
+        LCDdisplay.adjustBackgroundColor(0,0,1);
+        break;
+    case 'd': 
+        LCDdisplay.adjustBackgroundColor(0,0,-1);
+        break;
+    case 10:  // envoi 
+        LCDdisplay.setBackground();
+        break;
+    }
+  } 
 }
 
 

@@ -62,9 +62,16 @@ void Display::initDisplay()
 }
 
 // **********************************************************
-// Efface l'écran et mémorise la couleur de fond
+// Efface l'écran 
 // **********************************************************
-void Display::setBackground(int R, int G, int B) 
+void Display::setBackground() 
+{
+  TFTscreen.background(BackgroundR, BackgroundG, BackgroundB);
+}
+// **********************************************************
+// Efface l'écran et mémorise la couleur de fond (0-255)
+// **********************************************************
+void Display::setBackgroundColor(int R, int G, int B) 
 {
   TFTscreen.background(R, G, B);            // clear the screen with a rgb background
   BackgroundR = R;
@@ -78,6 +85,22 @@ void Display::setBackground(int R, int G, int B)
   strcpy(CurrentYear,  "");
   strcpy(CurrentGenre, "");
   strcpy(CurrentLog,   "");
+}
+
+// **********************************************************
+// Modifie la couleur de fond de l'ecran (0-255)
+// **********************************************************
+void Display::adjustBackgroundColor(int dR, int dG, int dB) 
+{
+  int R = BackgroundR + dR;
+  int G = BackgroundG + dG;
+  int B = BackgroundB + dB;
+  
+  // TFTscreen.background(R, G, B);            // clear the screen with a rgb background
+  BackgroundR = R;
+  BackgroundG = G;
+  BackgroundB = B;
+  Serial.println(String(BackgroundR) + "-" + String(BackgroundG) + "-" + String(BackgroundB));
 }
 
 // **********************************************************
@@ -209,7 +232,7 @@ void Display::printGenre(String texte)
 }
 
 // **********************************************************
-// Afiche le nombre d'étoiles demandées 
+// Affiche le nombre d'étoiles demandé 
 // **********************************************************
 void Display::printStars(int number)
 {

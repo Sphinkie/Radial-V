@@ -1,7 +1,7 @@
 /* ************************************************************************************************
  *  ASCII CONVERSIONS
  *  
- * Convertit des caractères Unicode ou UTF-8 en ASCII-ÉTENTDU (format supporté par la carte TFT)
+ * Convertit des caractères Unicode ou UTF-8 en ASCII-ÉTENDU (format supporté par la carte TFT)
  ************************************************************************************************ */
 
 #include "Unicode.h"

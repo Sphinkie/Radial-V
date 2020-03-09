@@ -1,6 +1,3 @@
-#ifndef DISPLAYCLASS_H_INCLUDED
-   #define DISPLAYCLASS_H_INCLUDED
-
 /* ************************************************************************************************
  *
  * Librairie pour piloter le shield ARDUINO ROBOT LCD SCREEN
@@ -10,6 +7,9 @@
  * - TFT   pour les accès à l'écran LCD du shield "Arduino Screen"
  * - SPI   pour le bus SPI   (inutile: a été enlevé)
  ************************************************************************************************** */
+#ifndef DISPLAYCLASS_H_INCLUDED
+   #define DISPLAYCLASS_H_INCLUDED
+
    #include <SD.h>       // pour le type File
    #include <TFT.h>      // pour le type PImage
 
@@ -32,18 +32,18 @@
    #define X_GENRE     X_YEAR+30
 
    // Couleur des textes (hors log, qui est rouge)
-   #define DARK_R 75
-   #define DARK_G 58
-   #define DARK_B 22
+   #define DARK_R    75
+   #define DARK_G    58
+   #define DARK_B    22
    // Couleur des textes grisés
-   #define GREYED_R 115
-   #define GREYED_G 115
-   #define GREYED_B 60
+   #define GREYED_R    220
+   #define GREYED_G    164
+   #define GREYED_B    57
 
    // Couleur du fond (jaune comme le boitier)
-   #define BG_R           210
-   #define BG_G           210
-   #define BG_B           0
+   #define BG_R           183
+   #define BG_G           118
+   #define BG_B           5
 
 // **********************************************************************
 // **********************************************************************
@@ -53,7 +53,9 @@ class Display
   public:
     Display();
     void initDisplay();
-    void setBackground(int R, int G, int B);
+    void setBackground();
+    void setBackgroundColor(int R, int G, int B);
+    void adjustBackgroundColor(int dR, int dG, int dB);
     void setBackgroundImage(char* filename);
     void printTitle(int lineNb, String texte);
     void printScrollingTitle(String texte);
@@ -99,8 +101,8 @@ class Display
     char     CurrentGenre[LINEMAX];
     char     CurrentLog[LINEMAX];
     // coordonnées du dernier picto affiché
-    byte     PictoX = 30;
-    byte     PictoY = 21;
+    byte     PictoX = 40;
+    byte     PictoY = 20;
     byte     PictoW = 0;
     byte     PictoH = 0;
     // Pas de déplacement pour le scrolling du titre
