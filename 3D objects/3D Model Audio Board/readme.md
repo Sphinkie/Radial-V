@@ -6,3 +6,4 @@ Cette carte fait passer le signal audio par le préamplificateur, le potentiomè
 [Vue du modèle 3D](Radial-V-Audio-Board.stl)
 
 ![Vue de la carte](Radial-V-Audio-Board.png)
+
