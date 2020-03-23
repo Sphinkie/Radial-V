@@ -6,7 +6,7 @@ Code: A000096
 
 The Arduino TFT screen is a backlit LCD screen with headers. You can draw text, images, and shapes to the screen with the [TFT library](https://www.arduino.cc/en/Reference/TFTLibrary). There is an onboard micro-SD card slot on the back of the screen that  can, among other things, store bitmap images for the screen to display.
 
-The screen's headers are designed to fit into the socket of any AVR-based Arduino (Uno, Leonardo, etc) or with the Arduino Due. To connect the screen to  other Arduino boards, read the tutorial on this [link](http://arduino.cc/en/Guide/TFTtoBoards).
+The screen's headers are designed to fit into the socket of any AVR-based Arduino (Uno, Leonardo, etc) or with the Arduino Due, Esplora, and Robot. To connect the screen to  other Arduino boards, read the tutorial on this [link](http://arduino.cc/en/Guide/TFTtoBoards).
 
 You can find [here](https://www.arduino.cc/en/Main/warranty) your board warranty informations.
 
@@ -35,7 +35,7 @@ The screen is 1.77" diagonal, with 160 x 128 pixel resolution. The  TFT library 
 - The screen runs on +5 VDC
 - The micro-SD slot is accessible through the [SD card library](https://www.arduino.cc/en/Reference/SD).
 - The LED backlight is dimmable by PWM.
-- The screen's headers are laid out so it easily sockets into the Arduino Esplora and Arduino Robot.
+
 
 ### Library
 
@@ -44,4 +44,5 @@ The Arduino TFT library extends the [Adafruit GFX](https://github.com/adafruit/A
 The library is backwards compatible, which means you can still use the Adafruit functions [described here](http://learn.adafruit.com/adafruit-gfx-graphics-library/overview).
 
 The TFT library relies on the [SPI library](https://www.arduino.cc/en/Reference/SPI), which must be included in any sketch that uses the screen.
+
 If you wish to use the SD card, you need to include the [SD library](https://www.arduino.cc/en/Reference/SD) as well.
