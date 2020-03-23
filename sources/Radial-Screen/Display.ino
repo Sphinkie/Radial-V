@@ -341,13 +341,13 @@ void Display::printDirectory(File dir, int numTabs)
 
 
 // ******************************************************************************
-// Reglage du niveau de rétro éclairage du TFT
-// 255 = lumineux
-// 0 = faible
+// Reglage du niveau de rétro éclairage du TFT (The LED backlight is dimmable by PWM).
+// Param:  255 = lumineux
+//           0 = faible
 // ******************************************************************************
 void Display::setBacklight(int value)
 {
-    analogWrite(BACKLIGHT, 255-value);    // pour le TFT, 0 est allumé
+    analogWrite(BACKLIGHT, 255-value);    // Pour le TFT, 0 = allumé
 }
 
 
