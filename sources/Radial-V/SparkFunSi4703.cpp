@@ -22,7 +22,9 @@ Si4703_Breakout::Si4703_Breakout(int resetPin, int sdioPin, int sclkPin, int stc
 // --------------------------------------------------------------------
 void Si4703_Breakout::powerOn()
 {
+    Serial.println(F(" ON ?"));
     si4703_init();
+    Serial.println(F(" ON !"));
 }
 
 // --------------------------------------------------------------------
@@ -151,14 +153,14 @@ void Si4703_Breakout::readRDS(char* buffer, long timeout)
 }
 
 // --------------------------------------------------------------------
-// To get the Si4703 inito 2-wire mode, SEN needs to be high and SDIO needs to be low after a reset
-// The breakout board has SEN pulled high, but also has SDIO pulled high. Therefore, after a normal power up
-// The Si4703 will be in an unknown state. RST must be controlled
+// To get the Si4703 inito 2-wire mode, SEN needs to be high and SDIO needs to be low after a reset.
+// The breakout board has SEN pulled high, but also has SDIO pulled high. Therefore, after a normal power up.
+// The Si4703 will be in an unknown state. RESET must be controlled.
 // --------------------------------------------------------------------
 void Si4703_Breakout::si4703_init() 
 {
-  pinMode(_resetPin, OUTPUT);
-  pinMode(_sdioPin, OUTPUT);      // SDIO is connected to A4 for I2C
+  pinMode(_resetPin, OUTPUT);     // RESET pin
+  pinMode(_sdioPin, OUTPUT);      // SDIO for I2C
   pinMode(_stcIntPin, OUTPUT);	  // STC (search/tune complete) interrupt pin
   digitalWrite(_sdioPin, LOW);    // A low SDIO indicates a 2-wire interface
   digitalWrite(_resetPin, LOW);   // Put Si4703 into reset
@@ -167,7 +169,9 @@ void Si4703_Breakout::si4703_init()
   digitalWrite(_resetPin, HIGH);  // Bring Si4703 out of reset with SDIO set to low and SEN pulled high with on-board resistor
   delay(1);                       // Allow Si4703 to come out of reset
 
-  Wire.begin(); //Now that the unit is reset and I2C inteface mode, we need to begin I2C
+  Serial.println(F(" start I2C !"));
+  Wire.begin(); // Now that the unit is reset and I2C inteface mode, we need to begin I2C
+  Serial.println(F(" done"));
 
   readRegisters();                   // Read the current register set
   //si4703_registers[0x07] = 0xBC04; // Enable the oscillator, from AN230 page 9, rev 0.5 (DOES NOT WORK, wtf Silicon Labs datasheet?)

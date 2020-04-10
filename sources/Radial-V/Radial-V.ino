@@ -59,7 +59,7 @@
 #define NEXT       18   // D18  Digital In     avec hardware interrupt 5
 #define PROMOTE    19   // D19  Digital In     avec hardware interrupt 4
 
-// ------------------ Pour RadioPlayer.h 
+// ------------------ Pour RadioPlayer
 #define FM_RESET   17 // D17 output : FM shield RST* Command (active LOW)
 #define FM_SDIO    20 // D20 I2C Bus - Digital In/out avec hardware interrupt 3
 #define FM_SCLK    21 // D21 I2C Bus - Digital In/out avec hardware interrupt 2
@@ -141,7 +141,7 @@ void setup()
   digitalWrite(LED_1,HIGH); // Eteint la Led témoin SPI BUSY
   // Initalise le Shield FM RADIO
   FMshield.initialize();
-  FMshield.displayInfos();
+//  FMshield.displayInfos();
     
   // On se connecte au bus I2C
   RemoteTFT.begin();
@@ -243,9 +243,9 @@ void loop()
     case 2:               // SOURCE = FM
             FMshield.setVolume(5);
             int v = FMshield.getVolume();
-            Serial.println(v);
-            FMshield.setChannel(935);
-            delay(10000);
+            Serial.println  (v);
+            //FMshield.setChannel(935);
+            delay(3000);
             break;
   }
 

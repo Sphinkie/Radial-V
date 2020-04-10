@@ -30,8 +30,6 @@ void RadioPlayer::initialize()
   Serial.println(F("FM player initialization."));
   Si4703_Breakout::powerOn();   // Cette fonction initialise aussi le dialogue I2C. 
   // Attention, car Radial-V l'initialise aussi dans RemoteDisplay::begin()...
-  volume=6;
-  Si4703_Breakout::setVolume(volume);
   Serial.println(F(" FM player initialized."));
 }
 
