@@ -26,6 +26,7 @@
  * 1.3  02/12/2015  Le Catalogue regroupe Year et Favorites. Installation des cartes d'extension.
  * 2.0  02/12/2019  Gestion des versions sous GitHub
  * 2.1  23/02/2020  Remapping des E/S : adaptation à la nouvelle carte "Bus Board v2"
+ * 2.2  07/04/2020  Adding FM radio shield
  *************************************************************************************************** 
 */
 
@@ -36,7 +37,7 @@
 
 #include "Radial-V.h"
 #include "MusicPlayer.h"
-#include "FMplayer.h"
+#include "RadioPlayer.h"
 #include "RotaryButton.h"
 #include "CapButton.h"
 #include "SelfReturnButton.h"
@@ -58,11 +59,11 @@
 #define NEXT       18   // D18  Digital In     avec hardware interrupt 5
 #define PROMOTE    19   // D19  Digital In     avec hardware interrupt 4
 
-// ------------------Définis dans FMplayer.h 
-// #define FM_RESET  17 // D17 output : FM shield RST* Command (active LOW)
-// #define SDIO      20 // D20 I2C Bus - Digital In/out avec hardware interrupt 3
-// #define SCLK      21 // D21 I2C Bus - Digital In/out avec hardware interrupt 2
-// #define FM_GPIO2  23 // D23 input  : FM shield pulse received then Seek/Tune completed. (pin GPI02 du shield FM Si7403)
+// ------------------ Pour RadioPlayer.h 
+#define FM_RESET   17 // D17 output : FM shield RST* Command (active LOW)
+#define FM_SDIO    20 // D20 I2C Bus - Digital In/out avec hardware interrupt 3
+#define FM_SCLK    21 // D21 I2C Bus - Digital In/out avec hardware interrupt 2
+#define FM_GPIO2   23 // D23 input  : FM shield pulse received then Seek/Tune completed. (pin GPI02 du shield FM Si7403)
 
 #define MODE_4     25   // D25  input   C-MODE-5    bouton Mode
 #define MODE_3     27   // D27  input   C-MODE-4    bouton Mode
@@ -92,7 +93,7 @@
 // variables globales
 // *******************************************************************************
 MusicPlayer        mp3shield(SD_CS);
-//FMplayer           FmShield();
+RadioPlayer        FMshield(FM_RESET, FM_SDIO, FM_SCLK, FM_GPIO2);
 Catalog            Catalogue;
 Rotary             ModeButton(MODE_1,MODE_2,MODE_3,MODE_4); 
 Rotary             SourceButton(MP3_ON, FM_ON); 
@@ -124,7 +125,7 @@ void setup()
   while (!Serial)   { ; } // wait for serial port to connect. Needed for native USB port only
   
   Serial.println(F("================================="));
-  Serial.println(F("==    RADIAL-V     v2.1        =="));
+  Serial.println(F("==    RADIAL-V     v2.2        =="));
   Serial.println(F("================================="));
   Serial.print  (F("CPU Frequency: ")); Serial.print(F_CPU/1000000); Serial.println(F(" MHz"));
   Serial.print  (F("Free RAM: "));      Serial.print(FreeRam(),DEC); Serial.println(F(" bytes"));
@@ -136,8 +137,11 @@ void setup()
   pinMode(K2,    OUTPUT); // Commande relay K2
   
   // Initalise le Shield Sparkfun MP3 player
-  mp3shield.initialize(); 
+  mp3shield.initialize();
   digitalWrite(LED_1,HIGH); // Eteint la Led témoin SPI BUSY
+  // Initalise le Shield FM RADIO
+  FMshield.initialize();
+  FMshield.displayInfos();
     
   // On se connecte au bus I2C
   RemoteTFT.begin();
@@ -222,7 +226,7 @@ void loop()
               Serial.println(F("  Picto FM"));
               RemoteTFT.clearBackground();
               RemoteTFT.printPictoFM();
-              RemoteTFT.setBacklight(false);
+              RemoteTFT.setBacklight(true);
               break;
     }
   }
@@ -236,7 +240,12 @@ void loop()
             break;        // NO SOURCE            
     case 1: loop_mp3();   // SOURCE = MP3
             break;
-    case 2:               // SOURCE = FM         
+    case 2:               // SOURCE = FM
+            FMshield.setVolume(5);
+            int v = FMshield.getVolume();
+            Serial.println(v);
+            FMshield.setChannel(935);
+            delay(10000);
             break;
   }
 
