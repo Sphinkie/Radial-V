@@ -41,7 +41,6 @@ class RemoteDisplay
     // Les interlocuteurs du bus I2C
     // ------------------------------------
     #define TFT_SLAVE 0x02   // Arduino avec écran TFT
-    #define FM_SLAVE  0x10   // Sparkfun FM Shield
     
     
     // ------------------------------------
@@ -61,8 +60,8 @@ class RemoteDisplay
     #define C_BLON            12   // TFT Backlight ON
     #define C_BLOFF           13   // TFT Backlight OFF
     #define C_ICON0           15   // clear last icon
-    #define C_ICON1           16   // audio icon
-    #define C_ICON2           17   // dance icon
+    #define C_ICON1           16   // medium icon
+    #define C_ICON2           17   // large icon
     #define C_ASCII           18   // Affiche toute la table ASCII de l'afficheur TFT
     #define C_TITLE           19  // + texte (deroulant)
 

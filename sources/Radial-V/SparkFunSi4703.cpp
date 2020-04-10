@@ -163,11 +163,11 @@ void Si4703_Breakout::si4703_init()
   pinMode(_sdioPin, OUTPUT);      // SDIO for I2C
   pinMode(_stcIntPin, OUTPUT);	  // STC (search/tune complete) interrupt pin
   digitalWrite(_sdioPin, LOW);    // A low SDIO indicates a 2-wire interface
-  digitalWrite(_resetPin, LOW);   // Put Si4703 into reset
+  digitalWrite(_resetPin, LOW);   // Put Si4703 into reset 
   digitalWrite(_stcIntPin, HIGH); // STC goes low on interrupt
-  delay(1);                       // Some delays while we allow pins to settle
+  delay(100);                     // Some delays while we allow pins to settle
   digitalWrite(_resetPin, HIGH);  // Bring Si4703 out of reset with SDIO set to low and SEN pulled high with on-board resistor
-  delay(1);                       // Allow Si4703 to come out of reset
+  delay(100);                     // Allow Si4703 to come out of reset
 
   Serial.println(F(" start I2C !"));
   Wire.begin(); // Now that the unit is reset and I2C inteface mode, we need to begin I2C
@@ -234,7 +234,11 @@ byte Si4703_Breakout::updateRegisters()
   byte ack = Wire.endTransmission();
   if(ack != 0) 
   {
-    Serial.println("Si4703 Register write failed !");
+    // 1: data too long to fit in transmit buffer
+    // 2: received NACK on transmit of address
+    // 3: received NACK on transmit of data
+    // 4: other error 
+    Serial.print("Si4703 Register write failed with code "); Serial.println(ack);
     return(FAIL);
   }
   else
@@ -275,7 +279,7 @@ int Si4703_Breakout::seek(byte seekDirection)
   si4703_registers[POWERCFG] |= (1<<SEEK); //Start seek
   updateRegisters(); //Seeking will now start
 
-  while(_stcIntPin == 1) {} //Wait for interrupt indicating STC (Seek/Tune complete)
+  while(_stcIntPin == 1) {} // Wait for interrupt indicating STC (Seek/Tune complete)
 
   readRegisters();
   int valueSFBL = si4703_registers[STATUSRSSI] & (1<<SFBL); //Store the value of SFBL

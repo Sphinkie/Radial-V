@@ -139,12 +139,12 @@ void setup()
   // Initalise le Shield Sparkfun MP3 player
   mp3shield.initialize();
   digitalWrite(LED_1,HIGH); // Eteint la Led témoin SPI BUSY
-  // Initalise le Shield FM RADIO
+  // Initalise le Shield FM RADIO et se connecte au bus I2C
   FMshield.initialize();
 //  FMshield.displayInfos();
     
-  // On se connecte au bus I2C
-  RemoteTFT.begin();
+  // On se connecte au bus I2C (deja fait lors de l'initialisation de la FM)
+  // RemoteTFT.begin();
   
   // Display the files on the SdCard 
   // mp3shield.dir();
@@ -225,8 +225,10 @@ void loop()
               mp3shield.stopTrack();
               Serial.println(F("  Picto FM"));
               RemoteTFT.clearBackground();
+              /*
               RemoteTFT.printPictoFM();
               RemoteTFT.setBacklight(true);
+              */
               break;
     }
   }
@@ -241,11 +243,11 @@ void loop()
     case 1: loop_mp3();   // SOURCE = MP3
             break;
     case 2:               // SOURCE = FM
-            FMshield.setVolume(5);
-            int v = FMshield.getVolume();
-            Serial.println  (v);
-            //FMshield.setChannel(935);
-            delay(3000);
+            // FMshield.setVolume(5);
+            // int v = FMshield.getVolume();
+            // Serial.println  (v);
+            // FMshield.setChannel(935);
+            // delay(3000);
             break;
   }
 
