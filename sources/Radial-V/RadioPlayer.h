@@ -14,14 +14,10 @@
 ************************************************************* */
 #include "SparkFunSi4703.h"   // Library pour shield FM Si7403
 
-
-
 #ifndef RADIOPLAYERCLASS_H_INCLUDED
 #define RADIOPLAYERCLASS_H_INCLUDED
 
-  #define  MIN_VOLUME 0
-  #define  MAX_VOLUME 15
-    
+  
   class RadioPlayer : public Si4703_Breakout
   {
      public:
@@ -29,9 +25,14 @@
         void   initialize();
         void   displayInfos();
         void   manageRadio(char commande);
-        void   listenRDSData();
         void   setChannel(int channel_nb);
                 
+		// fonctions de Velleman
+		int 	readRDS(char* ps, char* rt,uint8_t* pos);
+		char 	readRDSRadioText(char* rt);
+		char 	readRDSRadioStation(char* rs);
+				
+				
      private:
         int channel;
         int volume;

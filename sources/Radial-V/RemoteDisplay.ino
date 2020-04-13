@@ -29,28 +29,31 @@ void RemoteDisplay::begin()
 // Vérifie si le Slave est connecté au bus I2C
 // Note: Aucune des deux méthodes testées n'est efficace.
 // **********************************************************
+bool RemoteDisplay::isSlavePresent()
+{
+   return this->I2Cconnected;
+   /* ------------------------------------------
+    *  Essai de différentes méthodes:
+   // ------------------------------------------
+   //   Methode 1: Request Status
+   // ------------------------------------------
+   char SlaveArduinoStatus = 0;
+   SlaveArduinoStatus = this->requestStatus();
+   return (SlaveArduinoStatus==0?false:true);       // return True if a STATUS is received
+   // ------------------------------------------
+   //   Methode 2: Simple Begin Transmission
+   // ------------------------------------------
+   int result;
+   Wire.beginTransmission(TFT_SLAVE);   // transmit to slave device
+   result = Wire.endTransmission();     // end transmission and store answer
+   return (result==0?false:true);       // return True if ACK received
+   // ------------------------------------------ */
+}
 void RemoteDisplay::setSlavePresent(bool present)
 {
    this->I2Cconnected = present;
    Serial.print(F("Set I2C Slave: "));
    Serial.println(present?F("Present"):F("NOT Present"));
-}
-bool RemoteDisplay::isSlavePresent()
-{
-   return this->I2Cconnected;
-   // -------------------
-   //   Methode 1:
-   /* char SlaveArduinoStatus = 0;
-   SlaveArduinoStatus = this->requestStatus();
-   return (SlaveArduinoStatus==0?false:true);       // return True if a STATUS is received
-   */
-   // -------------------
-   //   Methode 2:
-   /* int result;
-   Wire.beginTransmission(TFT_SLAVE);   // transmit to slave device
-   result = Wire.endTransmission();     // end transmission and store answer
-   return (result==0?false:true);       // return True if ACK received
-   */
 }
 
 // **********************************************************
@@ -281,11 +284,12 @@ void RemoteDisplay::setBacklight(bool on)
 
 
 // **********************************************************
-// Demande de Status (1 byte)
+// Demande de Status (1 byte) (0x01 = Ready)
 // **********************************************************
 char RemoteDisplay::requestStatus()
 {
-  char c;
+  char c=0;
+  if (!I2Cconnected) return 0;
   Wire.requestFrom(TFT_SLAVE, 1);
   while(Wire.available())    // slave may send less than requested
   { 

@@ -93,7 +93,7 @@
 // variables globales
 // *******************************************************************************
 MusicPlayer        mp3shield(SD_CS);
-RadioPlayer        FMshield(FM_RESET, FM_SDIO, FM_SCLK, FM_GPIO2);
+// RadioPlayer        FMshield(FM_RESET, FM_SDIO, FM_SCLK, FM_GPIO2);
 Catalog            Catalogue;
 Rotary             ModeButton(MODE_1,MODE_2,MODE_3,MODE_4); 
 Rotary             SourceButton(MP3_ON, FM_ON); 
@@ -139,12 +139,24 @@ void setup()
   // Initalise le Shield Sparkfun MP3 player
   mp3shield.initialize();
   digitalWrite(LED_1,HIGH); // Eteint la Led témoin SPI BUSY
+  
+  /* ------------------------------------------------------------
   // Initalise le Shield FM RADIO et se connecte au bus I2C
   FMshield.initialize();
-//  FMshield.displayInfos();
+  FMshield.displayInfos();
+  // Cette partie a été mise en commentaire car la FM ne fonctionne pas.
+  // Impossible de communiquer acex le shield FM Si4703.
+  // Sur le bus I2C, il répond toujours NACK.
+  // ------------------------------------------------------------ */
+  // Comme on n'utilise pas la carte FM: On met les signaux à 0v.
+  pinMode(FM_RESET, OUTPUT);
+  pinMode(FM_GPIO2, OUTPUT);
+  digitalWrite(FM_RESET, LOW);
+  digitalWrite(FM_GPIO2, LOW);
+  // ------------------------------------------------------------ 
     
-  // On se connecte au bus I2C (deja fait lors de l'initialisation de la FM)
-  // RemoteTFT.begin();
+  // On se connecte au bus I2C (A commenter si on le fait via l'initialisation de la FM)
+  RemoteTFT.begin();
   
   // Display the files on the SdCard 
   // mp3shield.dir();
@@ -225,10 +237,10 @@ void loop()
               mp3shield.stopTrack();
               Serial.println(F("  Picto FM"));
               RemoteTFT.clearBackground();
-              /*
-              RemoteTFT.printPictoFM();
               RemoteTFT.setBacklight(true);
-              */
+              RemoteTFT.printPictoFM();
+              RemoteTFT.printLog(F("   PAS DE RECEPTION"));
+              Serial.println(F("FM is disabled. I did not succeed to communicate with Si4703 shield with I2C bus."));
               break;
     }
   }
@@ -243,11 +255,16 @@ void loop()
     case 1: loop_mp3();   // SOURCE = MP3
             break;
     case 2:               // SOURCE = FM
-            // FMshield.setVolume(5);
-            // int v = FMshield.getVolume();
-            // Serial.println  (v);
-            // FMshield.setChannel(935);
-            // delay(3000);
+            /* ------------------------------------------------------------ 
+            // Cette partie a été mise en commentaire car la FM ne fonctionne pas.
+            // Impossible de communiquer avec le shield FM Si4703.
+            // Sur le bus I2C, il répond toujours NACK.
+            FMshield.setVolume(5);
+            int v = FMshield.getVolume();
+            Serial.println  (v);
+            FMshield.setChannel(935);
+            delay(3000);
+            // ------------------------------------------------------------ */
             break;
   }
 
