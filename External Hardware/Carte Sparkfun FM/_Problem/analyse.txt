@@ -1,26 +1,27 @@
 Problème rencontré:
-
- - le Si4703 répond toujours NACK
+--------------------------
+ Le Si4703 répond toujours NACK
  
 Note:
  la tension de SDA baisse à 1.4v quand le Si4703 prend la main (1.24v avec les adaptations), mais reste à un niveau acceptable (cad > 0.7v)
 
 
 Nombreux essais effectués:
+----------------------------
 
 - Amélioration de l'adaptation I2C en mettant des diviseurs de tension sur RESET et GPIO2: sans effet
   (R ajustable de 20k)
 
 - Amélioration de l'adaptation I2C en mettant des transistors sur RESET et GPIO2: sans effet
-	(Transistor 2N7000 avec 4.7k sur drain) 
+	(Transistor 2N7000 avec 4.7k sur Drain) 
 	
 - Mise à LOW de GPIO2: sans effet
 
-- Vérification de SEN : est bien à HIGH.
+- Vérification de SEN: est bien à HIGH.
 
 - Désactivation de l'autre slave I2C (mais reste connecté): sans effet
 
-- Essais avec d'autres adresses (0x20) : NACK
+- Essais avec d'autres adresses (ex: 0x20): NACK
  
 
 
