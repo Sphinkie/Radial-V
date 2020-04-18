@@ -20,7 +20,7 @@ RemoteDisplay::RemoteDisplay()
 // **********************************************************
 // Initialise la connexion I2C en tant que Master.
 // **********************************************************
-void RemoteDisplay::begin()
+void RemoteDisplay::initI2C()
 {
   Wire.begin(); // join i2c bus (no address for Master)
 }

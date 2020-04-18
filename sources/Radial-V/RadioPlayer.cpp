@@ -8,27 +8,41 @@
 #include "RadioPlayer.h"
 
 // ******************************************************************************
-// Constructor
+// Constructor (avec Classe de base = Si4703_Breakout)
 // ******************************************************************************
 RadioPlayer::RadioPlayer(int pinRESET, int pinSDIO, int pinSCLK, int pinSTC) : Si4703_Breakout(pinRESET, pinSDIO, pinSCLK, pinSTC)
 {
   // Le constructeur de la library mémorise juste les pins.
+  initStatus = FAIL;  // not ready
 }
 
 // ******************************************************************************
 // Initialisation
+// Cette fonction initialise aussi le dialogue I2C.
+// Attention, à ne pas initialiser le bus I2C deux fois.
 // ******************************************************************************
 void RadioPlayer::initialize()
 {
   Serial.println(F("FM player initialization."));
-  Si4703_Breakout::powerOn();   // Cette fonction initialise aussi le dialogue I2C.
-  // Attention, car Radial-V l'initialise aussi dans RemoteDisplay::begin()...
-  Serial.println(F(" FM player initialized."));
+  initStatus = Si4703_Breakout::init();   // Cette fonction initialise aussi le dialogue I2C.
+  if (initStatus==SUCCESS)
+    Serial.println(F(" done."));
+  else
+    Serial.println(F(" failed."));
+  
 }
 
-// ------------------------------------------------------------------
+// ******************************************************************************
+// Renvoie True si on a réussi à initialiser la carte Si4703
+// ******************************************************************************
+bool RadioPlayer::isReady()
+{
+  return (initStatus==SUCCESS);
+}
+
+// ******************************************************************************
 // Affiche les valeurs des variables de la classe
-// ------------------------------------------------------------------
+// ******************************************************************************
 void RadioPlayer::displayInfos()
 {
   Serial.print(F("Channel:")); Serial.print(this->channel);

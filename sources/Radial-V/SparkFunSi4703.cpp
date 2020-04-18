@@ -26,9 +26,47 @@ Si4703_Breakout::Si4703_Breakout(int resetPin, int sdioPin, int sclkPin, int stc
 // --------------------------------------------------------------------
 // Hardware initialization
 // --------------------------------------------------------------------
-void Si4703_Breakout::powerOn()
+// To get the Si4703 inito 2-wire mode, SEN needs to be HIGH and SDIO needs to be LOW after a reset.
+// The breakout board has SEN pulled high, but also has SDIO pulled high...
+// Therefore, after a normal power up, the Si4703 will be in an unknown state. 
+// RESET must be controlled.
+// --------------------------------------------------------------------
+byte Si4703_Breakout::init()
 {
-  si4703_init();
+  byte errcode;
+  
+  pinMode(_resetPin, OUTPUT);     // FM_RESET pin
+  pinMode(_sdioPin, OUTPUT);      // SDIO (I2C)
+  pinMode(_stcIntPin, OUTPUT);    // STC (Search/Tune Complete) interrupt pin
+  digitalWrite(_sdioPin, LOW);    // A low SDIO indicates a 2-wire interface
+  digitalWrite(_resetPin, LOW);   // Put Si4703 into reset
+  digitalWrite(_stcIntPin, HIGH); // STC will go low on interrupt
+  delay(1);                       // Some delays while we allow pins to settle
+  digitalWrite(_resetPin, HIGH);  // Bring Si4703 out of reset with SDIO set to low, and SEN pulled high with on-board resistor
+  delay(1);                       // Allow Si4703 to come out of reset
+
+  Serial.println(F(" I2C initialization (Si4703)"));
+  Wire.begin(); // Now that the unit is reset and I2C inteface mode, we need to begin I2C
+
+  readRegisters();                   // Read the current register set
+  //si4703_registers[0x07] = 0xBC04; // Enable the oscillator, from AN230 page 9, rev 0.5 (DOES NOT WORK, wtf Silicon Labs datasheet?)
+  si4703_registers[0x07]  = 0x8100;  // Enable the oscillator, from AN230 page 9, rev 0.61 (works)
+  si4703_registers[0x04] |= 0x2000;  // Set bit 14 to high to enable STC Interrupt on GPIO2
+  errcode = updateRegisters();       // Write the registers
+  delay(500);                        // Wait for clock to settle - from AN230 page 9
+
+  readRegisters();                             // Read the current register set
+  si4703_registers[POWERCFG] = 0x4001;         // Enable the IC
+  //si4703_registers[POWERCFG] |= (1<<SMUTE) | (1<<DMUTE); //Disable Mute, disable softmute
+  si4703_registers[SYSCONFIG1] |= (1 << RDS);  // Enable RDS
+  si4703_registers[SYSCONFIG1] |= (1 << DE);   // 50kHz Europe setup
+  si4703_registers[SYSCONFIG2] |= (1 << SPACE0); // 100kHz channel spacing for Europe
+  si4703_registers[SYSCONFIG2] &= 0xFFF0;      // Clear volume bits
+  si4703_registers[SYSCONFIG2] |= 0x0001;      // Set volume to lowest
+  errcode = updateRegisters();                 // Write the Registers
+  delay(110);                                  // Max powerup time, from datasheet page 13
+
+  return errcode;
 }
 
 // --------------------------------------------------------------------
@@ -231,45 +269,6 @@ int Si4703_Breakout::readRDS(char* ps, char* rt)
 }
 
 
-// --------------------------------------------------------------------
-// To get the Si4703 inito 2-wire mode, SEN needs to be HIGH and SDIO needs to be LOW after a reset.
-// The breakout board has SEN pulled high, but also has SDIO pulled high...
-// Therefore, after a normal power up, the Si4703 will be in an unknown state. 
-// RESET must be controlled.
-// --------------------------------------------------------------------
-void Si4703_Breakout::si4703_init()
-{
-  pinMode(_resetPin, OUTPUT);     // FM_RESET pin
-  pinMode(_sdioPin, OUTPUT);      // SDIO (I2C)
-  pinMode(_stcIntPin, OUTPUT);	  // STC (Search/Tune Complete) interrupt pin
-  digitalWrite(_sdioPin, LOW);    // A low SDIO indicates a 2-wire interface
-  digitalWrite(_resetPin, LOW);   // Put Si4703 into reset
-  digitalWrite(_stcIntPin, HIGH); // STC will go low on interrupt
-  delay(1);                       // Some delays while we allow pins to settle
-  digitalWrite(_resetPin, HIGH);  // Bring Si4703 out of reset with SDIO set to low, and SEN pulled high with on-board resistor
-  delay(1);                       // Allow Si4703 to come out of reset
-
-  Serial.println(F(" Si4703 I2C initialization"));
-  Wire.begin(); // Now that the unit is reset and I2C inteface mode, we need to begin I2C
-
-  readRegisters();                   // Read the current register set
-  //si4703_registers[0x07] = 0xBC04; // Enable the oscillator, from AN230 page 9, rev 0.5 (DOES NOT WORK, wtf Silicon Labs datasheet?)
-  si4703_registers[0x07]  = 0x8100;  // Enable the oscillator, from AN230 page 9, rev 0.61 (works)
-  si4703_registers[0x04] |= 0x2000;  // Set bit 14 to high to enable STC Interrupt on GPIO2
-  updateRegisters();                 // Write the registers
-  delay(500);                        // Wait for clock to settle - from AN230 page 9
-
-  readRegisters();                             // Read the current register set
-  si4703_registers[POWERCFG] = 0x4001;         // Enable the IC
-  //si4703_registers[POWERCFG] |= (1<<SMUTE) | (1<<DMUTE); //Disable Mute, disable softmute
-  si4703_registers[SYSCONFIG1] |= (1 << RDS);  // Enable RDS
-  si4703_registers[SYSCONFIG1] |= (1 << DE);   // 50kHz Europe setup
-  si4703_registers[SYSCONFIG2] |= (1 << SPACE0); // 100kHz channel spacing for Europe
-  si4703_registers[SYSCONFIG2] &= 0xFFF0;      // Clear volume bits
-  si4703_registers[SYSCONFIG2] |= 0x0001;      // Set volume to lowest
-  updateRegisters();                           // Write the Registers
-  delay(110);                                  // Max powerup time, from datasheet page 13
-}
 
 // --------------------------------------------------------------------
 // Read the entire register control set, from 0x00 to 0x0F
@@ -404,4 +403,19 @@ int Si4703_Breakout::seek(byte seekDirection)
     radiotext[i] = 0;
   }
   return getChannel();
+}
+
+
+
+// ******************************************************************************
+// Disable the Si4703 shield. 
+// You can use this function if the initialisation has failed.
+// ******************************************************************************
+void Si4703_Breakout::disable()
+{
+  // Si on n'utilise pas la carte FM: On met les signaux à 0v.
+  pinMode(_resetPin, OUTPUT);
+  pinMode(_stcIntPin, OUTPUT);
+  digitalWrite(_resetPin, LOW);
+  digitalWrite(_stcIntPin, LOW);
 }

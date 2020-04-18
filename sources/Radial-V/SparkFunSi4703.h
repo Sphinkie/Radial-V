@@ -24,12 +24,15 @@ class Si4703_Breakout
 {
   public:
     Si4703_Breakout(int resetPin, int sdioPin, int sclkPin, int stcIntPin);
-    void powerOn();				        // call in setup
-	  void setChannel(int freq);  	// frequency in 100 kHz (europe: 875..1050)
+    byte init();                  // call in setup
+    void disable();
+    // FM tuning management
+    void setChannel(int freq);  	// frequency in 100 kHz (europe: 875..1050)
 	  int  seekUp(); 					      // returns the tuned channel or 0
 	  int  seekDown(); 				
-    void setVolume(int volume);     // 0 to 15
+    void setVolume(int volume);   // 0 to 15
     int  getVolume();
+    // RDS management
 	  char readRDSRadioText(char* rt);
 	  int  readRDS(char* ps, char* rt);
 
@@ -50,7 +53,6 @@ class Si4703_Breakout
 	  int  _stcIntPin;
 
     // protected functions
-	  void si4703_init();
 	  void readRegisters();
     void printRegisters(String comment);
     byte updateRegisters();
@@ -60,8 +62,8 @@ class Si4703_Breakout
     
 	  uint16_t si4703_registers[16]; //There are 16 registers, each 16 bits large
 	  static const uint16_t  FAIL = 0;
-	  static const uint16_t  SUCCESS = 1;
-
+    static const uint16_t  SUCCESS = 1;
+    
 	  static const int       SI4703 = 0x10;     // _001.0000 = I2C address of Si4703 - Note that the Wire function assumes non-left-shifted I2C address, not 0010.000W
 	  static const uint16_t  I2C_FAIL_MAX = 10; // This is the number of attempts we will try to contact the device before erroring out
 	  static const uint16_t  SEEK_DOWN = 0;     // Direction used for seeking. Default is down

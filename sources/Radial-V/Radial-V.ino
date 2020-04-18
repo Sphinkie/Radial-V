@@ -26,7 +26,8 @@
  * 1.3  02/12/2015  Le Catalogue regroupe Year et Favorites. Installation des cartes d'extension.
  * 2.0  02/12/2019  Gestion des versions sous GitHub
  * 2.1  23/02/2020  Remapping des E/S : adaptation à la nouvelle carte "Bus Board v2"
- * 2.2  07/04/2020  Adding FM radio shield
+ * 2.2  07/04/2020  Ajout FM radio shield
+ * 2.3  18/04/2020  Abandon FM radio shield. Ne fonctionne pas sur un Arduino MEGA avec I2C partagé.
  *************************************************************************************************** 
 */
 
@@ -93,7 +94,7 @@
 // variables globales
 // *******************************************************************************
 MusicPlayer        mp3shield(SD_CS);
-// RadioPlayer        FMshield(FM_RESET, FM_SDIO, FM_SCLK, FM_GPIO2);
+RadioPlayer        FMshield(FM_RESET, FM_SDIO, FM_SCLK, FM_GPIO2);
 Catalog            Catalogue;
 Rotary             ModeButton(MODE_1,MODE_2,MODE_3,MODE_4); 
 Rotary             SourceButton(MP3_ON, FM_ON); 
@@ -122,10 +123,10 @@ void setup()
   pinMode(SD_CS,   OUTPUT);    digitalWrite(SD_CS,   HIGH);   
   
   Serial.begin(115200);
-  while (!Serial)   { ; } // wait for serial port to connect. Needed for native USB port only
+  while (!Serial) { ; } // wait for serial port to connect. Needed for native USB port only
   
   Serial.println(F("================================="));
-  Serial.println(F("==    RADIAL-V     v2.2        =="));
+  Serial.println(F("==    RADIAL-V     v2.3        =="));
   Serial.println(F("================================="));
   Serial.print  (F("CPU Frequency: ")); Serial.print(F_CPU/1000000); Serial.println(F(" MHz"));
   Serial.print  (F("Free RAM: "));      Serial.print(FreeRam(),DEC); Serial.println(F(" bytes"));
@@ -136,34 +137,41 @@ void setup()
   pinMode(K1,    OUTPUT); // Commande relay K1
   pinMode(K2,    OUTPUT); // Commande relay K2
   
-  // Initalise le Shield Sparkfun MP3 player
-  mp3shield.initialize();
-  digitalWrite(LED_1,HIGH); // Eteint la Led témoin SPI BUSY
-  
-  /* ------------------------------------------------------------
-  // Initalise le Shield FM RADIO et se connecte au bus I2C
+ 
+  /*
+  // ------------------------------------------------------------
+  // Initalise le Shield FM RADIO et le bus I2C
+  // A faire en premier car cela initialise aussi le bus I2C
+  // ------------------------------------------------------------
   FMshield.initialize();
-  FMshield.displayInfos();
-  // Cette partie a été mise en commentaire car la FM ne fonctionne pas.
-  // Impossible de communiquer acex le shield FM Si4703.
-  // Sur le bus I2C, il répond toujours NACK.
-  // ------------------------------------------------------------ */
-  // Comme on n'utilise pas la carte FM: On met les signaux à 0v.
-  pinMode(FM_RESET, OUTPUT);
-  pinMode(FM_GPIO2, OUTPUT);
-  digitalWrite(FM_RESET, LOW);
-  digitalWrite(FM_GPIO2, LOW);
-  // ------------------------------------------------------------ 
-    
-  // On se connecte au bus I2C (A commenter si on le fait via l'initialisation de la FM)
-  RemoteTFT.begin();
-  
-  // Display the files on the SdCard 
-  // mp3shield.dir();
-  
-  // On enleve un echo acoustique désagréable
-  mp3shield.setDiffmode();
+  if (FMshield.isReady())
+      FMshield.displayInfos();
+  else
+  {
+      // On arrive ici si c'est impossible de communiquer avec le shield FM Si4703.
+      FMshield.disable();
+      Serial.println(F("  FM PLAYER DISABLED.")); 
+  }
+  */
 
+  // ------------------------------------------------------------
+  // Initalise le bus I2C
+  // ------------------------------------------------------------
+  // A commenter si on initialise le bus I2C via l'initialisation de la FM 
+  RemoteTFT.initI2C();
+
+  // ------------------------------------------------------------
+  // Initalise le Shield Sparkfun MP3 player
+  // ------------------------------------------------------------
+  mp3shield.initialize();
+  // Listing des fichiers de la carte SD 
+  // mp3shield.dir();
+  mp3shield.setDiffmode();    // Enleve un echo acoustique désagréable
+  digitalWrite(LED_1,HIGH);   // Eteint la Led témoin SPI BUSY
+
+  // ------------------------------------------------------------
+  // Initalise les autres objets
+  // ------------------------------------------------------------
   Catalogue.begin();      
   TuneButton.begin();
   NextMusicFile = "NOISE" ;   // ID du prochain clip MP3 à jouer ("STARTER")
@@ -171,7 +179,7 @@ void setup()
 
   Serial.println(F("Waiting I2C Slave ready..."));
   // -----------------------------------------------------------------------------
-  // On attend que le TFT soit prêt (status 0x01 = READY)
+  // On attend que l'Arduino SLAVE soit prêt sur le bus I2C (status 0x01 = READY)
   // -----------------------------------------------------------------------------
   while (SlaveArduinoStatus!=0)
   {
@@ -250,11 +258,14 @@ void loop()
   // --------------------------------------------------------------
   switch (SourceButton.getValue())
   {
-    case 0: TuneButton.readValue(true);
-            break;        // NO SOURCE            
-    case 1: loop_mp3();   // SOURCE = MP3
+    // --------------- MUTE = NO SOURCE ---------------------------
+    case 0: 
             break;
-    case 2:               // SOURCE = FM
+    // --------------- SOURCE = MP3 -------------------------------
+    case 1: loop_mp3();
+            break;
+    // --------------- SOURCE = FM -------------------------------
+    case 2:
             /* ------------------------------------------------------------ 
             // Cette partie a été mise en commentaire car la FM ne fonctionne pas.
             // Impossible de communiquer avec le shield FM Si4703.
@@ -547,7 +558,5 @@ void setRelay(int relaisposition)
    digitalWrite(K1,relaisposition);           // Commutation relay
    digitalWrite(K2,relaisposition);           // Commutation relay
 }
-
-
 
   

@@ -13,7 +13,7 @@ class RemoteDisplay
 
   public:
     RemoteDisplay();
-    void begin();
+    void initI2C();
     bool isSlavePresent();
     void setSlavePresent(bool present);
     void clearBackground();
