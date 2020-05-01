@@ -8,15 +8,19 @@ class Media
         Media();
         void fillWith(String medialine);
         // Setters
+        void setNextMediaPosition(long pos);
         void setSelected(bool select);
+        void setRating(int rating);
         // Getters
-        String getYear();
+        int    getYear();
         String getID();
         String getGenre();
-        String getRating();
+        int    getRating();
+        long   getNextMediaPosition();
+        long   getRatingPosition();
         // Checkers
         bool   isSelected();
-        bool   isGenre(String genre);
+        bool   hasGenre(String genre);
         bool   hasYearBetween(int YearStart, int YearEnd);
 
   private:
@@ -27,6 +31,10 @@ class Media
         String        Field3;       // genre
         String        Field4;       // rating
         bool          Selected=false;
+        long          NextMediaPosition=0;
+        // Infos sur les genres apparaissant sur la face avant (White List)
+        const String  GenreWhiteList="Classique;Blues;Jazz;Folk;Rock n'Roll;Rock;Chanson;Musiques du monde;";  // Ne pas oublier le ; final
+
 };
 
 #endif // MEDIA_H_INCLUDED

@@ -49,25 +49,46 @@ void Media::fillWith(String medialine)
   if (Field2.length()==0) Field2="NOISE";
   if (Field3.length()==0) Field3="-";
   if (Field4.length()==0) Field4="-";
-
-  // On mémorise la position du field Rating
-  // RatingPosition = getCurrentPosition()-4;
 }
 
-String Media::getYear()   {return Field1;}
-String Media::getID()     {return Field2;}
-String Media::getGenre()  {return Field3;}
-String Media::getRating() {return Field4;}
-bool   Media::isSelected(){return Selected;}
+// *******************************************************************************
+// Autres fonctions: Setters et Getters
+// *******************************************************************************
+int    Media::getYear()      {return Field1.toInt();}
+String Media::getID()        {return Field2;}
+String Media::getGenre()     {return Field3;}
+int    Media::getRating()    {return Field4.toInt();}
+bool   Media::isSelected()   {return Selected;}
+long   Media::getNextMediaPosition()   {return NextMediaPosition;}
+long   Media::getRatingPosition()      {return NextMediaPosition-4;}
 void   Media::setSelected(bool select) {Selected=select;}
+void   Media::setRating(int rating)    {Field4=String(rating);}
+void   Media::setNextMediaPosition(long pos)    {NextMediaPosition=pos;}
 
-bool Media::isGenre(String genre)
-{
-  return (genre==Field3);
-}
-
+// *******************************************************************************
+// *******************************************************************************
 bool Media::hasYearBetween(int YearStart, int YearEnd)
 {
   int year = Field1.toInt();
   return ((year>=YearStart) && (year<YearEnd));
+}
+
+
+// *******************************************************************************
+// Renvoie TRUE si le genre du média est egal au Genre demandé.
+// Renvoie TRUE si le genre du média est "hors-WhiteList" et le genre demandé est "*"
+// *******************************************************************************
+bool Media::hasGenre(String genre)
+{
+  //  Serial.println ("hasGenre "+genre);
+  if (genre=="*") 
+    // si le genre attendu est Others, alors on regarde si le genre lu est dans la Whitelist
+    // Si il est dedans : on renvoie FALSE.
+    {
+      Serial.print (" others:"+Field3+":"); Serial.println (GenreWhiteList.indexOf(Field3));
+      return (GenreWhiteList.indexOf(Field3)==-1); // -1=>on n'a pas trouvé=> on renvoie VRAI
+    }
+  else 
+    // si le genre attendu est defini, on le compare au genre lu
+    return (Field3.equalsIgnoreCase(genre));
 }

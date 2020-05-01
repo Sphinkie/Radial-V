@@ -53,7 +53,7 @@ bool CatalogFile::openCatalogAtPosition(long pos=5)
 }
 
 // *******************************************************************************
-// Ouvre le fichier Catalog.ndx, a une postion aléatoire
+// Ouvre le fichier Catalog.ndx, a une position aléatoire
 // *******************************************************************************
 bool CatalogFile::openCatalogAtRandomPosition()
 {
@@ -102,6 +102,7 @@ String CatalogFile::readNextLine()
 }
 
 // *******************************************************************************
+// Renvoie la position dans le fichier (c'est le début de la ligne suivante)
 // *******************************************************************************
 long CatalogFile::getCurrentPosition()
 {
@@ -150,14 +151,13 @@ String CatalogFile::readRandomLine()
 // *******************************************************************************
 // Ajoute +1 (max=5) au Rating du clip demandé, dans le fichier Catalog.ndx
 // *******************************************************************************
-int CatalogFile::writeAddStar(long clipPosition)
+int CatalogFile::writeAddStar(long RatingPosition)
 {
   SdFile FichierIndex;
   char   Stars='A';
-  long   RatingPosition = clipPosition+12;
   
-  Serial.print (F("ADDING a Star at ")); Serial.println (clipPosition);
-  if (clipPosition==NULL) return;
+  Serial.print (F("ADDING a Star at ")); Serial.println (RatingPosition);
+  if (RatingPosition==NULL) return;
   
   // On ouvre le fichier (renvoie false si error)
   if (!FichierIndex.open("/Catalog.ndx", O_RDWR))      // renvoie False en cas d'erreur
@@ -182,7 +182,7 @@ int CatalogFile::writeAddStar(long clipPosition)
   Serial.print (F(" and replaced with ")); Serial.println(Stars);
 
   // On vérifie (pour le debug)
-  FichierIndex.seekSet(clipPosition);
+  FichierIndex.seekSet(RatingPosition-12);
   Serial.print (F(" Debug end of line (after update): "));
   for (int i=0; i<14; i++) 
     {
@@ -201,14 +201,13 @@ int CatalogFile::writeAddStar(long clipPosition)
 // *******************************************************************************
 // Soustrait 1 (min=0) au Rating du clip demandé, dans le fichier Catalog.ndx
 // *******************************************************************************
-int CatalogFile::writeRemoveStar(long clipPosition)
+int CatalogFile::writeRemoveStar(long RatingPosition)
 {
   SdFile FichierIndex;
   char   Stars='A';
-  long   RatingPosition = clipPosition+12;
   
-  Serial.print (F("REMOVING a Star at ")); Serial.println (clipPosition);
-  if (clipPosition==NULL) return;
+  Serial.print (F("REMOVING a Star at ")); Serial.println (RatingPosition);
+  if (RatingPosition==NULL) return;
 
   // On ouvre le fichier
   if (!FichierIndex.open("/Catalog.ndx", O_RDWR))      // renvoie false si error
@@ -233,7 +232,7 @@ int CatalogFile::writeRemoveStar(long clipPosition)
   Serial.print (F(" and replaced with ")); Serial.println(Stars);
   
   // On vérifie (pour le debug)
-  FichierIndex.seekSet(clipPosition);
+  FichierIndex.seekSet(RatingPosition-12);
   Serial.print (F(" Debug end of line (after update): "));
   for (int i=0; i<14; i++) 
     {
@@ -252,13 +251,13 @@ int CatalogFile::writeRemoveStar(long clipPosition)
 // *******************************************************************************
 // Lit le Rating du clip demandé, dans le fichier Catalog.ndx
 // *******************************************************************************
-int CatalogFile::readRating(long clipPosition)
+int CatalogFile::readRating(long RatingPosition)
 {
   SdFile FichierIndex;
   char   Stars='A';
   
-  Serial.print (F("reading Rating at ")); Serial.println (clipPosition);
-  if (clipPosition==NULL) return;
+  Serial.print (F("reading Rating at ")); Serial.println (RatingPosition);
+  if (RatingPosition==NULL) return;
   
   // On ouvre le fichier (renvoie false si error)
   if (!FichierIndex.open("/Catalog.ndx", O_RDWR))      // renvoie False en cas d'erreur
@@ -269,12 +268,12 @@ int CatalogFile::readRating(long clipPosition)
   }
   
   // On se positionne sur la ligne du clip
-  FichierIndex.seekSet(clipPosition);
+  FichierIndex.seekSet(RatingPosition);
   // On lit 1 octet
   Stars = FichierIndex.read();
 
   // On vérifie (pour le debug)
-  FichierIndex.seekSet(clipPosition-12);
+  FichierIndex.seekSet(RatingPosition-12);
   Serial.print (F(" Debug end of line (after update): "));
   for (int i=0; i<14; i++) 
     {
@@ -292,12 +291,12 @@ int CatalogFile::readRating(long clipPosition)
 // Ecrit le Rating du clip demandé, dans le fichier Catalog.ndx
 // (on convertit les ints 0..5 en chars '0'..'5' 
 // *******************************************************************************
-void CatalogFile::writeRating(int rating, long clipPosition)
+void CatalogFile::writeRating(int rating, long RatingPosition)
 {
   SdFile FichierIndex;
   
-  Serial.print (F("writing Rating at ")); Serial.println (clipPosition);
-  if (clipPosition==NULL) return;
+  Serial.print (F("writing Rating at ")); Serial.println (RatingPosition);
+  if (RatingPosition==NULL) return;
   
   // On ouvre le fichier (renvoie false si error)
   if (!FichierIndex.open("/Catalog.ndx", O_RDWR))      // renvoie False en cas d'erreur
@@ -308,13 +307,13 @@ void CatalogFile::writeRating(int rating, long clipPosition)
   }
   
   // On se positionne sur la ligne du clip
-  FichierIndex.seekSet(clipPosition);
+  FichierIndex.seekSet(RatingPosition);
   // On ecrit 1 octet
   char stars = char(rating +'0');
   FichierIndex.print(stars);
 
   // On vérifie (pour le debug)
-  FichierIndex.seekSet(clipPosition-12);
+  FichierIndex.seekSet(RatingPosition-12);
   Serial.print (F(" Debug end of line (after update): "));
   for (int i=0; i<14; i++) 
     {
