@@ -1,35 +1,25 @@
 /* *******************************************************************************
- *  Gestion du fichier catalogue des MP3
+ *  Gestion du catalogue des MP3
  ********************************************************************************/
-
-#include <SdFat.h>
+#include "Arduino.h"
 #include "Catalog.h"
 
 // *******************************************************************************
-// Constructor
+// Constructor (avec Classe de base = CatalogFile)
 // *******************************************************************************
-Catalog::Catalog()
+Catalog::Catalog() : CatalogFile()
 {
    Media_Genre="-";
 }
 
+
 // *******************************************************************************
-// On initialise le Seed du générateur aléatoire.
-// N'a besoin d'être fait qu'une fois, mais pas immédiatement car SD doit être prêt.
+// N'a besoin d'être fait qu'une fois, mais pas immédiatement car la carte SD doit être prête.
 // *******************************************************************************
-void Catalog::begin()
+void Catalog::initialize()
 {
-   // On initialise le Seed du générateur aléatoire avec une valeur chaque fois différente.
-   randomSeed(analogRead(0));
-
-   // On cherche le nombre maximum, correspondant à la taille du fichier index.
-   if (!FichierIndex.open("/Catalog.ndx")) Serial.println(F("Catalog: Cannot open Catalog.ndx"));
-
-   RandomMax = FichierIndex.fileSize();
-   FichierIndex.close();
-   Serial.print(" taille Catalog.ndx: "); Serial.println(RandomMax);
+  CatalogFile::begin();
 }
-
 
 // *******************************************************************************
 // Il faut appeler cette méthode lorsque le tuning a changé.
@@ -78,7 +68,7 @@ void Catalog::parseFields(String medialine)
   if (Field4.length()==0) Field4="-";
 
   // On mémorise la position du field Rating
-  RatingPosition = FichierIndex.curPosition()-4;
+  RatingPosition = getCurrentPosition()-4;
 }
 
 // *******************************************************************************
@@ -244,13 +234,15 @@ String Catalog::selectRandomClip()
 
 // *******************************************************************************
 // Renvoie l'ID du Clip suivant dans l'index, correspondant au genre demandé.
-// On commence la recherche à partir de CurrentPosition (qui est l'emplacement du dernier clip joué,
+// On commence la recherche à partir de CurrentPosition (qui est l'emplacement du dernier clip joué),
 // ou du début, si on a fait un initSearch.
+
+// A OPTIMISER
+
 // *******************************************************************************
 String Catalog::selectClipForRequestedGenre(int tuning)
 {
   bool   FileAccessOK;
-  char   line[MAX_LG_LINE];            // ligne lue dans le fichier index
   String medialine;
   
   RequestedGenre = this->getGenreLabel(tuning); // La valeur textuelle du genre demandé
@@ -269,7 +261,7 @@ String Catalog::selectClipForRequestedGenre(int tuning)
     if (medialine=="ERROR") {this->closeCatalog(); return "NOISE";}    
     if (medialine=="EOF")   {this->closeCatalog(); this->findFirstClipForRequestedGenre(1); return "NOISE";}
     // Serial.print (F("  line read in Catalog.ndx: ")); Serial.println (medialine);
-    CurrentPositionG = FichierIndex.curPosition();  // On mémorise la position courante
+    CurrentPositionG = getCurrentPosition();  // On mémorise la position courante
     // on parse la ligne pour connaitre le genre que l'on compare au genre attendu
     this->parseFields(medialine);
     // tant que le genre lu n'est pas conforme au genre attendu...
@@ -306,13 +298,13 @@ String Catalog::selectClipForRequestedYear()
   if (!FileAccessOK) return ("NOISE");
 
   // On lit la ligne suivante
-  medialine = this->readNextLine();
-  if (medialine=="ERROR") {FichierIndex.close(); return "NOISE";}    
-  if (medialine=="EOF")   {FichierIndex.close(); return "NOISE";}
+  medialine = readNextLine();
+  if (medialine=="ERROR") {closeCatalog(); return "NOISE";}    
+  if (medialine=="EOF")   {closeCatalog(); return "NOISE";}
 
   Serial.print (F("  line read: ")); Serial.print (medialine);
-  CurrentPositionY  =FichierIndex.curPosition();  // On mémorise la position courante
-  FichierIndex.close();
+  CurrentPositionY = getCurrentPosition();  // On mémorise la position courante
+  closeCatalog();
 
   this->parseFields(medialine);
   // On verifie si le YEAR lu est toujours bien dans la période musicale demandée
@@ -348,14 +340,14 @@ String Catalog::selectClipForRequestedRating()
 
   Serial.print(F("  selectClipForRequestedRating ")); Serial.println(RequestedRating);
 
-  FileAccessOK = this->openCatalogAtPosition(5);
+  FileAccessOK = this->openCatalogAtPosition();
   // En cas d'erreur d'ouverture du fichier, on renvoie "NOISE.MP3"
   if (!FileAccessOK) return ("NOISE");
   
   // On lit une ligne au hasard dans le fichier
   medialine = this->readRandomLine();
-  if (medialine=="ERROR") {FichierIndex.close(); return "NOISE";}    
-  if (medialine=="EOF")   {FichierIndex.close(); return "NOISE";}
+  if (medialine=="ERROR")  {closeCatalog(); return "NOISE";}  
+  if (medialine=="EOF")    {closeCatalog(); return "NOISE";}
   Serial.print (F(" line read: ")); Serial.print (medialine);
   this->parseFields(medialine);
 
@@ -363,10 +355,11 @@ String Catalog::selectClipForRequestedRating()
   while (!this->isAsExpectedRating(Field4))
   {
         medialine=this->readNextLine();
-        if (medialine=="ERROR")  {FichierIndex.close(); return "NOISE";}  
-        if (medialine=="EOF")    {FichierIndex.close(); return "NOISE";}  
+        if (medialine=="ERROR")  {closeCatalog(); return "NOISE";}  
+        if (medialine=="EOF")    {closeCatalog(); return "NOISE";}  
         this->parseFields(medialine);
   } 
+  closeCatalog();
 
   // On memorise l'ID Media trouvé
   Media_Year       = Field1;
@@ -375,144 +368,44 @@ String Catalog::selectClipForRequestedRating()
   Media_Rating     = Field4;
 
   // on envoie l'ID du media trouvé
-  FichierIndex.close();
   return (Media_ID);
 }
 
-// *******************************************************************************
-// Ouvre le fichier Catalog.ndx, en gérant les cas d'erreur.
-// *******************************************************************************
-bool Catalog::openCatalogAtPosition(long pos)
-{
-  bool FileAccessOK;
-  
-  FileAccessOK = FichierIndex.open("/Catalog.ndx");      // on ouvre le fichier Catalog
-  if (!FileAccessOK)
-  {
-    // en cas d'erreur d'ouverture du fichier, on renvoie "NOISE.MP3"
-    Serial.println (F("Cannot open Catalog.ndx"));
-    return (false);
-  }
-  
-  // On se positionne dans l'index à la derniere position connue
-  Serial.print(F("  Catalog.ndx: going to position ")); Serial.println(pos);
-  FileAccessOK = FichierIndex.seekSet(pos);
-  if (!FileAccessOK)
-  {
-    Serial.print(F("Catalog.ndx: Cannot go to position ")); Serial.println(pos);
-    FichierIndex.close();
-    return (false);
-  }
-  return true;
-}
 
-// *******************************************************************************
-// Ferme le fichier Catalog.ndx.
-// *******************************************************************************
-void Catalog::closeCatalog()
-{
-  FichierIndex.close();
-}
-
-// *******************************************************************************
-// Lit une ligne au hasard dans le fichier.
-// Le FichierIndex est ouvert préalablement.
-// Renvoie la ligne, ou "EOF" ou "ERROR"
-// *******************************************************************************
-String Catalog::readRandomLine()
-{
-   char         line[MAX_LG_LINE];         // ligne lue dans le fichier
-   unsigned int RandomNb;         // Numéro aléatoire entre 1 et taille
-   int          Lg=0;
-   String       medialine;
-
-  RandomNb   = random(RandomMax)+1;   // random(Max) renvoie un nombre aléatoire entre 0 et Max-1
-  Serial.print("  read random line, number "); Serial.print (RandomNb); Serial.print (" out of "); Serial.println (RandomMax); 
-   
-  // On se positionne sur un octet au hasard dans l'index
-  if (!FichierIndex.seekSet(RandomNb))
-  {
-    Serial.println (F("Ratings.txt: Cannot go to position ")); Serial.println(RandomNb);
-    return ("ERROR");
-  }
-  
-  //On lit la fin de la ligne en cours (généralement tronquée, puisqu'on s'est placé au hasard dans le fichier)
-  Lg = FichierIndex.fgets(line,MAX_LG_LINE);
-  if (Lg==-1) return ("ERROR");      // Erreur de lecture
-  if (Lg==0)  return ("EOF");      // la ligne lue est vide ou EOF
-  // Serial.print (" positioned at : "); Serial.println (line);
-  
-  // On lit la ligne suivante
-  Lg = FichierIndex.fgets(line,MAX_LG_LINE);
-  if (Lg==-1) return ("ERROR");      // Erreur de lecture
-  if (Lg==0)  return ("EOF");      // la ligne lue est vide ou EOF
-
-  medialine=String(line);
-  medialine.trim();
-  return medialine;
-}
-
-// *******************************************************************************
-// On lit la ligne suivante du fichier
-// Le FichierIndex est ouvert préalablement.
-// *******************************************************************************
-String Catalog::readNextLine()
-{
-  char   Line[MAX_LG_LINE];         // ligne lue dans le fichier
-  String Medialine;
-   
-  // On lit la ligne suivante
-  int Lg = FichierIndex.fgets(Line,MAX_LG_LINE);
-  if (Lg==-1) return ("ERROR");    // Erreur de lecture
-  if (Lg==0)  return ("EOF");      // la ligne lue est vide ou EOF
-
-  Medialine=String(Line);
-  Medialine.trim();
-  return Medialine;
-}
 
 
 // *******************************************************************************
 // Initialisation des recherches de clip pour une année donnée.
 // Il faut appeler cette méthode lorsque l'année demandée change, ou que l'on vient de basculer sur le mode "YEAR".
-// Cette fond parcourt le Catalogue depuis le début jusqu'à trouver une année qui correspond à l'année demandée.
+// Cette fonction parcourt le Catalogue depuis le début jusqu'à trouver une année qui correspond à l'année demandée.
 // Cette fonction initialise FirstcurrentPositionY et CurrentPositionY.
-// Cette fonctione est un peu longue: voir si on peut l'optimiser...
+
+// A OPTIMISER
+
 // *******************************************************************************
 void Catalog::findFirstClipForRequestedYear()
 {
-  char   Line[MAX_LG_LINE];            // ligne lue dans le fichier catalogue
-  int    Lg;
   String medialine;
 
-  // on se positionne au debut du Catalogue
   Serial.print(F(" findFirstClipForRequestedYear ")); Serial.println(RequestedYear);
-  CurrentPositionY  =5;                      // Au debut du fichier index, il y a quelques octets inutiles. En dessous de 5, le programme plante.
-
-  // on ouvre le fichier Catalogue 
-  if (!FichierIndex.open("/Catalog.ndx"))      Serial.println (F("Cannot open Catalog.ndx"));
-    
-  // On se positionne au debut du Catalogue
-  FichierIndex.seekSet(5);
+  // on se positionne au debut du Catalogue
+  openCatalogAtPosition();
+  // CurrentPositionY=5;                
 
   // On cherche la première ligne correspondant à l'année demandée.
   // (On en a peut-être pas, alors on en prend une supérieure)
-  do
+  // On lit un paquet de 100 lignes dans le catalogue
+  for (int i=0; i<100; i++)
   {
-    CurrentPositionY  =FichierIndex.curPosition();  // On mémorise la position courante
-    Lg = FichierIndex.fgets(Line,MAX_LG_LINE);         // On lit une ligne
-    if (Lg==-1) {Serial.println (F("Cannot read Catalog.ndx")); break;}     // Erreur de lecture
-    if (Lg==0 ) {Serial.println (F("End of Catalog"));          break;}     // Fin de fichier - EOF
-    if (Lg <10) {Serial.println (F("line too short in Catalog.ndx")); Serial.println(Lg); Serial.println(Line);    continue;}     // ligne trop courte
-      
-    // Serial.print (" rewinding to line "); Serial.print (currentPositionY); Serial.print (F(" in Catalog.ndx: line read=")); Serial.println(line); 
-    medialine=String(Line);
-    medialine.trim();
+    CurrentPositionY = getCurrentPosition();  // On mémorise la position courante
+    readNextLine();
     // on parse la ligne pour lire l'année
     this->parseFields(medialine);
-  } while (!isInRange(Field1.toInt()));
+    // Si l'année est dans le bon Range: on sort de la boucle
+    if (isInRange(Field1.toInt())) break;
+  } 
 
-  FichierIndex.close();
+  closeCatalog();
 
   FirstcurrentPositionY=CurrentPositionY;
   FirstMediaYear  =Field1;
@@ -536,8 +429,8 @@ void Catalog::findFirstClipForRequestedGenre(int tuning)
     // en fonction d'un current tuning entre [Gdeb .. Gfin]
 /*    
  *     Algo:
- *     Pour le genre G, le tuning est compris    entre Gdeb et Gfin.
- *     La Position 'f' dans le fichier en % sera entre  0   et  1 
+ *     Pour le genre G, le tuning est compris entre Gdeb et Gfin.
+ *     La Position 'f' dans le fichier en % sera entre 0 et  1 
  *     f = (tuning-Gdeb)/(Gfin-Gdeb) = (tuning-Gdeb)/(GenreLength)
  */
     float f = float(tuning-CurrentGenreStart)/GenreLength;
@@ -545,15 +438,12 @@ void Catalog::findFirstClipForRequestedGenre(int tuning)
     unsigned int p = max(5,f*RandomMax - 100);  // on prend une marge de 100 chars pour ne pas être trop près de la fin du catalogue
     Serial.print(F("  p=")); Serial.print(p); Serial.println(F("(new planned position)"));
     // on se positionne à p, et on lit une ligne bidon, de façon à trouver une position initiale viable.
-    FichierIndex.open("/Catalog.ndx");
-    FichierIndex.seekSet(p);
-    FichierIndex.fgets(Line,MAX_LG_LINE);
-    CurrentPositionG  =FichierIndex.curPosition();
-    Serial.print(F("  CurrentPositionG=")); Serial.print(CurrentPositionG); Serial.println(F("(new position) "));
-    FichierIndex.close();
-
-    Serial.print(F("  Position of first ")); Serial.print(RequestedGenre); Serial.print(F(" is ")); Serial.println (CurrentPositionG);
-    
+    openCatalogAtPosition(p);
+    readNextLine();
+    CurrentPositionG = getCurrentPosition();
+    closeCatalog();
+    Serial.print(F("  CurrentPositionG="));  Serial.print(CurrentPositionG); Serial.println(F("(new position) "));
+    Serial.print(F("  Position of first ")); Serial.print(RequestedGenre);   Serial.print(F(" is ")); Serial.println (CurrentPositionG);
 }
 
 // *********************************************************************
@@ -566,7 +456,7 @@ bool Catalog::isInRange(int year)
 
 
 // *******************************************************************************
-// Renveio TRUE si le nombre d'étoiles du media est égal au Rating demandé.
+// Renvoie TRUE si le nombre d'étoiles du media est égal au Rating demandé.
 // *******************************************************************************
 bool Catalog::isAsExpectedRating(String rating)
 {
@@ -576,7 +466,7 @@ bool Catalog::isAsExpectedRating(String rating)
   
 
 // *******************************************************************************
-// Renvoie FALSE si le genre du média est egal genre demandé.
+// Renvoie FALSE si le genre du média est egal au Genre demandé.
 // Si le genre demandé est "*" alors cad que l'on attend un genre "hors-WhiteList"
 //   RequestedGenre = libellé du genre correspondant au tuning
 //   genre = libellé du genre du media en cours de lecture.
@@ -596,181 +486,27 @@ bool Catalog::isNotAsExpected(String genre)
     return (!genre.equalsIgnoreCase(RequestedGenre));
 }
 
-// *******************************************************************************
-// Ajoute +1 (max=5) au Rating du clip demandé, dans le fichier Catalog.ndx
-// *******************************************************************************
-void Catalog::writeAddStar(long clipPosition)
-{
-  SdFile FichierIndex;
-  char   Stars='A';
-  
-  Serial.print (F("ADDING a Star at ")); Serial.println (clipPosition);
-  if (clipPosition==NULL) return;
-  
-  // On ouvre le fichier (renvoie false si error)
-  if (!FichierIndex.open("/Catalog.ndx", O_RDWR))      // renvoie False en cas d'erreur
-  {
-    // En cas d'erreur d'ouverture du fichier, on sort.
-    Serial.println (F("Cannot open Catalog.ndx"));
-    return;
-  }
-  
-  // On se positionne sur la ligne du clip
-  FichierIndex.seekSet(clipPosition);
-  
-  // On lit le nombre d'etoiles (1 octet)
-  Stars = FichierIndex.read();
-  Serial.print (F(" I have read a byte:")); Serial.print(Stars);
-  // On incrémente
-  if (++Stars >'5') Stars='5'; 
-  if (Stars   <'0') Stars='0';
-  // On ecrit le nouveau nombre d'étoiles
-  FichierIndex.seekSet(clipPosition);
-  FichierIndex.print(Stars);
-  Serial.print (F(" and replaced with ")); Serial.println(Stars);
 
-  // On vérifie (pour le debug)
-  FichierIndex.seekSet(clipPosition-12);
-  Serial.print (F(" Debug end of line (after update): "));
-  for (int i=0; i<14; i++) 
-    {
-      char Debug = FichierIndex.read(); 
-      Serial.print(Debug);
-    }
-  Serial.println(); 
-  
-  // On ferme le fichier
-  FichierIndex.close();
-  
+// *******************************************************************************
+// Enleve une Star dans le media courant et dans le fichier index
+// *******************************************************************************
+void Catalog::removeStar(long clipPosition)
+{
+  int newValue; // valeur du rating apres décrementation
+  // décremente le Rating dans le fichier.
+  newValue = writeRemoveStar(clipPosition);
   // Positionne le Rating du Clip En Cours.
-  Media_Rating[0] = Stars;
+  Media_Rating[0] = newValue;
 }
 
-
 // *******************************************************************************
-// Soustrait 1 (min=0) au Rating du clip demandé, dans le fichier Catalog.ndx
+// Ajoute une Star dans le media courant et dans le fichier index
 // *******************************************************************************
-void Catalog::writeRemoveStar(long clipPosition)
+void Catalog::addStar(long clipPosition)
 {
-  SdFile FichierIndex;
-  char   Stars='A';
-  
-  Serial.print (F("REMOVING a Star at ")); Serial.println (clipPosition);
-  if (clipPosition==NULL) return;
-
-  // On ouvre le fichier
-  if (!FichierIndex.open("/Catalog.ndx", O_RDWR))      // renvoie false si error
-  {
-    // En cas d'erreur d'ouverture du fichier, on sort
-    Serial.println (F("Cannot open Catalog.ndx"));
-    return;
-  }
-
-  // On se positionne sur la ligne du clip
-  FichierIndex.seekSet(clipPosition);
-  
-  // On lit le nombre d'etoiles
-  Stars = FichierIndex.read();
-  Serial.print (F(" I have read byte ")); Serial.print(Stars);
-  // On décrémente
-  if (--Stars < '0') Stars='0';
-  if (Stars   >'5') Stars='5';
-  // On ecrit le nouveau nombre d'étoiles
-  FichierIndex.seekSet(clipPosition);
-  FichierIndex.print(Stars);
-  Serial.print (F(" and replaced with ")); Serial.println(Stars);
-  
-  // On vérifie (pour le debug)
-  FichierIndex.seekSet(clipPosition-12);
-  Serial.print (F(" Debug end of line (after update): "));
-  for (int i=0; i<14; i++) 
-    {
-      char Debug = FichierIndex.read(); 
-      Serial.print(Debug);
-    }
-  Serial.println(); 
-  
-  // On ferme le fichier
-  FichierIndex.close();
+  int newValue; // valeur du rating apres décrementation
+  // décremente le Rating dans le fichier.
+  newValue = writeAddStar(clipPosition);
   // Positionne le Rating du Clip En Cours.
-  Media_Rating[0] = Stars;
-}
-
-// *******************************************************************************
-// Ecrit le Rating du clip demandé, dans le fichier Catalog.ndx
-// (on convertit les ints 0..5 en chars '0'..'5' 
-// *******************************************************************************
-void Catalog::writeRating(int rating, long clipPosition)
-{
-  SdFile FichierIndex;
-  
-  Serial.print (F("writing Rating at ")); Serial.println (clipPosition);
-  if (clipPosition==NULL) return;
-  
-  // On ouvre le fichier (renvoie false si error)
-  if (!FichierIndex.open("/Catalog.ndx", O_RDWR))      // renvoie False en cas d'erreur
-  {
-    // En cas d'erreur d'ouverture du fichier, on sort.
-    Serial.println (F("Cannot open Catalog.ndx"));
-    return;
-  }
-  
-  // On se positionne sur la ligne du clip
-  FichierIndex.seekSet(clipPosition);
-  // On ecrit 1 octet
-  char stars = char(rating +'0');
-  FichierIndex.print(stars);
-
-  // On vérifie (pour le debug)
-  FichierIndex.seekSet(clipPosition-12);
-  Serial.print (F(" Debug end of line (after update): "));
-  for (int i=0; i<14; i++) 
-    {
-      char Debug = FichierIndex.read(); 
-      Serial.print(Debug);
-    }
-  Serial.println(); 
-  
-  // On ferme le fichier
-  FichierIndex.close();
-}
-
-// *******************************************************************************
-// Lit le Rating du clip demandé, dans le fichier Catalog.ndx
-// *******************************************************************************
-int Catalog::readRating(long clipPosition)
-{
-  SdFile FichierIndex;
-  char   Stars='A';
-  
-  Serial.print (F("reading Rating at ")); Serial.println (clipPosition);
-  if (clipPosition==NULL) return;
-  
-  // On ouvre le fichier (renvoie false si error)
-  if (!FichierIndex.open("/Catalog.ndx", O_RDWR))      // renvoie False en cas d'erreur
-  {
-    // En cas d'erreur d'ouverture du fichier, on sort.
-    Serial.println (F("Cannot open Catalog.ndx"));
-    return 0;
-  }
-  
-  // On se positionne sur la ligne du clip
-  FichierIndex.seekSet(clipPosition);
-  // On lit 1 octet
-  Stars = FichierIndex.read();
-
-
-  // On vérifie (pour le debug)
-  FichierIndex.seekSet(clipPosition-12);
-  Serial.print (F(" Debug end of line (after update): "));
-  for (int i=0; i<14; i++) 
-    {
-      char Debug = FichierIndex.read(); 
-      Serial.print(Debug);
-    }
-  Serial.println(); 
-  
-  // On ferme le fichier
-  FichierIndex.close();
-  return (Stars-'0');  // renvoie un entier
+  Media_Rating[0] = newValue;
 }

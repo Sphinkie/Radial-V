@@ -5,15 +5,19 @@
 #ifndef CATALOGCLASS_H_INCLUDED
 #define CATALOGCLASS_H_INCLUDED
 
-#define MAX_TUNING    1023        // Les entrées Analog renvoient une valeur entre 0 et 1023
-#define MAX_LG_LINE   40          // longueur maximale prévisionelle des lignes du catalogue
+#include "CatalogFile.h"
 
-class Catalog
+
+#define MAX_TUNING    1023        // Les entrées Analog renvoient une valeur entre 0 et 1023
+
+
+// La classe Catalog dérive de la classe CatalogFile (qui contient les primitives de lecture/ecriture dans le fichier de la carte SD
+class Catalog:CatalogFile
 {
     public:
         Catalog();
         // initialisations
-        void   begin();
+        void   initialize();
         void   setNewRequestedValues(int tuning);
         void   findFirstClipForRequestedYear();
         void   findFirstClipForRequestedGenre(int tuning);
@@ -28,15 +32,11 @@ class Catalog
         String getSelectedClipYear();
         String getSelectedClipRating();
         long   getRatingPosition();
-        // Accès au fichier Catalog.ndx
-        void   writeAddStar(long clipPosition);
-        void   writeRemoveStar(long clipPosition);
-      
+        void   removeStar(long clipPosition);
+        void   addStar(long clipPosition);
+              
     private:
-        bool   openCatalogAtPosition(long pos);
-        void   closeCatalog();
-        String readRandomLine();
-        String readNextLine();
+
         void   parseFields(String medialine);
         String getGenreLabel(int value);
         int    getYearValue(int tuning);
@@ -44,9 +44,6 @@ class Catalog
         bool   isInRange(int year);
         bool   isNotAsExpected(String mediagenre);
         bool   isAsExpectedRating(String rating);
-        // Accès au fichier Catalog.ndx
-        void   writeRating(int rating, long clipPosition);
-        int    readRating(long clipPosition);
 
         // debugage
         void   debugGenre();
@@ -62,8 +59,7 @@ class Catalog
 
     private:
         // Le catalogue
-        SdFile        FichierIndex;
-        unsigned int  RandomMax=10;         
+//        SdFile        FichierIndex;
         // Infos sur le dernier Media valide trouvé
         String        LastMedia_ID;   // sert à eviter de tomber deux fois de suite sur le même ID
         String        Media_ID;
@@ -85,7 +81,7 @@ class Catalog
         String        Field2;       // media_id
         String        Field3;       // genre
         String        Field4;       // rating
-        // Les curseurs dans la catalogue
+        // Les curseurs dans le catalogue
         long          FirstcurrentPositionY; // curseur de debut de décade (mode YEAR)
         long          CurrentPositionY;      // curseur pour le mode YEAR
         long          CurrentPositionG;      // curseur pour le mode GENRE

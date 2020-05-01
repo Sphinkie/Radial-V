@@ -172,7 +172,7 @@ void setup()
   // ------------------------------------------------------------
   // Initalise les autres objets
   // ------------------------------------------------------------
-  Catalogue.begin();      
+  Catalogue.initialize();      
   TuneButton.begin();
   NextMusicFile = "NOISE" ;   // ID du prochain clip MP3 à jouer ("STARTER")
   Action = _IDLE;
@@ -286,11 +286,9 @@ void loop()
 }
   
   
-// *******************************************************************************
-// *******************************************************************************
+// **************************************************************************************************************************************************************
 // Loop function for MP3 source
-// *******************************************************************************
-// *******************************************************************************
+// **************************************************************************************************************************************************************
 void loop_mp3() 
 {
   // --------------------------------------------------------------
@@ -427,7 +425,7 @@ void loop_mp3()
                         NextButton.wasPushed();   
                         Serial.println("NEXT !");    
                         mp3shield.stopTrack();    
-                        Catalogue.writeRemoveStar(CurrentRatingPos); // On édite le catalog pendant que le clip est stoppé.
+                        Catalogue.removeStar(CurrentRatingPos); // On édite le catalog pendant que le clip est stoppé.
                         RemoteTFT.printStars(Catalogue.getSelectedClipRating());
                         break; 
        case _AGAIN: // On ajoute une étoile, et on reprend le clip du début
@@ -436,7 +434,7 @@ void loop_mp3()
                         Serial.println("AGAIN !");   
                         digitalWrite(LED_1,LOW); // Allume la Led témoin SPI BUSY
                         mp3shield.pauseDataStream();
-                        Catalogue.writeAddStar(CurrentRatingPos);
+                        Catalogue.addStar(CurrentRatingPos);
                         mp3shield.resumeDataStream();
                         digitalWrite(LED_1,HIGH); // Eteint la Led témoin SPI BUSY
                         mp3shield.restartTrack();
@@ -448,7 +446,7 @@ void loop_mp3()
                         Serial.println("PROMOTE !"); 
                         digitalWrite(LED_1,LOW); // Allume la Led témoin SPI BUSY
                         mp3shield.pauseDataStream();
-                        Catalogue.writeAddStar(CurrentRatingPos);    
+                        Catalogue.addStar(CurrentRatingPos);    
                         mp3shield.resumeDataStream();
                         digitalWrite(LED_1,HIGH); // Eteint la Led témoin SPI BUSY
                         Serial.println(F(" display: Stars"));
