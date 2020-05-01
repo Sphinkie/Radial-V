@@ -11,6 +11,7 @@ class CatalogFile
 
         void   begin();
         bool   openCatalogAtPosition(long pos=5);
+        bool   openCatalogAtRandomPosition();
         void   closeCatalog();
         long   getCurrentPosition();
 

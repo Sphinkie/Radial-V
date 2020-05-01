@@ -3,15 +3,15 @@
  ********************************************************************************/
 #include "Arduino.h"
 #include "Catalog.h"
+#include "Media.h"
+
 
 // *******************************************************************************
 // Constructor (avec Classe de base = CatalogFile)
 // *******************************************************************************
 Catalog::Catalog() : CatalogFile()
 {
-   Media_Genre="-";
 }
-
 
 // *******************************************************************************
 // N'a besoin d'être fait qu'une fois, mais pas immédiatement car la carte SD doit être prête.
@@ -33,50 +33,12 @@ void Catalog::setNewRequestedValues(int tuning)
   RequestedRating= this->getStarsValue(tuning); // La valeur textuelle du rating demandé
 }
 
-
-// *******************************************************************************
-// Parsing des 4 champs d'une ligne de catalogue  (ex: 1956;E76E79B1;Calipso;0; )
-// *******************************************************************************
-void Catalog::parseFields(String medialine)
-{
-  // Serial.print("  parsing: "); Serial.println (medialine);
-  if (medialine.length()<18) 
-  {
-    // Si la ligne est trop courte pour être exploitable, on met les valeurs par défaut
-    Field1 = "0000";
-    Field2 = "NOISE";
-    Field3 = "-";
-    Field4 = "-";
-  }
-  else
-  {
-    // Si la ligne a une longueur correcte, on fait le parsing
-    int    Separ1   = medialine.indexOf(';');              // pointeur sur le premier séparateur
-    int    Separ2   = medialine.indexOf(';',Separ1+1);     // pointeur sur le second séparateur
-    int    Separ3   = medialine.indexOf(';',Separ2+1);     // pointeur sur le troisième séparateur
-    int    Separ4   = medialine.indexOf(';',Separ3+1);     // pointeur sur le quatrième séparateur
-    Field1 = medialine.substring(0       ,Separ1);
-    Field2 = medialine.substring(Separ1+1,Separ2);
-    Field3 = medialine.substring(Separ2+1,Separ3);          
-    Field4 = medialine.substring(Separ3+1,Separ4);
-  }
-
-  // Si après le parsing, un des champs est vide, on met la valeur par défaut
-  if (Field1.length()==0) Field1="0000";
-  if (Field2.length()==0) Field2="NOISE";
-  if (Field3.length()==0) Field3="-";
-  if (Field4.length()==0) Field4="-";
-
-  // On mémorise la position du field Rating
-  RatingPosition = getCurrentPosition()-4;
-}
-
 // *******************************************************************************
 // Renvoie l'ID qui a été trouvé lors du GetNextClip
 // *******************************************************************************
 String Catalog::getSelectedClipID()
 {
-  return Media_ID;
+  return NextMediaToPlay.getID();
 }
 
 // *******************************************************************************
@@ -84,7 +46,7 @@ String Catalog::getSelectedClipID()
 // *******************************************************************************
 String Catalog::getSelectedClipGenre()
 {
-  return Media_Genre;
+  return NextMediaToPlay.getGenre();
 }
 
 // *******************************************************************************
@@ -92,7 +54,7 @@ String Catalog::getSelectedClipGenre()
 // *******************************************************************************
 String Catalog::getSelectedClipYear()
 {
-  return Media_Year;
+  return NextMediaToPlay.getYear();
 }
 
 // *******************************************************************************
@@ -100,7 +62,7 @@ String Catalog::getSelectedClipYear()
 // *******************************************************************************
 String Catalog::getSelectedClipRating()
 {
-  return Media_Rating;
+  return NextMediaToPlay.getRating();
 }
 
 // *******************************************************************************
@@ -157,18 +119,17 @@ int Catalog::getYearValue(int tuning)
      toLow:  the lower bound of the value’s target range.
      toHigh: the upper bound of the value’s target range.
   */
-  if (tuning < 270)          {RangeStart=0;    RangeEnd=1700; return map(tuning,   0, 270,RangeStart,RangeEnd);    } // 0000...1700
-  if (tuning < 360)          {RangeStart=1700; RangeEnd=1800; return map(tuning, 270, 360,RangeStart,RangeEnd);    } // 1700...1800
-  if (tuning < 410)          {RangeStart=1800; RangeEnd=1900; return map(tuning, 360, 410,RangeStart,RangeEnd);    } // 1800...1900
-  if (tuning < 460)          {RangeStart=1900; RangeEnd=1940; return map(tuning, 410, 460,RangeStart,RangeEnd);    } // 1900...1940
-  if (tuning < 540)          {RangeStart=1940; RangeEnd=1950; return map(tuning, 460, 530,RangeStart,RangeEnd);    } // 40's
-  if (tuning < 600)          {RangeStart=1950; RangeEnd=1960; return map(tuning, 530, 600,RangeStart,RangeEnd);    } // 50's
-  if (tuning < 700)          {RangeStart=1960; RangeEnd=1970; return map(tuning, 600, 700,RangeStart,RangeEnd);    } // 60's
-  if (tuning < 790)          {RangeStart=1970; RangeEnd=1980; return map(tuning, 700, 790,RangeStart,RangeEnd);    } // 70's
-  if (tuning < 840)          {RangeStart=1980; RangeEnd=1990; return map(tuning, 790, 840,RangeStart,RangeEnd);    } // 80's
-  if (tuning < 860)          {RangeStart=1990; RangeEnd=2000; return map(tuning, 840, 860,RangeStart,RangeEnd);    } // 1990...2000
-  if (tuning < 1023)         {RangeStart=2000; RangeEnd=2050; return map(tuning, 860,1023,RangeStart,RangeEnd);    } // 2000...2050
-
+  if (tuning < 270)       {RangeStart=0;    RangeEnd=1700; return map(tuning,   0, 270,RangeStart,RangeEnd);    } // 0000...1700
+  if (tuning < 360)       {RangeStart=1700; RangeEnd=1800; return map(tuning, 270, 360,RangeStart,RangeEnd);    } // 1700...1800
+  if (tuning < 410)       {RangeStart=1800; RangeEnd=1900; return map(tuning, 360, 410,RangeStart,RangeEnd);    } // 1800...1900
+  if (tuning < 460)       {RangeStart=1900; RangeEnd=1940; return map(tuning, 410, 460,RangeStart,RangeEnd);    } // 1900...1940
+  if (tuning < 540)       {RangeStart=1940; RangeEnd=1950; return map(tuning, 460, 530,RangeStart,RangeEnd);    } // 40's
+  if (tuning < 600)       {RangeStart=1950; RangeEnd=1960; return map(tuning, 530, 600,RangeStart,RangeEnd);    } // 50's
+  if (tuning < 700)       {RangeStart=1960; RangeEnd=1970; return map(tuning, 600, 700,RangeStart,RangeEnd);    } // 60's
+  if (tuning < 790)       {RangeStart=1970; RangeEnd=1980; return map(tuning, 700, 790,RangeStart,RangeEnd);    } // 70's
+  if (tuning < 840)       {RangeStart=1980; RangeEnd=1990; return map(tuning, 790, 840,RangeStart,RangeEnd);    } // 80's
+  if (tuning < 860)       {RangeStart=1990; RangeEnd=2000; return map(tuning, 840, 860,RangeStart,RangeEnd);    } // 1990...2000
+  if (tuning < 1023)      {RangeStart=2000; RangeEnd=2050; return map(tuning, 860,1023,RangeStart,RangeEnd);    } // 2000...2050
 }
 
 
@@ -199,36 +160,34 @@ void Catalog::debugYear()
 // *******************************************************************************
 String Catalog::selectRandomClip()
 {
-  String  LineRead;
+  String  medialine;
   bool    FileAccessOK;
+  String  LastMedia_ID;
+  String  NextMedia_ID;
 
   // On ouvre le fichier
-  FileAccessOK = this->openCatalogAtPosition(5);
+  FileAccessOK = this->openCatalogAtPosition();
   // En cas d'erreur d'ouverture du fichier, on renvoie "NOISE.MP3"
   if (!FileAccessOK) return ("NOISE");
   
   // On lit une ligne au hasard dans le fichier
-  LineRead = this->readRandomLine();
+  medialine = this->readRandomLine();
   this->closeCatalog(); 
-  if (LineRead=="ERROR") {return "NOISE";}    
-  if (LineRead=="EOF")   {return "NOISE";}
+  if (medialine=="ERROR") {return "NOISE";}    
+  if (medialine=="EOF")   {return "NOISE";}
   
   // Serial.print(F("  line read: ")); Serial.println (LineRead);
   
   // on parse la ligne du media trouvé pour extraire l'ID
-  this->parseFields(LineRead);
-  LastMedia_ID = Media_ID;
-  Media_ID     = Field2;
+  LastMedia_ID = NextMediaToPlay.getID();
+  NextMediaToPlay.fillWith(medialine);
+  NextMedia_ID = NextMediaToPlay.getID();
 
   // Si on est tombé 2 fois sur le même ID, on met du Noise
-  if (LastMedia_ID==Media_ID) Media_ID="NOISE";
+  if (LastMedia_ID==NextMedia_ID) return "NOISE";
 
-  // On stocke les infos du clip trouvé
-  Media_Rating = Field4;
-  Media_Genre  = Field3;
-  Media_Year   = Field1;   
   // On retourne l'ID du media trouvé
-  return Media_ID;
+  return NextMedia_ID;
 }
 
 
@@ -244,6 +203,7 @@ String Catalog::selectClipForRequestedGenre(int tuning)
 {
   bool   FileAccessOK;
   String medialine;
+  bool   found = false;
   
   RequestedGenre = this->getGenreLabel(tuning); // La valeur textuelle du genre demandé
   Serial.println ("  selectClipForRequestedGenre: "+RequestedGenre);
@@ -253,31 +213,27 @@ String Catalog::selectClipForRequestedGenre(int tuning)
   // En cas d'erreur d'ouverture du fichier, on renvoie "NOISE.MP3"
   if (!FileAccessOK) return ("NOISE");
 
-  // On lit des lignes jusqu'à ce qu'on trouve une ligne du genre demandé
-  do
+  // On lit des lignes jusqu'à ce qu'on trouve une ligne du genre demandé (ou pas)
+  for (int i=0; i<100; i++)
   {
-    // On lit une ligne
-    medialine = this->readNextLine();
-    if (medialine=="ERROR") {this->closeCatalog(); return "NOISE";}    
-    if (medialine=="EOF")   {this->closeCatalog(); this->findFirstClipForRequestedGenre(1); return "NOISE";}
-    // Serial.print (F("  line read in Catalog.ndx: ")); Serial.println (medialine);
-    CurrentPositionG = getCurrentPosition();  // On mémorise la position courante
-    // on parse la ligne pour connaitre le genre que l'on compare au genre attendu
-    this->parseFields(medialine);
-    // tant que le genre lu n'est pas conforme au genre attendu...
-  } while (this->isNotAsExpected(Field3));      
-  Serial.println (F(" found a match! "));
+     // On lit une ligne
+     medialine = this->readNextLine();
+     if (medialine=="ERROR") {this->closeCatalog(); return "NOISE";}    
+     if (medialine=="EOF")   {this->closeCatalog(); this->findFirstClipForRequestedGenre(1); return "NOISE";}
+     // Serial.print (F("  line read in Catalog.ndx: ")); Serial.println (medialine);
+     CurrentPositionG = getCurrentPosition();  // On mémorise la position courante
+     // on parse la ligne pour connaitre le genre que l'on compare au genre attendu
+     CursorMedia.fillWith(medialine);
+     if (CursorMedia.isGenre(RequestedGenre))
+     {
+        found = true;
+        NextMediaToPlay=CursorMedia;
+        break;
+     }
+  } 
   
   this->closeCatalog(); 
-
-  // On mémorise les informations sur le media touvé
-  Media_Year  = Field1;
-  Media_ID    = Field2;   // this->parseMediaID(String(line));
-  Media_Genre = Field3;   // this->parseGenre(String(line));
-  Media_Rating= Field4;
-
-  // Retourne l'ID du media
-  return Media_ID;
+  return found;
 }
 
 // *******************************************************************************
@@ -312,18 +268,22 @@ String Catalog::selectClipForRequestedYear()
   {
     // Si on déborde, alors on rewinde.
     CurrentPositionY=FirstcurrentPositionY;
+    /*
     Media_Year  = FirstMediaYear;
     Media_ID    = FirstMediaID;
     Media_Genre = FirstMediaGenre;
     Media_Rating= FirstMediaRating;
+    */
   }
   else
   {
     // On memorise l'ID Media trouvé
+    /*
     Media_Year  = Field1;
     Media_ID    = Field2;
     Media_Genre = Field3;
     Media_Rating= Field4;
+    */
   }
   // Retourne l'ID du media à jouer
   return Media_ID;
@@ -361,12 +321,6 @@ String Catalog::selectClipForRequestedRating()
   } 
   closeCatalog();
 
-  // On memorise l'ID Media trouvé
-  Media_Year       = Field1;
-  Media_ID         = Field2;
-  Media_Genre      = Field3;
-  Media_Rating     = Field4;
-
   // on envoie l'ID du media trouvé
   return (Media_ID);
 }
@@ -390,7 +344,6 @@ void Catalog::findFirstClipForRequestedYear()
   Serial.print(F(" findFirstClipForRequestedYear ")); Serial.println(RequestedYear);
   // on se positionne au debut du Catalogue
   openCatalogAtPosition();
-  // CurrentPositionY=5;                
 
   // On cherche la première ligne correspondant à l'année demandée.
   // (On en a peut-être pas, alors on en prend une supérieure)
@@ -400,9 +353,14 @@ void Catalog::findFirstClipForRequestedYear()
     CurrentPositionY = getCurrentPosition();  // On mémorise la position courante
     readNextLine();
     // on parse la ligne pour lire l'année
-    this->parseFields(medialine);
-    // Si l'année est dans le bon Range: on sort de la boucle
-    if (isInRange(Field1.toInt())) break;
+    CursorMedia.create(medialine);
+    // Si l'année est dans le bon décade: on sort de la boucle
+    if (CursorMedia.hasYearBetween(RequestedYear,RangeEnd)) 
+    {
+      CursorMedia.setSelected(true);
+      NextMediaToPlay=CursorMedia:
+      break;
+    }
   } 
 
   closeCatalog();
@@ -417,29 +375,12 @@ void Catalog::findFirstClipForRequestedYear()
 // *******************************************************************************
 // Initialisation des recherches de clip pour les genres.
 // Cette fonction initialise CurrentPositionG.
-// Cette position initiale dépend du Tuning, ainsi on ne commence par toujours par le meme premier clip du genre.
 // *******************************************************************************
 void Catalog::findFirstClipForRequestedGenre(int tuning)
 {
-  char   Line[MAX_LG_LINE];            // ligne lue dans le fichier catalogue
-
     Serial.print(F(" findFirstClipForRequestedGenre ")); Serial.println(RequestedGenre);
-    // CurrentPositionG  =5;    
-    // On se positionne entre [5 .. TailleCatalog]  (TailleCatalog = randomMax)
-    // en fonction d'un current tuning entre [Gdeb .. Gfin]
-/*    
- *     Algo:
- *     Pour le genre G, le tuning est compris entre Gdeb et Gfin.
- *     La Position 'f' dans le fichier en % sera entre 0 et  1 
- *     f = (tuning-Gdeb)/(Gfin-Gdeb) = (tuning-Gdeb)/(GenreLength)
- */
-    float f = float(tuning-CurrentGenreStart)/GenreLength;
-    Serial.print(F("  f=")); Serial.print(int(f*100)); Serial.println(F("% of file"));
-    unsigned int p = max(5,f*RandomMax - 100);  // on prend une marge de 100 chars pour ne pas être trop près de la fin du catalogue
-    Serial.print(F("  p=")); Serial.print(p); Serial.println(F("(new planned position)"));
-    // on se positionne à p, et on lit une ligne bidon, de façon à trouver une position initiale viable.
-    openCatalogAtPosition(p);
-    readNextLine();
+    // On ouvre le catalogue au hasard, de façon à trouver une position initiale viable.
+    openCatalogAtRandomPosition();
     CurrentPositionG = getCurrentPosition();
     closeCatalog();
     Serial.print(F("  CurrentPositionG="));  Serial.print(CurrentPositionG); Serial.println(F("(new position) "));
@@ -449,11 +390,11 @@ void Catalog::findFirstClipForRequestedGenre(int tuning)
 // *********************************************************************
 // Renvoie TRUE si l'ANNEE du media est dans la bonne période (décade)
 // *********************************************************************
-bool Catalog::isInRange(int year)
+/* bool Catalog::isInRange(int year)
 {
   return ((year>=RequestedYear) && (year<RangeEnd));
 }
-
+*/
 
 // *******************************************************************************
 // Renvoie TRUE si le nombre d'étoiles du media est égal au Rating demandé.

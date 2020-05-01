@@ -6,7 +6,7 @@
 #define CATALOGCLASS_H_INCLUDED
 
 #include "CatalogFile.h"
-
+#include "Media.h"
 
 #define MAX_TUNING    1023        // Les entrées Analog renvoient une valeur entre 0 et 1023
 
@@ -37,7 +37,6 @@ class Catalog:CatalogFile
               
     private:
 
-        void   parseFields(String medialine);
         String getGenreLabel(int value);
         int    getYearValue(int tuning);
         int    getStarsValue(int value);
@@ -58,17 +57,15 @@ class Catalog:CatalogFile
         int           RangeEnd;              // Année demandée: Fin de la période (ex: 1970)
 
     private:
-        // Le catalogue
-//        SdFile        FichierIndex;
         // Infos sur le dernier Media valide trouvé
-        String        LastMedia_ID;   // sert à eviter de tomber deux fois de suite sur le même ID
-        String        Media_ID;
-        String        Media_Genre;
-        String        Media_Year;
-        String        Media_Rating;
+        // String        LastMedia_ID;   // sert à eviter de tomber deux fois de suite sur le même ID
+
+        Media         NextMediaToPlay;
+        Media         CursorMedia;
+
+
         // Infos sur les genres apparaissant sur la face avant (White List)
         const String  GenreWhiteList="Classique;Blues;Jazz;Folk;Rock n'Roll;Rock;Chanson;Musiques du monde;";  // Ne pas oublier le ; final
-//        byte          GenreWhiteListSize = 8;
         float         GenreLength;
         int           CurrentGenreStart;
         // Infos sur le premier Media ayant la date demandée
@@ -76,11 +73,7 @@ class Catalog:CatalogFile
         String        FirstMediaYear;
         String        FirstMediaGenre;
         String        FirstMediaRating;
-        // Infos temporaires sur la ligne lue dans le catalogue
-        String        Field1;       // year
-        String        Field2;       // media_id
-        String        Field3;       // genre
-        String        Field4;       // rating
+
         // Les curseurs dans le catalogue
         long          FirstcurrentPositionY; // curseur de debut de décade (mode YEAR)
         long          CurrentPositionY;      // curseur pour le mode YEAR

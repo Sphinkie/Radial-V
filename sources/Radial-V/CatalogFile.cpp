@@ -40,7 +40,7 @@ bool CatalogFile::openCatalogAtPosition(long pos=5)
     return (false);
   }
   
-  // On se positionne dans l'index à la derniere position connue
+  // On se positionne dans l'index à la position demandée
   Serial.print(F("  Catalog.ndx: going to position ")); Serial.println(pos);
   FileAccessOK = FichierIndex.seekSet(pos);
   if (!FileAccessOK)
@@ -50,6 +50,24 @@ bool CatalogFile::openCatalogAtPosition(long pos=5)
     return (false);
   }
   return true;
+}
+
+// *******************************************************************************
+// Ouvre le fichier Catalog.ndx, a une postion aléatoire
+// *******************************************************************************
+bool CatalogFile::openCatalogAtRandomPosition()
+{
+  bool FileAccessOK;
+  long pos;
+  
+  // On se positionne entre [0 .. TailleCatalog]  (TailleCatalog = randomMax)
+  // on prend une marge de 100 chars pour ne pas être trop près de la fin du catalogue
+  pos = random(100, RandomMax-100);
+  FileAccessOK = openCatalogAtPosition(pos);
+  // Comme on est à une position aleatoire, on est possiblement au milieu d'une ligne.
+  // On lit la fin de cette ligne, de façon à se positionner en debut de ligne.
+  if (FileAccessOK) this->readNextLine();
+  return FileAccessOK;
 }
 
 
@@ -112,7 +130,7 @@ String CatalogFile::readRandomLine()
     return ("ERROR");
   }
   
-  //On lit la fin de la ligne en cours (généralement tronquée, puisqu'on s'est placé au hasard dans le fichier)
+  // On lit la fin de la ligne en cours (généralement tronquée, puisqu'on s'est placé au hasard dans le fichier)
   Lg = FichierIndex.fgets(line,MAX_LG_LINE);
   if (Lg==-1) return ("ERROR");      // Erreur de lecture
   if (Lg==0)  return ("EOF");      // la ligne lue est vide ou EOF
@@ -136,6 +154,7 @@ int CatalogFile::writeAddStar(long clipPosition)
 {
   SdFile FichierIndex;
   char   Stars='A';
+  long   RatingPosition = clipPosition+12;
   
   Serial.print (F("ADDING a Star at ")); Serial.println (clipPosition);
   if (clipPosition==NULL) return;
@@ -149,7 +168,7 @@ int CatalogFile::writeAddStar(long clipPosition)
   }
   
   // On se positionne sur la ligne du clip
-  FichierIndex.seekSet(clipPosition);
+  FichierIndex.seekSet(RatingPosition);
   
   // On lit le nombre d'etoiles (1 octet)
   Stars = FichierIndex.read();
@@ -158,12 +177,12 @@ int CatalogFile::writeAddStar(long clipPosition)
   if (++Stars >'5') Stars='5'; 
   if (Stars   <'0') Stars='0';
   // On ecrit le nouveau nombre d'étoiles
-  FichierIndex.seekSet(clipPosition);
+  FichierIndex.seekSet(RatingPosition);
   FichierIndex.print(Stars);
   Serial.print (F(" and replaced with ")); Serial.println(Stars);
 
   // On vérifie (pour le debug)
-  FichierIndex.seekSet(clipPosition-12);
+  FichierIndex.seekSet(clipPosition);
   Serial.print (F(" Debug end of line (after update): "));
   for (int i=0; i<14; i++) 
     {
@@ -186,6 +205,7 @@ int CatalogFile::writeRemoveStar(long clipPosition)
 {
   SdFile FichierIndex;
   char   Stars='A';
+  long   RatingPosition = clipPosition+12;
   
   Serial.print (F("REMOVING a Star at ")); Serial.println (clipPosition);
   if (clipPosition==NULL) return;
@@ -199,7 +219,7 @@ int CatalogFile::writeRemoveStar(long clipPosition)
   }
 
   // On se positionne sur la ligne du clip
-  FichierIndex.seekSet(clipPosition);
+  FichierIndex.seekSet(RatingPosition);
   
   // On lit le nombre d'etoiles
   Stars = FichierIndex.read();
@@ -208,12 +228,12 @@ int CatalogFile::writeRemoveStar(long clipPosition)
   if (--Stars < '0') Stars='0';
   if (Stars   >'5') Stars='5';
   // On ecrit le nouveau nombre d'étoiles
-  FichierIndex.seekSet(clipPosition);
+  FichierIndex.seekSet(RatingPosition);
   FichierIndex.print(Stars);
   Serial.print (F(" and replaced with ")); Serial.println(Stars);
   
   // On vérifie (pour le debug)
-  FichierIndex.seekSet(clipPosition-12);
+  FichierIndex.seekSet(clipPosition);
   Serial.print (F(" Debug end of line (after update): "));
   for (int i=0; i<14; i++) 
     {
