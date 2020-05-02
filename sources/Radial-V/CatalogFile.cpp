@@ -1,5 +1,5 @@
 /* *******************************************************************************
- *  Gestion du fichier catalogue des MP3
+ *  Gestion du fichier catalogue des MP3 : Primitives d'accès Lecture/Ecriture
  ********************************************************************************/
 #include <SdFat.h>
 #include "CatalogFile.h"
@@ -41,7 +41,7 @@ bool CatalogFile::openCatalogAtPosition(long pos=5)
   }
   
   // On se positionne dans l'index à la position demandée
-  Serial.print(F("  Catalog.ndx: going to position ")); Serial.println(pos);
+  // Serial.print(F("  Catalog.ndx: going to position ")); Serial.println(pos);
   FileAccessOK = FichierIndex.seekSet(pos);
   if (!FileAccessOK)
   {
@@ -57,16 +57,18 @@ bool CatalogFile::openCatalogAtPosition(long pos=5)
 // *******************************************************************************
 bool CatalogFile::openCatalogAtRandomPosition()
 {
-  bool FileAccessOK;
-  long pos;
+  char  Line[MAX_LG_LINE];   // ligne lue dans le fichier
+  bool  FileAccessOK;
+  long  pos;
   
+  Serial.println(F("  Catalog.ndx: going to random position"));
   // On se positionne entre [0 .. TailleCatalog]  (TailleCatalog = randomMax)
   // on prend une marge de 100 chars pour ne pas être trop près de la fin du catalogue
   pos = random(100, RandomMax-100);
   FileAccessOK = openCatalogAtPosition(pos);
   // Comme on est à une position aleatoire, on est possiblement au milieu d'une ligne.
-  // On lit la fin de cette ligne, de façon à se positionner en debut de ligne.
-  if (FileAccessOK) this->readNextLine();
+  // On lit la fin de cette ligne, de façon à se positionner en début de ligne suivante.
+  if (FileAccessOK) FichierIndex.fgets(Line,MAX_LG_LINE);;
   return FileAccessOK;
 }
 
@@ -79,6 +81,17 @@ void CatalogFile::closeCatalog()
   FichierIndex.close();
 }
 
+// *******************************************************************************
+// Renvoie un index viable d'un media aléatoire dans le catalogue
+// *******************************************************************************
+long CatalogFile::getRandomPosition()
+{
+    // On ouvre le catalogue au hasard, de façon à trouver une position initiale viable.
+    this->openCatalogAtRandomPosition();
+    long pos = this->getCurrentPosition();
+    this->closeCatalog();
+    return pos;
+}
 
 // *******************************************************************************
 // On lit la ligne suivante du fichier
@@ -86,7 +99,7 @@ void CatalogFile::closeCatalog()
 // *******************************************************************************
 String CatalogFile::readNextLine()
 {
-  char   Line[MAX_LG_LINE];         // ligne lue dans le fichier
+  char   Line[MAX_LG_LINE];   // ligne lue dans le fichier
   String Medialine;
    
   // On lit la ligne suivante
@@ -94,7 +107,7 @@ String CatalogFile::readNextLine()
 
   if (Lg==-1) {Serial.println (F("Cannot read Catalog.ndx")); return ("ERROR");}     // Erreur de lecture
   if (Lg==0 ) {Serial.println (F("End of Catalog"));          return ("EOF");}       // la ligne lue est vide ou EOF
-  if (Lg <10) {Serial.println (F("line too short in Catalog.ndx")); Serial.println(Lg); Serial.println(Line); return ("ERROR");}     // ligne trop courte
+  if (Lg <10) {Serial.print(F("line too short [")); Serial.print(Lg); Serial.print(F(" chars]: ")); Serial.print(Line); return ("ERROR");}     // ligne trop courte
 
   Medialine=String(Line);
   Medialine.trim();
@@ -183,7 +196,7 @@ int CatalogFile::writeAddStar(long RatingPosition)
 
   // On vérifie (pour le debug)
   FichierIndex.seekSet(RatingPosition-12);
-  Serial.print (F(" Debug end of line (after update): "));
+  Serial.print (F(" End of line after update: "));
   for (int i=0; i<14; i++) 
     {
       char Debug = FichierIndex.read(); 
@@ -233,7 +246,7 @@ int CatalogFile::writeRemoveStar(long RatingPosition)
   
   // On vérifie (pour le debug)
   FichierIndex.seekSet(RatingPosition-12);
-  Serial.print (F(" Debug end of line (after update): "));
+  Serial.print (F(" End of line after update: "));
   for (int i=0; i<14; i++) 
     {
       char Debug = FichierIndex.read(); 
@@ -274,7 +287,7 @@ int CatalogFile::readRating(long RatingPosition)
 
   // On vérifie (pour le debug)
   FichierIndex.seekSet(RatingPosition-12);
-  Serial.print (F(" Debug end of line (after update): "));
+  Serial.print (F(" End of line: "));
   for (int i=0; i<14; i++) 
     {
       char Debug = FichierIndex.read(); 
@@ -314,7 +327,7 @@ void CatalogFile::writeRating(int rating, long RatingPosition)
 
   // On vérifie (pour le debug)
   FichierIndex.seekSet(RatingPosition-12);
-  Serial.print (F(" Debug end of line (after update): "));
+  Serial.print (F(" End of line after update: "));
   for (int i=0; i<14; i++) 
     {
       char Debug = FichierIndex.read(); 

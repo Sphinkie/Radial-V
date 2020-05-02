@@ -1,3 +1,6 @@
+/* *******************************************************************************
+ *  Face-Avant en Plexiglass
+ ********************************************************************************/
 #ifndef PLEXIGLASS_H_INCLUDED
 #define PLEXIGLASS_H_INCLUDED
 
@@ -8,24 +11,24 @@ class Plexiglass
   public:
         Plexiglass();
         void setTuning(int tuning);
+        String getYear();
 
   private:
         String getGenreLabel(int tuning);
         int    getYearValue(int tuning);
         int    getStarsValue(int tuning);
-        // debugage
+        // debuggage
         void   debugGenre();
         void   debugYear();
 
   public:
-        // Valeurs correspondant au dernier Tuning reçu
-        float         GenreLength;
-        int           CurrentGenreStart;
-        int           RangeStart;            // Année demandée: Début de la période (ex: 1960)
-        int           RangeEnd;              // Année demandée: Fin de la période (ex: 1970)
+        // Valeurs correspondant au Tuning reçu
         String        Genre;                 // Le Genre associé au bouton Tuning
-        int           Rating;                // Le Rating associé au bouton Tunnig
+        float         GenreLength;           // Correspond à la 'largeur' du Genre associé au bouton Tuning
         int           Year;                  // L'Année associée au bouton Tuning (ex: 1964)
+        int           RangeStart;            // Début de la période associée au bouton Tuning (ex: 1960)
+        int           RangeEnd;              // Fin de la période associée au bouton Tuning (ex: 1970)
+        int           Rating;                // Le Rating associé au bouton Tunnig
 
 };
 

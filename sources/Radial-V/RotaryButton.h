@@ -18,7 +18,7 @@
 #define RANDOM  4   // gauche
 #define GENRE   3
 #define YEAR    2
-#define FAV     1   // droite
+#define RATING  1   // droite
 
 class Rotary
 {

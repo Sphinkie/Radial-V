@@ -1,5 +1,5 @@
 /* ***********************************************************
- *  FM PLAYER
+ *       RADIO PLAYER
  *  
  *  Gestion de la carte Sparkfun FM player, en utilisant la 
  *  librairie "SparkFunSi4703" et le bus I2C

@@ -27,7 +27,7 @@
  * 2.0  02/12/2019  Gestion des versions sous GitHub
  * 2.1  23/02/2020  Remapping des E/S : adaptation à la nouvelle carte "Bus Board v2"
  * 2.2  07/04/2020  Ajout FM radio shield
- * 2.3  18/04/2020  Abandon FM radio shield. Ne fonctionne pas sur un Arduino MEGA avec I2C partagé.
+ * 2.3  18/04/2020  Abandon FM radio shield (Ne fonctionne pas sur un Arduino MEGA avec I2C partagé). Refonte ed la recherche.
  *************************************************************************************************** 
 */
 
@@ -116,10 +116,10 @@ char               SlaveArduinoStatus=0;       // Status de l'Arduino Slave I2C 
 void setup() 
 {
   // Des le début, on met les SlaveSelect du bus SPI au niveau haut, pour qu'ils ne reçoivent pas de messages parasites.
-  pinMode(53,      OUTPUT);    digitalWrite(53,      HIGH);   
-  pinMode(MP3_CS,  OUTPUT);    digitalWrite(MP3_CS,  HIGH);   
-  pinMode(MP3_DCS, OUTPUT);    digitalWrite(MP3_DCS, HIGH);   
-  pinMode(SD_CS,   OUTPUT);    digitalWrite(SD_CS,   HIGH);   
+  pinMode(53,      OUTPUT);    digitalWrite(53,      HIGH);
+  pinMode(MP3_CS,  OUTPUT);    digitalWrite(MP3_CS,  HIGH);
+  pinMode(MP3_DCS, OUTPUT);    digitalWrite(MP3_DCS, HIGH);
+  pinMode(SD_CS,   OUTPUT);    digitalWrite(SD_CS,   HIGH);
   
   Serial.begin(115200);
   while (!Serial) { ; } // wait for serial port to connect. Needed for native USB port only
@@ -188,7 +188,7 @@ void setup()
   Serial.println(F("================================="));
   // Pour le debug: On peut mettre FALSE pour tester avec un seul Arduino. 
   // Pour la prod: Mettre TRUE.
-  RemoteTFT.setSlavePresent(true);
+  RemoteTFT.setSlavePresent(false);
 }
 
 
@@ -300,22 +300,14 @@ void loop_mp3()
       // On a détecté un changement de tuning. delta significatif + not still moving
       Serial.print(F(">>Tuning has changed: ")); Serial.println(tuning); 
       // Si le bouton TUNE a bougé, on est peut-être sur une autre année, ou un autre genre, ou autre rating.
-      Catalogue.setNewRequestedValues(tuning); 
-      // On redétermine donc l'année/genre correspondant à ce réglage.
-      digitalWrite(LED_1,LOW); // Allume la Led témoin SPI BUSY
-      mp3shield.pauseDataStream();
-      if (ModeButton.getValue()==YEAR)  Catalogue.initSearchForRequestedYear();
-      if (ModeButton.getValue()==GENRE) Catalogue.initSearchForRequestedGenre();
-      mp3shield.resumeDataStream();
-      digitalWrite(LED_1,HIGH); // Eteint la Led témoin SPI BUSY
-      // On change le morceau MP3 suivant (qui avait été choisi en étape 4)
-      Serial.println(F("  Recherche du prochain clip"));
-      NextMusicFile = getNextFile();    
-
-}
+      // On redétermine donc l'année/genre/rating correspondant à ce réglage.
+      Catalogue.setNewRequestedValues(tuning);
+      // On relance la recherche du clip suivant
+      initClipSearch();
+  }
 
   // --------------------------------------------------------------
-  // Gestion du bouton MODE (FAV/YEAR/GENRE/RANDOM)
+  // Gestion du bouton MODE (RATING/YEAR/GENRE/RANDOM)
   // --------------------------------------------------------------
   ModeButton.readPosition();
   if (ModeButton.hasChanged())  
@@ -323,26 +315,22 @@ void loop_mp3()
       // On a détecté un changement de Mode. On met à jour la valeur de l'année et du genre.
       Serial.print("Mode is now "); Serial.print(ModeButton.getValue()); Serial.println(F(" [1:fav 2:year 3:genre 4:random]"));
       Catalogue.setNewRequestedValues(tuning); 
-      digitalWrite(LED_1,LOW); // Allume la Led témoin SPI BUSY
-      mp3shield.pauseDataStream();
-      if (ModeButton.getValue()==YEAR)  Catalogue.initSearchForRequestedYear();
-      if (ModeButton.getValue()==GENRE) Catalogue.initSearchForRequestedGenre();
-      mp3shield.resumeDataStream();
-      digitalWrite(LED_1,HIGH); // Eteint la Led témoin SPI BUSY
-
+      // On relance la recherche du clip suivant
+      initClipSearch();
   }
-  
+
+   // On actualise la recherche du clip suivant
+   searchNextClip();
+
   // --------------------------------------------------------------
   // Gestion du clip MP3
   // --------------------------------------------------------------
   if (!mp3shield.isPlaying())      // S'il n'y a pas de morceau en cours, on en joue un.
   {
-      Serial.println(F("No clip playing. Play another one."));
-      MusicFile = getNextFile();        // on trouve le prochain clip en fonction du mode et du tuning
-      //MusicFile = NextMusicFile;      // Le Next devient le Courant
-      NextMusicFile = "NOISE";          // Initialisation au cas où on ne trouve pas de suivant.
-      Serial.println(F("---------------"));
-      mp3shield.playTrack(MusicFile);   // On joue le MP3 
+      Serial.println(F("No clip playing. Taking the next one."));
+      Catalogue.takeClip();             // On prend ce qu'on a pu trouver. Le Next devient le Courant.
+      MusicFile = Catalogue.getSelectedClipID();
+      mp3shield.playTrack(MusicFile);   // Et on le joue (eventuellement, cela peut être Noise).
   }
 
    // --------------------------------------------------------------
@@ -351,35 +339,35 @@ void loop_mp3()
    int Step = mp3shield.getStep();
    switch (Step)
    {
-    case 2: // on recupère des infos dans le catalogue
-            Serial.println(F("  Send Requested Mode to TFT (from Tuning)"));
+    case 2: // On affiche le mode en cours.
+            Serial.println(F("  >Send Requested Mode to TFT (from Tuning)"));
             RemoteTFT.clearBackground();
             displayRequestedMode();
             break;
     case 3: // On affiche les infos du clip issues du fichier MP3
-            Serial.println(F("  Send Title to TFT (from tag)"));
+            Serial.println(F("  >Send Title to TFT (from tag)"));
             // RemoteTFT.printLog(MusicFile);
             if (MusicFile == "NOISE") 
             {
-              String message = F("Rech.");
-              switch (ModeButton.getValue())
-              {
-                case 1: message += F(" parmi les favoris"); break;
-                case 2: message += F(" par année");         break;
-                case 3: message += F(" par genre");         break;
-                case 4: message += F(" aléatoire");         break;
-              }
-              RemoteTFT.printTitle(message);
+               String message = F("Rech.");
+               switch (ModeButton.getValue())
+               {
+                 case 1: message += F(" parmi les favoris"); break;
+                 case 2: message += F(" par année");         break;
+                 case 3: message += F(" par genre");         break;
+                 case 4: message += F(" aléatoire");         break;
+               }
+               RemoteTFT.printTitle(message);
             }
             else
             {
-              RemoteTFT.printTitle(mp3shield.getTitle());
-              RemoteTFT.printArtist(mp3shield.getArtist());
-              RemoteTFT.printAlbum(mp3shield.getAlbum());
+               RemoteTFT.printTitle(mp3shield.getTitle());
+               RemoteTFT.printArtist(mp3shield.getArtist());
+               RemoteTFT.printAlbum(mp3shield.getAlbum());
             }
             break;
     case 4: // On affiche la suite des infos du clip issues du fichier Catalog
-            Serial.println(F("  Send Year+Genre to TFT (from Catalog)"));
+            Serial.println(F("  >Send Year+Genre to TFT (from Catalog)"));
             if (MusicFile == "NOISE") 
             {
               RemoteTFT.printYear(" ");
@@ -391,19 +379,15 @@ void loop_mp3()
               RemoteTFT.printGenre(Catalogue.getSelectedClipGenre());
             }
             break;
-    case 5: // On détermine le morceau MP3 suivant
-            Serial.println(F(">>Recherche du prochain clip"));
-            NextMusicFile = getNextFile();       
-            break;
-    case 6: // On determine le nombre d'étoiles et on l'affiche.
-            Serial.println(F("  Send Rating to TFT (from Catalog)"));
+    case 5: // On determine le nombre d'étoiles et on l'affiche.
+            Serial.println(F("  >Send Rating to TFT (from Catalog)"));
             if (MusicFile == "NOISE") 
               RemoteTFT.printStars("-");
             else
               RemoteTFT.printStars(Catalogue.getSelectedClipRating());
             break;
     case 12: // on surveille la RAM consommée
-            Serial.print(F(" Free RAM (bytes)= ")); Serial.println(FreeRam(), DEC);
+            Serial.print(F("Free RAM (bytes)= ")); Serial.println(FreeRam(), DEC);
             // On baisse l'intensité de l'affichage
             RemoteTFT.setBacklight(false);
             break;
@@ -451,35 +435,44 @@ void loop_mp3()
   }
 }
 
+// *******************************************************************************
+// Reinitialisation d'une recherche de clip dans le catalogue
+// Ceci comporte un accès au fichier catalogue
+// *******************************************************************************
+void initClipSearch()
+{
+      digitalWrite(LED_1,LOW); // Allume la Led témoin SPI BUSY
+      mp3shield.pauseDataStream();
+      if (ModeButton.getValue()==YEAR)   Catalogue.initSearchForRequestedYear();
+      if (ModeButton.getValue()==GENRE)  Catalogue.initSearchForRequestedGenre();
+      if (ModeButton.getValue()==RATING) Catalogue.initSearchForRequestedRating();
+      mp3shield.resumeDataStream();
+      digitalWrite(LED_1,HIGH); // Eteint la Led témoin SPI BUSY
+
+}
 
 // *******************************************************************************
 // Renvoie le prochain clip a jouer (en fonction des boutons Mode et Tuning)
 // *******************************************************************************
-String getNextFile()
+void searchNextClip()
 {
-  String NextClipID;
-
   // On lit la position du bouton de reglage, pour le cas où il aurait changé au cours du clip précédent
   int tuning = TuneButton.readValue();
-  Serial.print(F("  get next clip, for mode ")); Serial.println(ModeButton.getValue()); 
+  // Serial.print(F("  searchNextClip for mode ")); Serial.println(ModeButton.getValue()); 
 
   digitalWrite(LED_1,LOW); // Allume la Led témoin SPI BUSY
   mp3shield.pauseDataStream();
 
   switch (ModeButton.getValue())
   {
-    
     case YEAR  : Catalogue.searchClipForRequestedYear();         break;
     case GENRE : Catalogue.searchClipForRequestedGenre();        break;
-    case FAV   : Catalogue.selectClipForRequestedRating();       break;
+    case RATING: Catalogue.searchClipForRequestedRating();       break;
     case RANDOM: Catalogue.selectRandomClip();                   break;
   }
 
   mp3shield.resumeDataStream();
   digitalWrite(LED_1,HIGH); // Eteint la Led témoin SPI BUSY
-  NextClipID = Catalogue.getSelectedClipID();
-  Serial.print(F("  next clip will be ")); Serial.println(NextClipID); 
-  return NextClipID;
 }
 
 // *******************************************************************************
@@ -491,7 +484,7 @@ void displayRequestedMode()
             switch (ModeButton.getValue())
             {
                 case 1: ModeMessage = F("Musique favorite "); 
-                        ModeMessage += String(Catalogue.RequestedRating);
+                        ModeMessage += String(Catalogue.Plexi.Rating);
                         ModeMessage += F("*");
                         break;
                 case 2: ModeMessage = F("    Années ");
@@ -500,7 +493,7 @@ void displayRequestedMode()
                         ModeMessage += String(Catalogue.Plexi.RangeEnd);
                         break;
                 case 3: ModeMessage = F("Genre: ");
-                        ModeMessage += Catalogue.RequestedGenre;            
+                        ModeMessage += Catalogue.Plexi.Genre;            
                         break;
                 case 4: ModeMessage = F("   Musique aleatoire");
                         break;
