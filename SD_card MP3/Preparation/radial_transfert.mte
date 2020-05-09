@@ -2,10 +2,13 @@ $filename(TransfertFiles.txt,utf-16)
 rem --------------------------------------------------------
 rem Ce script sert a recopier tous les MP3 en fichiers 8.3
 rem --------------------------------------------------------
-rem ce fichier TXT doit etre convertit en Batch CP850 pour gerer les fichiers avac accents.
+rem ce fichier TXT doit etre convertit en Batch CP850 pour gerer les fichiers avec accents.
 rem --------------------------------------------------------
 
 rem goto end
+
+copy %_folderpath%\Catalog.txt .
+
 
 mkdir R:\Music
 
@@ -14,11 +17,10 @@ $loopend()
 
 :end
 
-sort %_folderpath%\Catalog.txt /Output .\Catalog.ndx
+sort Catalog.txt /Output Catalog.ndx
 
-copy .\Catalog.ndx R:\
-
-copy %_folderpath%\..\NOISE.mp3 R:\Music\NOISE.mp3
+copy /Y Catalog.ndx R:\
+copy /Y NOISE.mp3   R:\Music\
 
 
 pause
