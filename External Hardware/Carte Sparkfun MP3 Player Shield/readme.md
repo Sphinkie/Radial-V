@@ -2,7 +2,7 @@
 
 ## Sparkfun MP3 Player Shield v1.3 (RETIRED)
 
-Le Player MP3 de Sparkfun est un shield pour Arduino, piloté en I2C, comprenant une carte SD pour stocker les fichiers MP3 et un chipset audio pour les jouer. La sortie audio se fait sur une prise Jack et/ou un connecteur.
+Le Player MP3 de Sparkfun est un shield pour Arduino, piloté en SPI, comprenant une carte SD pour stocker les fichiers MP3 et un chipset audio pour les jouer. La sortie audio se fait sur une prise Jack et/ou un connecteur "Speaker".
 
 <img src="MP3player.jpg" alt="MP3player" style="zoom:66%;" />
 
