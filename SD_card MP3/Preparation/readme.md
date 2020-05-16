@@ -6,13 +6,12 @@ La carte MP3 peut être refaite chaque fois que l'on veut ajouter de nouveaux mo
 
 La préparation nécessite l'application freeware MP3Tag "*The universal Tag Editor*" http://www.mp3tag.de
 
-
-
 ### Tags
 
-Les tags MP3 doivent être bien renseignés, en particulier: **Titre, Artiste, Genre, Année**
+Les tags MP3 doivent être bien renseignés, en particulier: **Titre, Artiste, Genre, Année**.
+Ne pas hésiter à donner des étoiles (*Rating*) aux différents morceaux.
 
-###Préparation
+### Préparation
 
 * Lancer **MP3Tag.exe**
 

@@ -2,7 +2,7 @@
 
 ## Façade Plexiglass
 
-La face-avant de la radio est refaite, en gardant le design de la face-avant orginale, mais en affichant des graduations adaptées aux nouvelles fonctionnalités du Radial-V.
+La face-avant de la radio est refaite, en gardant le design de la face-avant originale, mais en affichant des graduations adaptées aux nouvelles fonctionnalités du Radial-V.
 
  ![Model_Photo_1](Plexi-Radialva.png)
 
@@ -11,15 +11,10 @@ La face-avant de la radio est refaite, en gardant le design de la face-avant org
 ### Génération du .psd à partir du .ai
 
 - Dans Illutratrator, exporter un fichier **.psd** avec les layers et sans lissage.
-
   (Dessin sans les hachures, et sans tracé du contour de découpe). 
-
 - Ouvrir le fichier dans Photoshop: Dans le calque "fond brun", effacer le hachurage vert.
-
 - Exporter en PNG avec couche Alpha.
   (**blanc = transparent**)
-
-
 - Enregistrer
   
 
