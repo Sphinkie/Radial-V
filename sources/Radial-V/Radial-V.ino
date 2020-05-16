@@ -45,11 +45,15 @@
 #include "Catalog.h"
 #include "RemoteDisplay.h"
 
+// Pour le debug: On peut mettre FALSE pour tester avec un seul Arduino. 
+// Pour la prod : Mettre TRUE.
+#define USE_TWO_ARDUINO true
+
 // *******************************************************************************
 // Mapping du cablage
 // *******************************************************************************
 // MP3 data request     // D2 DataRequest   (MP3 shield) avec hardware interrupt 0
-#define AGAIN    3      // D3   Digital In avec hardware interrupt 1
+#define AGAIN      3    // D3   Digital In avec hardware interrupt 1
 // Midi-In              // D3   NOT USED    (MP3 shield) avec hardware interrupt 1
 // GPIO                 // D4   GPIO        (MP3 shield)
 // MP3-reset            // D8   MP3 reset   (MP3 shield)
@@ -115,80 +119,77 @@ char               SlaveArduinoStatus=0;       // Status de l'Arduino Slave I2C 
 // *******************************************************************************
 void setup() 
 {
-  // Des le début, on met les SlaveSelect du bus SPI au niveau haut, pour qu'ils ne reçoivent pas de messages parasites.
-  pinMode(53,      OUTPUT);    digitalWrite(53,      HIGH);
-  pinMode(MP3_CS,  OUTPUT);    digitalWrite(MP3_CS,  HIGH);
-  pinMode(MP3_DCS, OUTPUT);    digitalWrite(MP3_DCS, HIGH);
-  pinMode(SD_CS,   OUTPUT);    digitalWrite(SD_CS,   HIGH);
+    // Dès le début, on met les SlaveSelect du bus SPI au niveau haut, pour qu'ils ne reçoivent pas de messages parasites.
+    pinMode(53,      OUTPUT);    digitalWrite(53,      HIGH);
+    pinMode(MP3_CS,  OUTPUT);    digitalWrite(MP3_CS,  HIGH);
+    pinMode(MP3_DCS, OUTPUT);    digitalWrite(MP3_DCS, HIGH);
+    pinMode(SD_CS,   OUTPUT);    digitalWrite(SD_CS,   HIGH);
   
-  Serial.begin(115200);
-  while (!Serial) { ; } // wait for serial port to connect. Needed for native USB port only
+    Serial.begin(115200);
+    while (!Serial) { ; } // wait for serial port to connect. Needed for native USB port only
   
-  Serial.println(F("================================="));
-  Serial.println(F("==    RADIAL-V     v2.3        =="));
-  Serial.println(F("================================="));
-  Serial.print  (F("CPU Frequency: ")); Serial.print(F_CPU/1000000); Serial.println(F(" MHz"));
-  Serial.print  (F("Free RAM: "));      Serial.print(FreeRam(),DEC); Serial.println(F(" bytes"));
-  // FreeRam is provided by SdFatUtil.h
+    Serial.println(F("================================="));
+    Serial.println(F("==    RADIAL-V     v2.4        =="));
+    Serial.println(F("================================="));
+    Serial.print  (F("CPU Frequency: ")); Serial.print(F_CPU/1000000); Serial.println(F(" MHz"));
+    Serial.print  (F("Free RAM: "));      Serial.print(FreeRam(),DEC); Serial.println(F(" bytes"));
+    // FreeRam is provided by SdFatUtil.h
 
-  pinMode(LED_1, OUTPUT); // Led SPI BUSY (Catalog accede à la carte SD)
-  pinMode(LED_2, OUTPUT);
-  pinMode(K1,    OUTPUT); // Commande relay K1
-  pinMode(K2,    OUTPUT); // Commande relay K2
+    pinMode(LED_1, OUTPUT); // Led SPI BUSY (Catalog accede à la carte SD)
+    pinMode(LED_2, OUTPUT);
+    pinMode(K1,    OUTPUT); // Commande relay K1
+    pinMode(K2,    OUTPUT); // Commande relay K2
   
- 
-  /*
-  // ------------------------------------------------------------
-  // Initalise le Shield FM RADIO et le bus I2C
-  // A faire en premier car cela initialise aussi le bus I2C
-  // ------------------------------------------------------------
-  FMshield.initialize();
-  if (FMshield.isReady())
-      FMshield.displayInfos();
-  else
-  {
-      // On arrive ici si c'est impossible de communiquer avec le shield FM Si4703.
-      FMshield.disable();
-      Serial.println(F("  FM PLAYER DISABLED.")); 
-  }
-  */
+    /*
+    // ------------------------------------------------------------
+    // Initalise le Shield FM RADIO et le bus I2C
+    // A faire en premier car cela initialise aussi le bus I2C
+    // ------------------------------------------------------------
+    FMshield.initialize();
+    if (FMshield.isReady())
+        FMshield.displayInfos();
+    else
+    {
+        // On arrive ici si c'est impossible de communiquer avec le shield FM Si4703.
+        FMshield.disable();
+        Serial.println(F("  FM PLAYER DISABLED.")); 
+    }
+    */
 
-  // ------------------------------------------------------------
-  // Initalise le bus I2C
-  // ------------------------------------------------------------
-  // A commenter si on initialise le bus I2C via l'initialisation de la FM 
-  RemoteTFT.initI2C();
+    // ------------------------------------------------------------
+    // Initalise le bus I2C
+    // ------------------------------------------------------------
+    // A commenter si on initialise le bus I2C via l'initialisation de la FM 
+    RemoteTFT.initI2C();
 
-  // ------------------------------------------------------------
-  // Initalise le Shield Sparkfun MP3 player
-  // ------------------------------------------------------------
-  mp3shield.initialize();
-  // Listing des fichiers de la carte SD 
-  // mp3shield.dir();
-  mp3shield.setDiffmode();    // Enleve un echo acoustique désagréable
-  digitalWrite(LED_1,HIGH);   // Eteint la Led témoin SPI BUSY
+    // ------------------------------------------------------------
+    // Initalise le Shield Sparkfun MP3 player
+    // ------------------------------------------------------------
+    mp3shield.initialize();
+    // Listing des fichiers de la carte SD 
+    // mp3shield.dir();
+    mp3shield.setDiffmode();    // Enleve un echo acoustique désagréable
+    digitalWrite(LED_1,HIGH);   // Eteint la Led témoin SPI BUSY
 
-  // ------------------------------------------------------------
-  // Initalise les autres objets
-  // ------------------------------------------------------------
-  Catalogue.initialize();      
-  TuneButton.begin();
-  NextMusicFile = "NOISE" ;   // ID du prochain clip MP3 à jouer ("STARTER")
-  Action = _IDLE;
+    // ------------------------------------------------------------
+    // Initalise les autres objets
+    // ------------------------------------------------------------
+    Catalogue.initialize();      
+    TuneButton.begin();
+    NextMusicFile = "NOISE" ;   // ID du prochain clip MP3 à jouer ("STARTER")
+    Action = _IDLE;
 
-  Serial.println(F("Waiting I2C Slave ready..."));
-  // -----------------------------------------------------------------------------
-  // On attend que l'Arduino SLAVE soit prêt sur le bus I2C (status 0x01 = READY)
-  // -----------------------------------------------------------------------------
-  while (SlaveArduinoStatus!=0)
-  {
-     SlaveArduinoStatus=RemoteTFT.requestStatus();
-     delay(100);
-  }
-  Serial.println(F("================================="));
-  // Pour le debug: On peut mettre FALSE pour tester avec un seul Arduino. 
-  // Pour la prod: Mettre TRUE.
-  RemoteTFT.setSlavePresent(false);
+    Serial.println(F("Waiting I2C Slave ready..."));
+    // -----------------------------------------------------------------------------
+    // On attend que l'Arduino SLAVE soit prêt sur le bus I2C (status 0x01 = READY)
+    // -----------------------------------------------------------------------------
+    while (SlaveArduinoStatus!=0)
+    {
+       SlaveArduinoStatus=RemoteTFT.requestStatus();
+       delay(100);
+    }
+    Serial.println(F("================================="));
+    RemoteTFT.setSlavePresent(USE_TWO_ARDUINO);
 }
 
 
@@ -448,7 +449,6 @@ void initClipSearch()
       if (ModeButton.getValue()==RATING) Catalogue.initSearchForRequestedRating();
       mp3shield.resumeDataStream();
       digitalWrite(LED_1,HIGH); // Eteint la Led témoin SPI BUSY
-
 }
 
 // *******************************************************************************
@@ -456,23 +456,21 @@ void initClipSearch()
 // *******************************************************************************
 void searchNextClip()
 {
-  // On lit la position du bouton de reglage, pour le cas où il aurait changé au cours du clip précédent
-  int tuning = TuneButton.readValue();
-  // Serial.print(F("  searchNextClip for mode ")); Serial.println(ModeButton.getValue()); 
+    // On lit la position du bouton de reglage, pour le cas où il aurait changé au cours du clip précédent
+    int tuning = TuneButton.readValue();
+    // Serial.print(F("  searchNextClip for mode ")); Serial.println(ModeButton.getValue()); 
 
-  digitalWrite(LED_1,LOW); // Allume la Led témoin SPI BUSY
-  mp3shield.pauseDataStream();
-
-  switch (ModeButton.getValue())
-  {
-    case YEAR  : Catalogue.searchClipForRequestedYear();         break;
-    case GENRE : Catalogue.searchClipForRequestedGenre();        break;
-    case RATING: Catalogue.searchClipForRequestedRating();       break;
-    case RANDOM: Catalogue.selectRandomClip();                   break;
-  }
-
-  mp3shield.resumeDataStream();
-  digitalWrite(LED_1,HIGH); // Eteint la Led témoin SPI BUSY
+    digitalWrite(LED_1,LOW); // Allume la Led témoin SPI BUSY
+    mp3shield.pauseDataStream();
+    switch (ModeButton.getValue())
+    {
+        case YEAR  : Catalogue.searchClipForRequestedYear();         break;
+        case GENRE : Catalogue.searchClipForRequestedGenre();        break;
+        case RATING: Catalogue.searchClipForRequestedRating();       break;
+        case RANDOM: Catalogue.selectRandomClip();                   break;
+    }
+    mp3shield.resumeDataStream();
+    digitalWrite(LED_1,HIGH); // Eteint la Led témoin SPI BUSY
 }
 
 // *******************************************************************************
@@ -508,8 +506,8 @@ void displayRequestedMode()
 // *******************************************************************************
 void ISR_NextButton() 
 {
-  Action = _NEXT;
-  NextButton.setStatus(true);
+    Action = _NEXT;
+    NextButton.setStatus(true);
 }
 
 // *******************************************************************************
@@ -518,8 +516,8 @@ void ISR_NextButton()
 // *******************************************************************************
 void ISR_AgainButton() 
 {
-  Action = _AGAIN;
-  AgainButton.setStatus(true);
+    Action = _AGAIN;
+    AgainButton.setStatus(true);
 }
 
 // *******************************************************************************
@@ -528,8 +526,8 @@ void ISR_AgainButton()
 // *******************************************************************************
 void ISR_PromoteButton() 
 {
-  Action = _PROMOTE;
-  PromoteButton.setStatus(true);
+    Action = _PROMOTE;
+    PromoteButton.setStatus(true);
 }
 
 
@@ -544,5 +542,3 @@ void setRelay(int relaisposition)
    digitalWrite(K1,relaisposition);           // Commutation relay
    digitalWrite(K2,relaisposition);           // Commutation relay
 }
-
-  
