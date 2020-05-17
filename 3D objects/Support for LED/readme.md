@@ -5,4 +5,4 @@ La LED de l'activité de la carte SD a besoin d'un petit système de fixation po
 
 [Vue du modèle 3D](Radial-V-Fixation-LED.stl)
 
-![Vue de l'objet](Support-LED.jpg)
+![Vue de l'objet](Radial-V-Fixation-LED.png)
