@@ -15,11 +15,6 @@
 #define ROTARYCLASS_H_INCLUDED
 
 
-#define RANDOM  4   // gauche
-#define GENRE   3
-#define YEAR    2
-#define RATING  1   // droite
-
 class Rotary
 {
     public:

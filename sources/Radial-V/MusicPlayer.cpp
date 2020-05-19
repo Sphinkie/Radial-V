@@ -17,12 +17,12 @@
 // ******************************************************************************
 // Mode réel        
 SdFat        sd;    
-SFEMP3Shield MP3player;
+SFEMP3Shield SparkfunShield;
 
 // Mode simulé
 // #include "Bouchon.h"
 //        Bouchon      sdCard;
-//        Bouchon      MP3player;
+//        Bouchon      SparkfunShield;
 
 // ******************************************************************************
 // Constructor
@@ -65,7 +65,7 @@ void MusicPlayer::initialize()
 
   //Initialize the MP3 Player Shield
   uint8_t result; //result code from some function as to be tested at later time.
-  result = MP3player.begin();
+  result = SparkfunShield.begin();
   
   //check result, see readme for error codes.
   if(result == 0) 
@@ -91,7 +91,7 @@ void MusicPlayer::playTrack(String filename)
     filename = String ("/Music/"+filename+".mp3");
     filename.toCharArray(trackName,30);
     
-    result = MP3player.playMP3(trackName);
+    result = SparkfunShield.playMP3(trackName);
     //check result, see readme for error codes.
     if(result != 0) {
       Serial.print(F("Error code: "));
@@ -111,7 +111,7 @@ void MusicPlayer::playTrack(String filename)
 // ******************************************************************************
 bool MusicPlayer::isPlaying()
 {
-   return (MP3player.isPlaying());
+   return (SparkfunShield.isPlaying());
 }
 
 
@@ -122,7 +122,7 @@ bool MusicPlayer::isPlaying()
 void MusicPlayer::setVolume(int volume)
 {
     // push byte into both left and right assuming equal balance.
-    MP3player.setVolume(volume,volume);
+    SparkfunShield.setVolume(volume,volume);
 }
 
 
@@ -133,7 +133,7 @@ void MusicPlayer::stopTrack()
 {
    // Stop the current track
    Serial.println(F("  Stopping mp3"));
-   MP3player.stopTrack();
+   SparkfunShield.stopTrack();
    Step=0;   // step number
 }
 
@@ -144,7 +144,7 @@ void MusicPlayer::restartTrack()
 {
    // Restart the current track
    Serial.println(F("  Restarting mp3"));
-   MP3player.skipTo(0);
+   SparkfunShield.skipTo(0);
    Step=0;   // step number
 }
 
@@ -163,13 +163,13 @@ void MusicPlayer::displayMediaInfo()
   strcpy(artist,"Current artist");
   strcpy(album, "Current album");
 
-  if (!MP3player.isPlaying()) return;
+  if (!SparkfunShield.isPlaying()) return;
 
   //we can get track info by using the following functions and arguments
   //the functions will extract the requested information, and put it in the array we pass in
-  MP3player.trackTitle((char*)&title);
-  MP3player.trackArtist((char*)&artist);
-  MP3player.trackAlbum((char*)&album);
+  SparkfunShield.trackTitle((char*)&title);
+  SparkfunShield.trackArtist((char*)&artist);
+  SparkfunShield.trackAlbum((char*)&album);
 
   //print out the arrays of track information
   // Serial.print(F(" title:  "));   Serial.write((byte*)&title, 30);  Serial.println();
@@ -189,9 +189,9 @@ String MusicPlayer::getTitle()
   String retour;
 
   // S'il n'y a pas de clip en cours, on revoie un blanc.
-  if (!MP3player.isPlaying()) return " ";
+  if (!SparkfunShield.isPlaying()) return " ";
   // On lit le tag TITLE, et on le met dans le Buffer
-  MP3player.trackTitle((char*)&Buffer);
+  SparkfunShield.trackTitle((char*)&Buffer);
   // S'il est vide, on renvoie un blanc.
   if (strlen(Buffer)==0) return " ";
   retour = String(Buffer);
@@ -207,9 +207,9 @@ String MusicPlayer::getArtist()
   String retour;
 
   // S'il n'y a pas de clip en cours, on revoie un blanc.
-  if (!MP3player.isPlaying()) return " ";
+  if (!SparkfunShield.isPlaying()) return " ";
   // On lit le tag ARTIST, et on le met dans le Buffer
-  MP3player.trackArtist((char*)&Buffer);
+  SparkfunShield.trackArtist((char*)&Buffer);
   // S'il est vide, on renvoie un blanc.
   if (strlen(Buffer)==0) return " ";
   retour = String(Buffer);
@@ -225,9 +225,9 @@ String MusicPlayer::getAlbum()
   String retour;
   
   // S'il n'y a pas de clip en cours, on revoie un blanc.
-  if (!MP3player.isPlaying()) return " ";
+  if (!SparkfunShield.isPlaying()) return " ";
   // On lit le tag ALBUM, et on le met dans le Buffer
-  MP3player.trackAlbum((char*)&Buffer);
+  SparkfunShield.trackAlbum((char*)&Buffer);
   // S'il est vide, on renvoie un blanc.
   if (strlen(Buffer)==0) return " ";
   // Sinon, on le convertit en String, on tronque à 32 et on le renvoie
@@ -242,8 +242,8 @@ String MusicPlayer::getAlbum()
 // ******************************************************************************
 void MusicPlayer::resetBoard()
 {
-    MP3player.stopTrack();
-    MP3player.vs_init();
+    SparkfunShield.stopTrack();
+    SparkfunShield.vs_init();
     Serial.println(F(" Reseting VS10xx chip"));
     Step=0;   // numero de step
 }
@@ -254,7 +254,7 @@ void MusicPlayer::resetBoard()
 // ******************************************************************************
 void MusicPlayer::setEarSpeaker()
 {
-    uint8_t earspeaker = MP3player.getEarSpeaker();
+    uint8_t earspeaker = SparkfunShield.getEarSpeaker();
     if(earspeaker >= 3)
     {
       earspeaker = 0;
@@ -262,7 +262,7 @@ void MusicPlayer::setEarSpeaker()
     {
       earspeaker++;
     }
-    MP3player.setEarSpeaker(earspeaker); // commit new earspeaker
+    SparkfunShield.setEarSpeaker(earspeaker); // commit new earspeaker
     Serial.print(F(" earspeaker set to "));
     Serial.println(earspeaker, DEC);
 }
@@ -275,17 +275,17 @@ void MusicPlayer::setEarSpeaker()
 // ******************************************************************************
 void MusicPlayer::setDiffmode()
 {
-    uint16_t diff_state = MP3player.getDifferentialOutput();
+    uint16_t diff_state = SparkfunShield.getDifferentialOutput();
 
     Serial.print(F(" Differential Mode "));
     if(diff_state == 0) 
     {
-      MP3player.setDifferentialOutput(1);
+      SparkfunShield.setDifferentialOutput(1);
       Serial.println(F("Enabled."));
     } 
     else 
     {
-      MP3player.setDifferentialOutput(0);
+      SparkfunShield.setDifferentialOutput(0);
       Serial.println(F("Disabled."));
     }
 }
@@ -296,10 +296,10 @@ void MusicPlayer::setDiffmode()
 // ******************************************************************************
 void MusicPlayer::setStereo(bool ON)
 {
-    if (ON)  MP3player.setMonoMode(1);
-    else     MP3player.setMonoMode(0);
+    if (ON)  SparkfunShield.setMonoMode(1);
+    else     SparkfunShield.setMonoMode(0);
 
-    uint16_t monostate = MP3player.getMonoMode();
+    uint16_t monostate = SparkfunShield.getMonoMode();
     if (monostate==1) Serial.println(F(" mode stereo."));
     else Serial.println(F(" mode mono."));
 }
@@ -314,10 +314,10 @@ void MusicPlayer::printStatus()
 {
     Serial.println(F("Current State of VS10xx is."));
     Serial.print(F("isPlaying() = "));
-    Serial.println(MP3player.isPlaying());
+    Serial.println(SparkfunShield.isPlaying());
 
     Serial.print(F("getState() = "));
-    switch (MP3player.getState()) {
+    switch (SparkfunShield.getState()) {
     case uninitialized:
       Serial.print(F("uninitialized"));
       break;
@@ -386,7 +386,7 @@ void MusicPlayer::dir()
 {
   // Display the files on the SdCard 
   // (prevent root.ls when playing, something locks the dump, but keeps playing).
-  if(!MP3player.isPlaying()) 
+  if(!SparkfunShield.isPlaying()) 
   {
      Serial.println(F("Files found (name date size):"));
      sd.ls(LS_R | LS_DATE | LS_SIZE);
@@ -415,14 +415,14 @@ int MusicPlayer::getStep()
 
 // ******************************************************************************
 // Disable interrupts to avoid collisions on the SPI bus between this code 
-// and the MP3player library.
+// and the SparkfunShield library.
 // These  functions make sure there will be no data collisions on the SPI bus 
 // caused by the MP3 decoder asking for more data at the wrong time. 
 // You need to wrap any SPI code you add to your project with these two functions.
 // ******************************************************************************
 void MusicPlayer::pauseDataStream()
 {
-  MP3player.pauseDataStream();
+  SparkfunShield.pauseDataStream();
 }
 
 
@@ -434,6 +434,6 @@ void MusicPlayer::pauseDataStream()
 // ******************************************************************************
 void MusicPlayer::resumeDataStream()
 {
-  MP3player.resumeDataStream();
+  SparkfunShield.resumeDataStream();
 }
   

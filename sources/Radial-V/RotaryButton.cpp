@@ -2,7 +2,7 @@
  *  Gestion de Bouton de type Commutateur Rotatif
  *  
  ************************************************************* */
-
+#include "Arduino.h"
 #include "RotaryButton.h"
      
         
@@ -90,5 +90,3 @@ bool Rotary::hasChanged()
   Changed = false;
   return ChangeStatus;
 }
-
-
