@@ -28,4 +28,36 @@ Ne pas hésiter à donner des étoiles (*Rating*) aux différents morceaux.
 * Insérer la carte SD du player MP3 dans le PC. S'assurer qu'elle est identifiée en tant que disque R:.
 * Lancer "**TransfertFiles.bat**"
 
+## Format du fichier Catalogue
+
+| Année (4 chars) | Hash (8 chars) | Genre (variable) | Rating (1 char) |
+| --------------- | -------------- | ---------------- | --------------- |
+| 1878            | B2BC31C5       | Classique        | 3               |
+| 1918            | 080B6B84       | Jazz             | 2               |
+
+Exemple:
+
+```
+1878;B2BC31C5;Classique;3;
+1918;080B6B84;Jazz;2;
+```
+
+0000 = Année inconnue.
+
+Le Catalogue est trié par Année. Séparateur = *point-virgule*.
+
+Le *Rating* est à une position fixe par rapport à la fin de la ligne (cad: du début de ligne suivante).
+
+
+
+## Fichiers du répertoire
+
+* **Catalog.ndx** = catalogue final, à copier sur la carte SD
+* **TransfertFiles.bat** = fichier de commande en CP850 pour copier les MP3 sur la carte SD
+* **radial_catalog.mte** = fichier d'actions MP3Tag pour générer *Catalog.txt*
+* **radial_transfert.mte** = fichier d'actions MP3Tag pour générer *radial_transfert.txt*
+* **ConvertTransfertBatch.bat** = fichier de commande pour générer *TransfertFiles.bat*
+* **radial_transfert.txt** = fichier UTF-16
+* **Catalog.txt** = fichier intermédiaire, non trié par Année.
+* **iconv** = utilitaire de conversion UTF-16 en CodePage CP850
 
