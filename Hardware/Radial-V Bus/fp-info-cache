@@ -1,4 +1,4 @@
-15173397685869263
+15174985077075051
 Battery
 BatteryHolder_Bulgin_BX0036_1xC
 Bulgin Battery Holder, BX0036, Battery Type C (https://www.bulgin.com/products/pub/media/bulgin/data/Battery_holders.pdf)
@@ -45268,6 +45268,13 @@ connector Molex KK-254 side entry
 0
 2
 2
+MesModules
+PCB_Edge_1x10
+PCB Edge Connector 10pads
+Edge Connector
+0
+10
+10
 MesModules
 Potentiometer_ACP_CA9-H2,5_Horizontal
 Potentiometer, horizontal, ACP CA9-H2,5, http://www.acptechnologies.com/wp-content/uploads/2017/05/02-ACP-CA9-CE9.pdf

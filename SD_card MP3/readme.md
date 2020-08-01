@@ -4,10 +4,13 @@
 
 ![carte microSD](microSD.jpg)
 
-* **/Preparation** - Ce repository contient les éléments nécessaires pour la carte SD du shield **MP3 Player**:
-  * Fichier audio utilisé par le programme (`NOISE.MP3`)
-  * Scripts et utilitaires pour générer le fichier `Catalog.ndx` utilisé par le programme.
+La carte doit avoir un *file system* FAT16 ou FAT32, et des noms de fichier au format 8.3.
 
+* **/Preparation** - Ce repository contient les éléments nécessaires pour la carte SD du shield **MP3 Player**:
+  
+  * Fichier audio utilisé par le programme (`NOISE.MP3`)
+* Scripts et utilitaires pour générer le fichier `Catalog.ndx` utilisé par le programme.
+  
 * **/SD_Card** - Contenu typique de la carte SD: le fichier `Catalog.ndx` , un répertoire `Music`contenant tous les fichiers MP3 au format 8.3 et les patches VLSI pour le chipset audio.
 
   
