@@ -7,11 +7,23 @@
 # Standard to msysgit
 *.doc	 diff=astextplain
 *.DOC	 diff=astextplain
-*.docx diff=astextplain
-*.DOCX diff=astextplain
-*.dot  diff=astextplain
-*.DOT  diff=astextplain
-*.pdf  diff=astextplain
+*.docx   diff=astextplain
+*.DOCX   diff=astextplain
+*.dot    diff=astextplain
+*.DOT    diff=astextplain
+*.pdf    diff=astextplain
 *.PDF	 diff=astextplain
 *.rtf	 diff=astextplain
 *.RTF	 diff=astextplain
+
+
+# Configuration pour que GitHub-Linguit détecte bien le langage 
+External*/* linguist-vendored
+Tools/* linguist-vendored
+docs/* linguist-documentation
+
+*.h linguist-language=C++
+*.ino linguist-language=C++
+Catalog.ndx linguist-generated=true
+*.kicad_pcb linguist-detectable=true
+*.sch linguist-detectable=true
