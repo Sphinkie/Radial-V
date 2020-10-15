@@ -1,8 +1,26 @@
-* Arduino Uno
-* LED RGB 
+# Bill Of Material
+
+
+
+## Boards
+
+* Arduino Mega x2
+* Audio Amplifier (Kit Velleman VM114)
+* TFT Screen 160x128
+* MP3 player shield (sparkfun)
+* FM Receiver  (sparkfun)
+
+
+
+----
+
+## Components
+
 * Potentiometer (200 k-ohms)
 * Speaker
-* USD – SR04 – Ultrasonic sensor
-* SN.754410.NE + Stepper Motor
+* LEDs
+* Static Relays
+
+
 
 **[Back to home page](../index)**

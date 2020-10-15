@@ -1,16 +1,25 @@
-## Front and Rear views:
+# Pictures
 
-![robot-bonbons Front](../images/Robot-Bonbons-LR-front.png)
-![robot-bonbons Rear](../images/Robot-Bonbons-LR-rear.png)
+*to be completed*
 
-## Closer views:  
 
-![robot-bonbons Close](../images/Robot-Bonbons-LR-close.png)
-![robot-bonbons Inside](../images/Robot-Bonbons-LR-inside.png)
 
-## Outside View:
+## Before:
 
-![robot-bonbons](../images/Robot-Bonbons-LR-view.png)
+
+
+## 3D models:  
+
+
+
+
+## Final view:
+
+
+
+
+
+
 
 **[Back to home page](../index)**
 
