@@ -1,0 +1,8 @@
+theme: jekyll-theme-slate
+title: Radial-V
+description: A vintage radio transformed into intelligent MP3 player
+show_downloads: false
+
+github:
+  owner_name: David de Lorenzo
+  owner_url: https://sphinkie.github.io/
