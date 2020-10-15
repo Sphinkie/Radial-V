@@ -14,10 +14,10 @@
 
 ----
 
-## Components
+## Components for homemade PCBs
 
-* Potentiometer (200 k-ohms)
-* Speaker
+* Potentiometer
+* Loud-Speaker
 * LEDs
 * Static Relays
 
