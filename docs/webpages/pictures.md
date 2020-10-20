@@ -8,13 +8,13 @@
 
 ## 3D-models:  
 
-Here are the 3D-models for the PLA printed supports, the boards  and the homemade PCB.
+Here are the 3D-models for the PLA printed supports, the boards  and the homemade PCBs.
 
-![Radial-V-front](../images/Radial-V-front.png)
+Front view:![Radial-V-front](../images/Radial-V-front.png)
 
-![Radial-V-rear](../images/Radial-V-rear.png)
+Rear view:![Radial-V-rear](../images/Radial-V-rear.png)
 
-![Radial-V-top](../images/Radial-V-top.png)
+Perspective:![Radial-V-top](../images/Radial-V-top.png)
 
 
 ## Final view:
