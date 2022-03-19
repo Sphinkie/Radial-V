@@ -9,3 +9,5 @@ Cette minicarte réalise une adaptation du signal audio entre la carte MP3 et la
 La carte a été fabriquée sur un Veroboard (pas de PCB).
 
 ![Radial-V MP3 Audio Adapter](Radial-V%20MP3%20Audio%20Adapter.png)
+
+Le branchement sur le connecteur *CNX_SPARE* permet de récupérer un signal GND.
