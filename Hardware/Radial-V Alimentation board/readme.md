@@ -12,3 +12,9 @@ Cette carte distribue l'alimentation **5v** vers les autres cartes du système e
 * POWER-IN : Alimentation externe 12v (VCC)
 * CNX_ON_OFF : Bouton ON/OFF externe
 * Jumper: Permet d’alimenter les Arduino en VCC (12v) ou en +5v
+
+
+
+## Schematic & PCB
+
+Compatibles avec le logiciel **Eagle**.

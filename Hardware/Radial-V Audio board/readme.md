@@ -11,3 +11,6 @@ Cette carte fait passer la sortie audio (en provenance de la carte "Extension Bu
 ![RADIAL-V Audio Board Silk](RADIAL-V_AudioBoard_Silk.png)
 
 Note: Le PréAmplificateur a été remplacé par une carte *Shunt*.
+
+Schémas et PCB compatibles avec le logiciel **KiCad** (freeware).
+

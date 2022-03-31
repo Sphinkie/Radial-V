@@ -6,3 +6,5 @@ Le préamplificateur initialement prévu s'est avéré inutile: le signal en sor
 
 ![Radial-V Shematic Shunt](Radial-V%20Shematic%20Shunt.png)
 ![Radial-V PreAmplifier Shunt](Radial-V%20PreAmplifier%20Shunt.png)
+
+Schémas et PCB compatibles avec le logiciel **KiCad** (freeware).
