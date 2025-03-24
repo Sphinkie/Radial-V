@@ -8,7 +8,7 @@ Remise en fonctionnement d'un poste de TSF, avec radio FM, player MP3, et affich
 
 ## Fabrication
 
-Plusieurs éléments ont été réalisés: circuits électroniques, supports en PLA et logiciel.
+Plusieurs éléments ont été réalisés: logiciel, circuits électroniques et supports en PLA.
 
 ![Radial-V-front](docs/images/Radial-V-front.png)
 
